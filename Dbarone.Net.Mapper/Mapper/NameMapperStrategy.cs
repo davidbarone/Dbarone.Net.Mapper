@@ -1,8 +1,17 @@
 namespace Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions.Reflection;
 
+/// <summary>
+/// Default mapper strategy. Maps properties where the names match.
+/// </summary>
 public class NameMapperStrategy : IMapperStrategy
 {
+    /// <summary>
+    /// Maps source to target types based on matching property names.
+    /// </summary>
+    /// <param name="T"></param>
+    /// <param name="U"></param>
+    /// <returns></returns>
     public IList<PropertyMap> MapTypes(Type T, Type U)
     {
         var sourceProperties = T.GetProperties();

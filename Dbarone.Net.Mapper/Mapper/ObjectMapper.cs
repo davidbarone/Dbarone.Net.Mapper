@@ -1,6 +1,11 @@
 namespace Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions.Reflection;
 
+/// <summary>
+/// Maps objects from one type to another.
+/// </summary>
+/// <typeparam name="T">The type to map from.</typeparam>
+/// <typeparam name="U">The type to map to.</typeparam>
 public class ObjectMapper<T, U> where T : class where U : class
 {
     Type _from;
@@ -20,11 +25,21 @@ public class ObjectMapper<T, U> where T : class where U : class
         this._map = this._mapperStrategy.MapTypes(this._from, this._to);
     }
 
+    /// <summary>
+    /// Static factory method to create a new mapper instance.
+    /// </summary>
+    /// <param name="mapperStrategy">Optional mapper strategy. If omitted, the default NameMapperStrategy will be used.</param>
+    /// <returns></returns>
     public static ObjectMapper<T, U> Create(IMapperStrategy mapperStrategy = null)
     {
         return new ObjectMapper<T, U>(mapperStrategy);
     }
 
+    /// <summary>
+    /// Maps a single object.
+    /// </summary>
+    /// <param name="obj">The object to map from.</param>
+    /// <returns>The new object.</returns>
     public U? MapOne(T? obj)
     {
         if (obj == null)
@@ -68,6 +83,11 @@ public class ObjectMapper<T, U> where T : class where U : class
         return target;
     }
 
+    /// <summary>
+    /// Maps a collection of objects.
+    /// </summary>
+    /// <param name="obj">A collection of object.</param>
+    /// <returns>The new mapped collection.</returns>
     public IEnumerable<U> MapMany(IEnumerable<T> obj)
     {
         foreach (var item in obj)

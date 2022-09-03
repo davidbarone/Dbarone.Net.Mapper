@@ -56,6 +56,7 @@ public class MapperTests
         Assert.True(a2.ValueEquals(a));
     }
 
+    [Fact]
     public void TestMapMany()
     {
         var customers = new List<CustomerEntity>(){
@@ -68,6 +69,6 @@ public class MapperTests
 
         var mapper = ObjectMapper<CustomerEntity, CustomerModel>.Create();
         var model = mapper.MapMany(customers.ToList().OrderBy(c => c.CustomerId));
-        Assert.Equal("ABC Bicycles,Star Scooters,Bikes Galore,Bikes R Us,Bicycle Exchange", (string.Concat(model.Select(m => m.Name))));
+        Assert.Equal("ABC Bicycles,Star Scooters,Bikes Galore,Bikes R Us,Bicycle Exchange", (string.Join(',', model.Select(m => m.Name))));
     }
 }
