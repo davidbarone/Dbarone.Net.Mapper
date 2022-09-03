@@ -86,7 +86,7 @@ public class ObjectMapper<T, U> where T : class where U : class
     /// <summary>
     /// Maps a collection of objects.
     /// </summary>
-    /// <param name="obj">A collection of object.</param>
+    /// <param name="obj">A collection of objects.</param>
     /// <returns>The new mapped collection.</returns>
     public IEnumerable<U> MapMany(IEnumerable<T> obj)
     {

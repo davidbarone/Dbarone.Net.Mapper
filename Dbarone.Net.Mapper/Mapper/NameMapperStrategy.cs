@@ -9,9 +9,9 @@ public class NameMapperStrategy : IMapperStrategy
     /// <summary>
     /// Maps source to target types based on matching property names.
     /// </summary>
-    /// <param name="T"></param>
-    /// <param name="U"></param>
-    /// <returns></returns>
+    /// <param name="T">The source type.</param>
+    /// <param name="U">The target type.</param>
+    /// <returns>A list of mapper rules.</returns>
     public IList<PropertyMap> MapTypes(Type T, Type U)
     {
         var sourceProperties = T.GetProperties();

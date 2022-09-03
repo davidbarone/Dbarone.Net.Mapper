@@ -6,6 +6,22 @@
  Implements a custom mapper strategy. 
 
 ---
+### M:Dbarone.Net.Mapper.CustomMapperStrategy`2.Configure(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Linq.Expressions.Expression{System.Func{`1,System.Object}})
+ Configures the CustomMapperStrategy using a set of expressions. 
+|Name | Description |
+|-----|------|
+|from: |The from expression.|
+|to: |The to expression.|
+
+---
+### M:Dbarone.Net.Mapper.CustomMapperStrategy`2.MapTypes(System.Type,System.Type)
+ Custom implementation of MapTypes method. 
+|Name | Description |
+|-----|------|
+|T: |The source type.|
+|U: |The target type.|
+
+---
 
 
 >## T:Dbarone.Net.Mapper.IMapperStrategy
@@ -15,10 +31,10 @@
 ---
 ### M:Dbarone.Net.Mapper.IMapperStrategy.MapTypes(System.Type,System.Type)
  A mapper strategy must implement the MapTypes method. 
-| Name | Description      |
-| ---- | ---------------- |
-| T:   | The source type. |
-| U:   | The target type. |
+|Name | Description |
+|-----|------|
+|T: |The source type.|
+|U: |The target type.|
 
 ---
 
@@ -30,10 +46,10 @@
 ---
 ### M:Dbarone.Net.Mapper.NameMapperStrategy.MapTypes(System.Type,System.Type)
  Maps source to target types based on matching property names. 
-| Name | Description |
-| ---- | ----------- |
-| T:   |             |
-| U:   |             |
+|Name | Description |
+|-----|------|
+|T: |The source type.|
+|U: |The target type.|
 
 ---
 
@@ -47,23 +63,23 @@
 ---
 ### M:Dbarone.Net.Mapper.ObjectMapper`2.Create(Dbarone.Net.Mapper.IMapperStrategy)
  Static factory method to create a new mapper instance. 
-| Name            | Description                                                                        |
-| --------------- | ---------------------------------------------------------------------------------- |
-| mapperStrategy: | Optional mapper strategy. If omitted, the default NameMapperStrategy will be used. |
+|Name | Description |
+|-----|------|
+|mapperStrategy: |Optional mapper strategy. If omitted, the default NameMapperStrategy will be used.|
 
 ---
 ### M:Dbarone.Net.Mapper.ObjectMapper`2.MapOne(`0)
  Maps a single object. 
-| Name | Description             |
-| ---- | ----------------------- |
-| obj: | The object to map from. |
+|Name | Description |
+|-----|------|
+|obj: |The object to map from.|
 
 ---
 ### M:Dbarone.Net.Mapper.ObjectMapper`2.MapMany(System.Collections.Generic.IEnumerable{`0})
  Maps a collection of objects. 
-| Name | Description             |
-| ---- | ----------------------- |
-| obj: | A collection of object. |
+|Name | Description |
+|-----|------|
+|obj: |A collection of objects.|
 
 ---
 
