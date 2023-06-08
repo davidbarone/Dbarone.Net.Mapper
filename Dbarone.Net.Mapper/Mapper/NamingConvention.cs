@@ -1,0 +1,21 @@
+/// <summary>
+/// Defines the default member naming convention for the type.
+/// </summary>
+public enum NamingConvention {
+    
+    /// <summary>
+    /// Members are named in CamelCase, for example 'memberName'.
+    /// </summary>
+    CamelCaseNamingConvention,
+    
+    /// <summary>
+    /// Members are named in PascalCase, for example: 'MemberName'.
+    /// </summary>
+    PascalCaseNamingConvention,
+
+    /// <summary>
+    /// Members are named in SnakeCase, for example 'member_name'.
+    /// </summary>
+    SnakeCasingConvention
+
+}
