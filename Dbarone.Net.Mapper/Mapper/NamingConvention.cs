@@ -3,6 +3,12 @@
 /// </summary>
 public enum NamingConvention {
     
+
+    /// <summary>
+    /// No defined naming convention used.
+    /// </summary>
+    None,
+
     /// <summary>
     /// Members are named in CamelCase, for example 'memberName'.
     /// </summary>

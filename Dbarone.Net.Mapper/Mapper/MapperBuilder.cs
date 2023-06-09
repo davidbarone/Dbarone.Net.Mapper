@@ -13,7 +13,7 @@ public class MapperBuilder<T, U>
     /// Creates a new MapperBuilder class.
     /// </summary>
     /// <returns></returns>
-    public MapperBuilder<T, U> Create()
+    public static MapperBuilder<T, U> Create()
     {
         return new MapperBuilder<T, U>();
     }
@@ -55,7 +55,7 @@ public class MapperBuilder<T, U>
 
         return this.ApplyMemberAction(member, (p) =>
         {
-            p.FieldName = newName;
+            p.MemberOverrideName = newName;
         });
     }
 
