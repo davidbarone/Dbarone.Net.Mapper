@@ -9,9 +9,15 @@ public class EntityMap
 
     public Type ToType { get; set; }
 
+    public bool IncludeFields { get; set; }
+
+    public bool IncludeNonPublic { get; set; }
+    
     public NamingConvention SourceMemberNamingConvention { get; set; }
 
     public NamingConvention DestinationMemberNamingConvention { get; set; }
+
+    public Func<string, string> SourceMemberNameReplacer { get; set; }
 
     public List<MemberRule> MemberRules { get; } = new List<MemberRule>();
 

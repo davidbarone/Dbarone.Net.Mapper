@@ -5,6 +5,7 @@ using System.Reflection;
 
 /// <summary>
 /// Defines the rules for a single member mapping.
+/// 
 /// </summary>
 public class MemberRule
 {
@@ -18,7 +19,7 @@ public class MemberRule
     /// </summary>
     public Type DataType { get; set; } = default!;
 
-    public string MemberOverrideName { get; set; } = default!;
+    public string ReplacementMemberName { get; set; } = default!;
 
     /// <summary>
     /// Delegate method to get the value from the instance.
