@@ -1,5 +1,5 @@
 namespace Dbarone.Net.Mapper;
-using Dbarone.Net.Extensions.Reflection;
+using Dbarone.Net.Extensions;
 
 /// <summary>
 /// Default mapper strategy. Maps properties where the names match.

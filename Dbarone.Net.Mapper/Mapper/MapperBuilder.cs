@@ -43,7 +43,7 @@ public class MapperBuilder<T, U>
     {
         return this.ApplyMemberAction(member, (p) =>
         {
-            Configuration.Members.Remove(p);
+            Configuration.MemberRules.Remove(p);
         });
     }
 
@@ -56,12 +56,12 @@ public class MapperBuilder<T, U>
 
         return this.ApplyMemberAction(member, (p) =>
         {
-            p.MemberOverrideName = newName;
+            p.ReplacementMemberName = newName;
         });
     }
 
     /// <summary>
-    /// Get a property based on a expression. Eg.: 'x => x.UserId' return string "UserId"
+    /// Selects a member, then applies an action to the member mapping rule.
     /// </summary>
     private MapperBuilder<T, U> ApplyMemberAction<TK, K>(Expression<Func<TK, K>> member, Action<RuleMemberMap> action)
     {
@@ -71,12 +71,12 @@ public class MapperBuilder<T, U>
 
         if (memb == null)
         {
-            throw new ArgumentNullException($"Member '{member.GetPath()}' not found in type '{_entity.ForType.Name}' (use IncludeFields in BsonMapper)");
+            throw new ArgumentNullException($"Member '{member.GetMemberPath()}' not found in type.");
         }
 
         action(memb);
 
         return this;
     }
-    public EntityMap Configuration { get; } = new EntityMap();
+    public RuleEntityMap Configuration { get; } = new RuleEntityMap();
 }

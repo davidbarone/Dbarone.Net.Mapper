@@ -1,5 +1,6 @@
 namespace Dbarone.Net.Mapper;
 using System.Linq.Expressions;
+using Dbarone.Net.Extensions;
 using System.Text.RegularExpressions;
 
 public class RuleEntityMap
@@ -11,7 +12,7 @@ public class RuleEntityMap
     public bool ShouldIncludeFields { get; set; }
 
     public bool ShouldIncludeNonPublic { get; set; }
-    
+
     public NamingConvention SourceMemberNamingConvention { get; set; }
 
     public NamingConvention DestinationMemberNamingConvention { get; set; }
@@ -25,7 +26,6 @@ public class RuleEntityMap
     /// </summary>
     public RuleMemberMap? GetMemberRule(Expression expr)
     {
-        return this.MemberRules.FirstOrDefault(x => x.MemberName == GetPath(expr));
+        return this.MemberRules.FirstOrDefault(x => x.MemberName == expr.GetMemberPath());
     }
-
 }

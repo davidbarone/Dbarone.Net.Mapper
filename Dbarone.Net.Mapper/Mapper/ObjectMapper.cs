@@ -1,5 +1,5 @@
 namespace Dbarone.Net.Mapper;
-using Dbarone.Net.Extensions.Reflection;
+using Dbarone.Net.Extensions;
 
 /// <summary>
 /// Maps objects from one type to another.
