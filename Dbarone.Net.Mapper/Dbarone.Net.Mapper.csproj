@@ -17,8 +17,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\"/>
-    <None Include="..\Documentation.md" Pack="true" PackagePath="\"/>  
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\Documentation.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="Dbarone.Net.Extensions" Version="1.0.0" />  
     <PackageReference Include="Dbarone.Net.Extensions.Reflection" Version="1.0.4" />
   </ItemGroup>
 

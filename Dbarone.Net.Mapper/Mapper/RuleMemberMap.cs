@@ -7,7 +7,7 @@ using System.Reflection;
 /// Defines the rules for a single member mapping.
 /// 
 /// </summary>
-public class MemberRule
+public class RuleMemberMap
 {
     /// <summary>
     /// Member name for the mapping rule.

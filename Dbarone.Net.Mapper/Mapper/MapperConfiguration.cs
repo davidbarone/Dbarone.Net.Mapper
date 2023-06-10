@@ -3,7 +3,7 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// 
 /// </summary>
-public class MapperConfiguration : {
+public class MapperConfiguration {
     private IList<MapperBuilder<Type, Type>> ObjectMappers = new List<MapperBuilder<Type, Type>>();
 
     public MapperConfiguration Create()
@@ -13,6 +13,6 @@ public class MapperConfiguration : {
 
     public MapperConfiguration Add()
     {
-        return null
-     }
+        return null;
+    }
 }

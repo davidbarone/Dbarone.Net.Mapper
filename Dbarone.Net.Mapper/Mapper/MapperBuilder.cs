@@ -1,5 +1,6 @@
 namespace Dbarone.Net.Mapper;
 using System.Linq.Expressions;
+using Dbarone.Net.Extensions;
 
 /// <summary>
 /// Builds a mapping rule.
@@ -62,7 +63,7 @@ public class MapperBuilder<T, U>
     /// <summary>
     /// Get a property based on a expression. Eg.: 'x => x.UserId' return string "UserId"
     /// </summary>
-    private MapperBuilder<T, U> ApplyMemberAction<TK, K>(Expression<Func<TK, K>> member, Action<MemberRule> action)
+    private MapperBuilder<T, U> ApplyMemberAction<TK, K>(Expression<Func<TK, K>> member, Action<RuleMemberMap> action)
     {
         if (member == null) throw new ArgumentNullException(nameof(member));
 

@@ -2,16 +2,15 @@ namespace Dbarone.Net.Mapper;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-public class EntityMap
+public class RuleEntityMap
 {
-
     public Type FromType { get; set; }
 
     public Type ToType { get; set; }
 
-    public bool IncludeFields { get; set; }
+    public bool ShouldIncludeFields { get; set; }
 
-    public bool IncludeNonPublic { get; set; }
+    public bool ShouldIncludeNonPublic { get; set; }
     
     public NamingConvention SourceMemberNamingConvention { get; set; }
 
@@ -19,7 +18,7 @@ public class EntityMap
 
     public Func<string, string> SourceMemberNameReplacer { get; set; }
 
-    public List<MemberRule> MemberRules { get; } = new List<MemberRule>();
+    public List<RuleMemberMap> MemberRules { get; } = new List<RuleMemberMap>();
 
     // more dirty as possible: removing ".Select(x => x." sentence
     private static Regex _removeSelect = new Regex(@"\.Select\s*\(\s*\w+\s*=>\s*\w+\.", RegexOptions.Compiled);
@@ -72,7 +71,7 @@ public class EntityMap
     /// <summary>
     /// Resolve expression to get member mapped
     /// </summary>
-    public MemberRule? GetMemberRule(Expression expr)
+    public RuleMemberMap? GetMemberRule(Expression expr)
     {
         return this.MemberRules.FirstOrDefault(x => x.MemberName == GetPath(expr));
     }
