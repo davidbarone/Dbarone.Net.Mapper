@@ -18,8 +18,6 @@ public class MapperBuilderTests
             .Create()
             .SetSourceMemberNamingConvention(NamingConvention.CamelCaseNamingConvention)
             .Ignore(cust => cust.CustomerId)
-            .Rename(cust => cust.CustomerName, "NewName")
             .Configuration;
-
     }
 }
