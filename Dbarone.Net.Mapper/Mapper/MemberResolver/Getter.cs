@@ -1,3 +1,5 @@
+namespace Dbarone.Net.Mapper;
+
 /// <summary>
 /// Defines a basic getter delegate.
 /// </summary>
