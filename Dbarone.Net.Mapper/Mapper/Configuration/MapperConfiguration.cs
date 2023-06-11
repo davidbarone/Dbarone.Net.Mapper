@@ -31,13 +31,19 @@ public class MapperConfiguration
     {
         foreach (var type in types)
         {
-            TypeConfiguration[type] = new MapperTypeConfiguration
-            {
-                Type = type,
-                Options = options
-            };
+            RegisterType(type, options);
         }
         return this;
+    }
+
+    /// <summary>
+    /// Registers a single type.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="options"></param>
+    public MapperConfiguration RegisterType<T>(MapperOptions options)
+    {
+        return RegisterType(typeof(T), options);
     }
 
     private IEnumerable<MemberInfo> GetMembers(Type type, MapperOptions options)
@@ -76,24 +82,9 @@ public class MapperConfiguration
             {
                 MemberName = m.Name,
                 DataType = m.MemberType==MemberTypes.Property ? (m as PropertyInfo)!.PropertyType : (m as FieldInfo)!.FieldType,
-                Getter = memberResolver.GetGetter(type, m.Name),
-                Setter = memberResolver.GetSetter(type, m.Name)
+                Getter = memberResolver.GetGetter(type, m),
+                Setter = memberResolver.GetSetter(type, m)
             })
-        };
-        return this;
-    }
-
-    /// <summary>
-    /// Registers a single type.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="options"></param>
-    public MapperConfiguration RegisterType<T>(MapperOptions options)
-    {
-        TypeConfiguration[typeof(T)] = new MapperTypeConfiguration
-        {
-            Type = typeof(T),
-            Options = options
         };
         return this;
     }
