@@ -169,6 +169,16 @@ public class MapperConfiguration
     /// <returns></returns>
     public ObjectMapper<object, object> Build()
     {
-        return null;
+        // Set InternalMemberName
+        foreach (var k in this.TypeConfiguration.Keys) {
+            var v = this.TypeConfiguration[k];
+            foreach (var item in v.MemberConfiguration) {
+                if (item.InternalMemberName.IsNullOrWhiteSpace()) {
+                    item.InternalMemberName = v.Options.MemberNameTranslation.Invoke(item.MemberName);
+                }
+            }
+        }
+
+
     }
 }
