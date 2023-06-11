@@ -1,4 +1,6 @@
 namespace Dbarone.Net.Mapper;
+using System.Linq.Expressions;
+using Dbarone.Net.Extensions;
 
 /// <summary>
 /// 
@@ -7,8 +9,6 @@ public class MapperConfiguration
 {
     private IDictionary<Type, MapperTypeConfiguration> TypeConfiguration { get; set; } = new Dictionary<Type, MapperTypeConfiguration>();
     private IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> MapConfiguration { get; set; } = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
-
-    private IList<MapperBuilder<Type, Type>> ObjectMappers = new List<MapperBuilder<Type, Type>>();
 
     internal MapperConfiguration() { }
 
@@ -94,5 +94,61 @@ public class MapperConfiguration
     {
         RegisterMap(typeof(T), sourceOptions, typeof(U), destinationOptions);
         return this;
+    }
+
+    /// <summary>
+    /// Defines a member that will not be mapped.
+    /// </summary>
+    public MapperConfiguration Ignore<T>(Expression<Func<T, object>> member)
+    {
+        var type = typeof(T);
+        return this.ApplyMemberAction(member, (p) =>
+        {
+            p.Ignore = true;
+        });
+    }
+
+    /// <summary>
+    /// Defines a custom name for a member when mapping to other types.
+    /// </summary>
+    public MapperConfiguration Rename<T>(Expression<Func<T, object>> member, string newName)
+    {
+        if (newName.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(newName));
+
+        return this.ApplyMemberAction(member, (p) =>
+        {
+            p.InternalMemberName = newName;
+        });
+    }
+
+
+    /// <summary>
+    /// Selects a member, then applies an action to the member mapping rule.
+    /// </summary>
+    private MapperConfiguration ApplyMemberAction<T>(Expression<Func<T, object>> member, Action<MapperMemberConfiguration> action)
+    {
+        var type = typeof(T);
+
+        if (member == null) throw new ArgumentNullException(nameof(member));
+
+        var memb = this.TypeConfiguration[type].GetMemberRule(member);
+
+        if (memb == null)
+        {
+            throw new ArgumentNullException($"Member '{member.GetMemberPath()}' not found in type.");
+        }
+
+        action(memb);
+        return this;
+    }
+
+
+    /// <summary>
+    /// Builds a configured object mapper.
+    /// </summary>
+    /// <returns></returns>
+    public ObjectMapper<object, object> Build()
+    {
+        return null;
     }
 }
