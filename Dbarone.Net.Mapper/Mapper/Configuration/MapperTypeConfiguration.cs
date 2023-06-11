@@ -20,7 +20,12 @@ public class MapperTypeConfiguration
     /// <summary>
     /// Defines the member configuration.
     /// </summary>
-    public List<MapperMemberConfiguration> MemberConfiguration { get; set; } = new List<MapperMemberConfiguration>();
+    public IEnumerable<MapperMemberConfiguration> MemberConfiguration { get; set; } = new List<MapperMemberConfiguration>();
+
+    /// <summary>
+    /// Provides the member resolving strategy for this type.
+    /// </summary>
+    public IMemberResolver MemberResolver { get; set; } = default!;
 
     /// <summary>
     /// Resolves a member/unary expression to a member configuration.

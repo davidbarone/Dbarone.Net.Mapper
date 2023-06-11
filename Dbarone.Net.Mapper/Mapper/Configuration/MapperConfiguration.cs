@@ -1,6 +1,7 @@
 namespace Dbarone.Net.Mapper;
 using System.Linq.Expressions;
 using Dbarone.Net.Extensions;
+using System.Reflection;
 
 /// <summary>
 /// 
@@ -39,6 +40,17 @@ public class MapperConfiguration
         return this;
     }
 
+    private IEnumerable<MemberInfo> GetMembers(Type type, MapperOptions options)
+    {
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+        if (options.IncludePrivateMembers)
+        {
+            bindingFlags |= BindingFlags.NonPublic;
+        }
+        var members = type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
+        return members;
+    }
+
     /// <summary>
     /// Registers a single type.
     /// </summary>
@@ -46,10 +58,27 @@ public class MapperConfiguration
     /// <param name="options"></param>
     public MapperConfiguration RegisterType(Type type, MapperOptions options)
     {
+        // Check whether type is a normal class or a dictionary type.
+        var isDict = type.IsDictionaryType();
+        IMemberResolver memberResolver = new ClassMemberResolver();
+        if (isDict)
+        {
+            memberResolver = new DictionaryMemberResolver();
+        }
+
+        var members = GetMembers(type, options);
+
         TypeConfiguration[type] = new MapperTypeConfiguration
         {
             Type = type,
-            Options = options
+            Options = options,
+            MemberConfiguration = members.Select(m => new MapperMemberConfiguration
+            {
+                MemberName = m.Name,
+                DataType = m.MemberType==MemberTypes.Property ? (m as PropertyInfo)!.PropertyType : (m as FieldInfo)!.FieldType,
+                Getter = memberResolver.GetGetter(type, m.Name),
+                Setter = memberResolver.GetSetter(type, m.Name)
+            })
         };
         return this;
     }
