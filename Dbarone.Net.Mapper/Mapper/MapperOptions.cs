@@ -1,6 +1,9 @@
 namespace Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions;
 
+/// <summary>
+/// Defines a set of mapping options.
+/// </summary>
 public class MapperOptions
 {
     /// <summary>
@@ -14,9 +17,17 @@ public class MapperOptions
     public bool IncludePrivateMembers { get; set; } = false;
 
     /// <summary>
-    /// 
+    /// The default casing convention for members of the type. Default is CaseType.None.
     /// </summary>
-    public CaseType MemberNameCaseType { get; set; } = CaseType.
+    public CaseType MemberNameCaseType { get; set; } = CaseType.None;
 
-    public 
+    /// <summary>
+    /// Optional member name translation function
+    /// </summary>
+    public Func<string, string> MemberNameTranslation { get; set; } = s => s;
+
+    /// <summary>
+    /// Defines implicit assertion of mapping rules prior to any map function call. Defaults to 'None'.
+    /// </summary>
+    public MapperEndPoint AssertMapEndPoint { get; set; } = MapperEndPoint.None;
 }
