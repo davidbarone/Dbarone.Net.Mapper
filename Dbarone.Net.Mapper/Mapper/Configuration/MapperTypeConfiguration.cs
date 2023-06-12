@@ -35,4 +35,9 @@ public class MapperTypeConfiguration
         return this.MemberConfiguration.FirstOrDefault(x => x.MemberName == expr.GetMemberPath());
     }
 
+    /// <summary>
+    /// Create a new instance of the type.
+    /// </summary>
+    public CreateInstance CreateInstance { get; set; } = default!;
+
 }

@@ -47,12 +47,11 @@ public class MapperTests
     [Fact]
     public void TestMapOne()
     {
-        // Map from ClassA -> ClassB -> ClassA, and check before / after values are identical.
-        var mapperAB = ObjectMapper<ClassA, ClassB>.Create();
-        var mapperBA = ObjectMapper<ClassB, ClassA>.Create();
+        var mapper = MapperConfiguration.Create().RegisterType<ClassA>().RegisterType<ClassB>().Build();
+
         var a = new ClassA();
-        var b = mapperAB.MapOne(a);
-        var a2 = mapperBA.MapOne(b);
+        var b = mapper.MapOne<ClassA, ClassB>(a);
+        var a2 = mapper.MapOne<ClassB, ClassA>(b);
         Assert.True(a2.ValueEquals(a));
     }
 
@@ -67,8 +66,8 @@ public class MapperTests
             new CustomerEntity(){CustomerId = 5, Name = "Bicycle Exchange", AddressId = 5, Country = "US", Rating = 'C'}
         };
 
-        var mapper = ObjectMapper<CustomerEntity, CustomerModel>.Create();
-        var model = mapper.MapMany(customers.ToList().OrderBy(c => c.CustomerId));
+        var mapper = MapperConfiguration.Create().RegisterType<CustomerEntity>().RegisterType<CustomerModel>().Build();
+        var model = mapper.MapMany<CustomerEntity, CustomerModel>(customers.ToList().OrderBy(c => c.CustomerId));
         Assert.Equal("ABC Bicycles,Star Scooters,Bikes Galore,Bikes R Us,Bicycle Exchange", (string.Join(',', model.Select(m => m.Name))));
     }
 }

@@ -7,6 +7,15 @@ using System.Linq.Expressions;
 /// </summary>
 public class ClassMemberResolver : IMemberResolver
 {
+    public CreateInstance CreateInstance(Type type, params object[] args)
+    {
+        List<ParameterExpression> parameters = new List<ParameterExpression>();
+
+        // args array (optional)
+        parameters.Add(Expression.Parameter(typeof(object[]), "args"));
+        return Expression.Lambda<CreateInstance>(Expression.New(type), parameters).Compile();
+    }
+
     public Getter GetGetter(Type type, MemberInfo memberInfo)
     {
         if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));

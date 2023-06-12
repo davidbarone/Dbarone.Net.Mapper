@@ -27,7 +27,7 @@ public class MapperConfiguration
     /// </summary>
     /// <param name="types"></param>
     /// <param name="options"></param>
-    public MapperConfiguration RegisterTypes(Type[] types, MapperOptions options)
+    public MapperConfiguration RegisterTypes(Type[] types, MapperOptions? options = null)
     {
         foreach (var type in types)
         {
@@ -41,7 +41,7 @@ public class MapperConfiguration
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="options"></param>
-    public MapperConfiguration RegisterType<T>(MapperOptions options)
+    public MapperConfiguration RegisterType<T>(MapperOptions? options = null)
     {
         return RegisterType(typeof(T), options);
     }
@@ -62,8 +62,13 @@ public class MapperConfiguration
     /// </summary>
     /// <param name="type"></param>
     /// <param name="options"></param>
-    public MapperConfiguration RegisterType(Type type, MapperOptions options)
+    public MapperConfiguration RegisterType(Type type, MapperOptions? options = null)
     {
+        if (options == null)
+        {
+            options = new MapperOptions();
+        }
+
         // Check whether type is a normal class or a dictionary type.
         var isDict = type.IsDictionaryType();
         IMemberResolver memberResolver = new ClassMemberResolver();
@@ -78,10 +83,11 @@ public class MapperConfiguration
         {
             Type = type,
             Options = options,
+            CreateInstance = memberResolver.CreateInstance(type, null),
             MemberConfiguration = members.Select(m => new MapperMemberConfiguration
             {
                 MemberName = m.Name,
-                DataType = m.MemberType==MemberTypes.Property ? (m as PropertyInfo)!.PropertyType : (m as FieldInfo)!.FieldType,
+                DataType = m.MemberType == MemberTypes.Property ? (m as PropertyInfo)!.PropertyType : (m as FieldInfo)!.FieldType,
                 Getter = memberResolver.GetGetter(type, m),
                 Setter = memberResolver.GetSetter(type, m)
             })
@@ -141,6 +147,18 @@ public class MapperConfiguration
         });
     }
 
+    /// <summary>
+    /// Maps a member from source to destination using lambda expressions.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
+    /// <param name="fromMember"></param>
+    /// <param name="toMember"></param>
+    /// <returns></returns>
+    public MapperConfiguration MapMember<T, U>(Expression<Func<T, object>> fromMember, Expression<Func<U, object>> toMember)
+    {
+        throw new NotSupportedException();
+    }
 
     /// <summary>
     /// Selects a member, then applies an action to the member mapping rule.
@@ -167,18 +185,20 @@ public class MapperConfiguration
     /// Builds a configured object mapper.
     /// </summary>
     /// <returns></returns>
-    public ObjectMapper<object, object> Build()
+    public ObjectMapper Build()
     {
         // Set InternalMemberName
-        foreach (var k in this.TypeConfiguration.Keys) {
+        foreach (var k in this.TypeConfiguration.Keys)
+        {
             var v = this.TypeConfiguration[k];
-            foreach (var item in v.MemberConfiguration) {
-                if (item.InternalMemberName.IsNullOrWhiteSpace()) {
+            foreach (var item in v.MemberConfiguration)
+            {
+                if (item.InternalMemberName.IsNullOrWhiteSpace())
+                {
                     item.InternalMemberName = v.Options.MemberNameTranslation.Invoke(item.MemberName);
                 }
             }
         }
-
-
+        return new ObjectMapper(this.TypeConfiguration);
     }
 }

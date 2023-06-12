@@ -15,4 +15,9 @@ public class DictionaryMemberResolver : IMemberResolver
     {
         throw new NotImplementedException();
     }
+
+    public CreateInstance CreateInstance(Type type, params object[] args)
+    {
+        throw new NotImplementedException();
+    }
 }

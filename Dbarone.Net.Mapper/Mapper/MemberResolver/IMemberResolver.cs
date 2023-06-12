@@ -8,4 +8,5 @@ public interface IMemberResolver
 {
     Getter GetGetter(Type type, MemberInfo memberInfo);
     Setter GetSetter(Type type, MemberInfo memberInfo);
+    CreateInstance CreateInstance(Type type, params object[] args);
 }
