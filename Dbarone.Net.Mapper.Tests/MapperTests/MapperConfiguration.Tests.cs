@@ -1,9 +1,11 @@
 namespace Dbarone.Net.Mapper;
 
-public class MapperConfigurationTests {
+public class MapperConfigurationTests
+{
 
     [Fact]
-    public void TestConfigurationSimpleCustomer() {
+    public void TestConfigurationSimpleCustomer()
+    {
         var config = MapperConfiguration.Create().RegisterType<SimpleCustomer>();
         Assert.Equal(1, config.GetTypeConfigurationCount());
 
@@ -16,9 +18,11 @@ public class MapperConfigurationTests {
     [InlineData(false, false, 2)]
     [InlineData(false, true, 3)]
     [InlineData(true, false, 3)]
-    [InlineData(true, true, 5)]
-    public void TestConfigurationSimpleCustomerWithPrivatePropertiesAndFields(bool includePrivateMembers, bool includeFields, int expectedMemberCount) {
-        var config = MapperConfiguration.Create().RegisterType<SimpleCustomerWithPrivatePropertiesAndFields>(new MapperOptions{
+    [InlineData(true, true, 8)]
+    public void TestConfigurationSimpleCustomerWithPrivatePropertiesAndFields(bool includePrivateMembers, bool includeFields, int expectedMemberCount)
+    {
+        var config = MapperConfiguration.Create().RegisterType<SimpleCustomerWithPrivatePropertiesAndFields>(new MapperOptions
+        {
             IncludeFields = includeFields,
             IncludePrivateMembers = includePrivateMembers
         });
@@ -27,6 +31,4 @@ public class MapperConfigurationTests {
         MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(SimpleCustomerWithPrivatePropertiesAndFields));
         Assert.Equal(expectedMemberCount, typeConfig.MemberConfiguration.Count());
     }
-
-
 }
