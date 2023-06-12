@@ -14,6 +14,25 @@ public class MapperConfiguration
     internal MapperConfiguration() { }
 
     /// <summary>
+    /// Returns the number of types configured.
+    /// </summary>
+    /// <returns>Returns the number of types configured.</returns>
+    public int GetTypeConfigurationCount()
+    {
+        return TypeConfiguration.Keys.Count();
+    }
+
+    /// <summary>
+    /// Gets the type configuration for a specific type.
+    /// </summary>
+    /// <param name="type">The type to get the configuration for.</param>
+    /// <returns>Type configuration for the type.</returns>
+    public MapperTypeConfiguration GetTypeConfiguration(Type type)
+    {
+        return TypeConfiguration[type];
+    }
+
+    /// <summary>
     /// Creates a new MapperConfiguration instance.
     /// </summary>
     /// <returns></returns>
