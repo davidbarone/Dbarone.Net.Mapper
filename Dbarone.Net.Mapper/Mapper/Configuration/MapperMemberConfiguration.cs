@@ -22,7 +22,7 @@ public class MapperMemberConfiguration
     /// <summary>
     /// The internal member name. Mapping from source to destination is done via matching internal names.
     /// </summary>
-    internal string InternalMemberName { get; set; } = default!;
+    public string InternalMemberName { get; set; } = default!;
 
     /// <summary>
     /// Set to true to ignore this member in the mapping configuration.

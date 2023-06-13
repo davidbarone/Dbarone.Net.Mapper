@@ -109,7 +109,7 @@ public class MapperConfiguration
                 DataType = m.MemberType == MemberTypes.Property ? (m as PropertyInfo)!.PropertyType : (m as FieldInfo)!.FieldType,
                 Getter = memberResolver.GetGetter(type, m),
                 Setter = memberResolver.GetSetter(type, m)
-            })
+            }).ToList()
         };
         return this;
     }
