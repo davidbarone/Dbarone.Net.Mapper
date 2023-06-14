@@ -1,4 +1,5 @@
 namespace Dbarone.Net.Mapper;
+using Dbarone.Net.Extensions;
 
 public class ObjectMapper
 {
@@ -8,26 +9,41 @@ public class ObjectMapper
         this.configuration = configuration;
     }
 
-    public U? MapOne<T, U>(T? obj)
+    public object MapOne(Type fromType, Type toType, object obj)
     {
-        MapperTypeConfiguration fromType = configuration[typeof(T)];
-        MapperTypeConfiguration toType = configuration[typeof(U)];
+        MapperTypeConfiguration fromTypeConfiguration = configuration[fromType];
+        MapperTypeConfiguration toTypeConfiguration = configuration[toType];
 
-        var newInstance = toType.CreateInstance();
+        var newInstance = toTypeConfiguration.CreateInstance();
 
-        foreach (var rule in toType.MemberConfiguration.Where(r => r.Ignore == false))
+        foreach (var toRule in toTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false))
         {
             // Get from rule
-            var ruleName = rule.InternalMemberName;
-            var fromRule = fromType.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(ruleName, StringComparison.CurrentCultureIgnoreCase));
-            if (fromRule == null && (toType.Options.AssertMapEndPoint & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+            var ruleName = toRule.InternalMemberName;
+            var fromRule = fromTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(ruleName, StringComparison.CurrentCultureIgnoreCase));
+            if (fromRule == null && (toTypeConfiguration.Options.AssertMapEndPoint & MapperEndPoint.Destination) == MapperEndPoint.Destination)
             {
-                throw new Exception($"Cannot find member: {rule.InternalMemberName} in source mapping configuration.");
+                throw new Exception($"Cannot find member: {toRule.InternalMemberName} in source mapping configuration.");
             }
             var fromObj = fromRule!.Getter.Invoke(obj!);
-            rule.Setter.Invoke(newInstance, fromObj);
+
+            // Get type of from
+            if (toRule.DataType.IsBuiltInType() && fromRule.DataType.IsBuiltInType())
+                // built-in type? just set value on to object
+                toRule.Setter.Invoke(newInstance, fromObj);
+            else if (this.configuration.Keys.Contains(toRule.DataType) && this.configuration.Keys.Contains(fromRule.DataType))
+            {
+                // from / to are both objects that can be mapped
+                var childObject = MapOne(fromRule.DataType, toRule.DataType, fromObj);
+                toRule.Setter.Invoke(newInstance, childObject);
+            }
         }
-        return (U)newInstance;
+        return newInstance;
+    }
+
+    public U? MapOne<T, U>(T? obj)
+    {
+        return (U)MapOne(typeof(T), typeof(U), obj);
     }
 
     /// <summary>
