@@ -93,4 +93,28 @@ public class MapperTests
         var newObj = mapper.MapOne<CustomerWithChildAddress, CustomerWithChildAddress>(obj);
         Assert.Equal("1 Acacia Avenue", newObj!.Address.AddressLine1);
     }
+
+    [Fact]
+    public void TestChildObjectsWithoutMappingShouldThrowError()
+    {
+        CustomerWithChildAddress obj = new CustomerWithChildAddress()
+        {
+            CustomerId = 1,
+            CustomerName = "A Customer",
+            Address = new CustomerChildAddress()
+            {
+                AddressLine1 = "1 Acacia Avenue",
+                AddressLine2 = "Sometown",
+                City = "SomeCity"
+            }
+        };
+
+        // Create Register the customer class, but not the address class
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<CustomerWithChildAddress>()
+            .Build();
+
+        // Should throw exception, as we don't have any registration for CustomerChildAddress type.
+        Assert.Throws<MapperException>(() => mapper.MapOne<CustomerWithChildAddress, CustomerWithChildAddress>(obj));
+    }
 }

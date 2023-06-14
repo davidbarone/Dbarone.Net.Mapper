@@ -29,13 +29,35 @@ public class ObjectMapper
 
             // Get type of from
             if (toRule.DataType.IsBuiltInType() && fromRule.DataType.IsBuiltInType())
-                // built-in type? just set value on to object
+                // built-in type -> built-in type
                 toRule.Setter.Invoke(newInstance, fromObj);
+            else if (
+                // enum -> enum
+                toRule.DataType.IsEnum &&
+                toRule.DataType.GetEnumUnderlyingType().IsBuiltInType() &&
+                fromRule.DataType.IsEnum &&
+                fromRule.DataType.GetEnumUnderlyingType().IsBuiltInType())
+            {
+                toRule.Setter.Invoke(newInstance, fromObj);
+            }
+            else if (
+                // nullable -> nullable
+                toRule.DataType.IsNullable() &&
+                toRule.DataType.GetNullableUnderlyingType()!.IsBuiltInType() &&
+                fromRule.DataType.IsNullable() &&
+                fromRule.DataType.GetNullableUnderlyingType()!.IsBuiltInType())
+            {
+                toRule.Setter.Invoke(newInstance, fromObj);
+            }
             else if (this.configuration.Keys.Contains(toRule.DataType) && this.configuration.Keys.Contains(fromRule.DataType))
             {
-                // from / to are both objects that can be mapped
+                // reference type -> reference type (both types registered in mapper config)
                 var childObject = MapOne(fromRule.DataType, toRule.DataType, fromObj);
                 toRule.Setter.Invoke(newInstance, childObject);
+            }
+            else
+            {
+                throw new MapperException($"Cannot map from type: {fromRule.DataType} to {toRule.DataType}. Are you missing a type registration or mapping?");
             }
         }
         return newInstance;
