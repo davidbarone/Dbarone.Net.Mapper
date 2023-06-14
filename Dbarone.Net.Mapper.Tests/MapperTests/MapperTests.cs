@@ -70,4 +70,27 @@ public class MapperTests
         var model = mapper.MapMany<CustomerEntity, CustomerModel>(customers.ToList().OrderBy(c => c.CustomerId));
         Assert.Equal("ABC Bicycles,Star Scooters,Bikes Galore,Bikes R Us,Bicycle Exchange", (string.Join(',', model.Select(m => m.Name))));
     }
+
+    [Fact]
+    public void TestChildObjects()
+    {
+        CustomerWithChildAddress obj = new CustomerWithChildAddress()
+        {
+            CustomerId = 1,
+            CustomerName = "A Customer",
+            Address = new CustomerChildAddress()
+            {
+                AddressLine1 = "1 Acacia Avenue",
+                AddressLine2 = "Sometown",
+                City = "SomeCity"
+            }
+        };
+
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<CustomerWithChildAddress>()
+            .RegisterType<CustomerChildAddress>().Build();
+
+        var newObj = mapper.MapOne<CustomerWithChildAddress, CustomerWithChildAddress>(obj);
+        Assert.Equal("1 Acacia Avenue", newObj!.Address.AddressLine1);
+    }
 }
