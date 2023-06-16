@@ -125,7 +125,7 @@ public class MapperTests
         CustomerWithDifferentTypesA custA = new CustomerWithDifferentTypesA()
         {
             CustomerId = 123,
-            //CustomerDOB = "01-Jun-2000",
+            CustomerDOB = "01-Jun-2000",
             CustomerRank = "789"
         };
         var mapper = MapperConfiguration.Create().RegisterType<CustomerWithDifferentTypesA>().RegisterType<CustomerWithDifferentTypesB>().Build();
@@ -138,17 +138,18 @@ public class MapperTests
         CustomerWithDifferentTypesA custA = new CustomerWithDifferentTypesA()
         {
             CustomerId = 123,
-            //CustomerDOB = "2018-08-18",
+            CustomerDOB = "2018-08-18",
             CustomerRank = "789"
         };
         var mapper = MapperConfiguration.Create()
         .RegisterType<CustomerWithDifferentTypesA>()
         .RegisterType<CustomerWithDifferentTypesB>()
-        .RegisterTypeConverter<string, DateTime>((str) => DateTime.Parse(str))
-        .RegisterTypeConverter<string, int>((str) => int.Parse(str))
+        .RegisterConverter<string, DateTime>((str) => DateTime.Parse(str))
+        .RegisterConverter<string, int>((str) => int.Parse(str))
         .Build();
         var custB = mapper.MapOne<CustomerWithDifferentTypesA, CustomerWithDifferentTypesB>(custA);
         Assert.NotNull(custB);
         Assert.Equal(789, custB!.CustomerRank);
+        Assert.Equal(new DateTime(2018, 8, 18), custB!.CustomerDOB);
     }
 }
