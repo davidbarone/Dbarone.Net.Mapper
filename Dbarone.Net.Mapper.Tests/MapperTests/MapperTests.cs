@@ -1,6 +1,7 @@
 namespace Dbarone.Net.Mapper.Tests;
 using Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions.Object;
+using System.Linq.Expressions;
 
 public enum EnumValue
 {
@@ -116,5 +117,38 @@ public class MapperTests
 
         // Should throw exception, as we don't have any registration for CustomerChildAddress type.
         Assert.Throws<MapperException>(() => mapper.MapOne<CustomerWithChildAddress, CustomerWithChildAddress>(obj));
+    }
+
+    [Fact]
+    public void TestMappingDifferentTypesWithoutTypeConverterShouldThrowError()
+    {
+        CustomerWithDifferentTypesA custA = new CustomerWithDifferentTypesA()
+        {
+            CustomerId = 123,
+            //CustomerDOB = "01-Jun-2000",
+            CustomerRank = "789"
+        };
+        var mapper = MapperConfiguration.Create().RegisterType<CustomerWithDifferentTypesA>().RegisterType<CustomerWithDifferentTypesB>().Build();
+        Assert.Throws<MapperException>(() => mapper.MapOne<CustomerWithDifferentTypesA, CustomerWithDifferentTypesB>(custA));
+    }
+
+    [Fact]
+    public void TestMappingDifferentTypesWithTypeConverter()
+    {
+        CustomerWithDifferentTypesA custA = new CustomerWithDifferentTypesA()
+        {
+            CustomerId = 123,
+            //CustomerDOB = "2018-08-18",
+            CustomerRank = "789"
+        };
+        var mapper = MapperConfiguration.Create()
+        .RegisterType<CustomerWithDifferentTypesA>()
+        .RegisterType<CustomerWithDifferentTypesB>()
+        .RegisterTypeConverter<string, DateTime>((str) => DateTime.Parse(str))
+        .RegisterTypeConverter<string, int>((str) => int.Parse(str))
+        .Build();
+        var custB = mapper.MapOne<CustomerWithDifferentTypesA, CustomerWithDifferentTypesB>(custA);
+        Assert.NotNull(custB);
+        Assert.Equal(789, custB!.CustomerRank);
     }
 }

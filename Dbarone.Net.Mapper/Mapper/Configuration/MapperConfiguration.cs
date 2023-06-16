@@ -11,6 +11,8 @@ public class MapperConfiguration
     private IDictionary<Type, MapperTypeConfiguration> TypeConfiguration { get; set; } = new Dictionary<Type, MapperTypeConfiguration>();
     private IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> MapConfiguration { get; set; } = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
 
+    private IDictionary<Tuple<Type, Type>, ITypeConverter> CustomTypeConverter { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
+
     internal MapperConfiguration() { }
 
     /// <summary>
@@ -39,6 +41,20 @@ public class MapperConfiguration
     public static MapperConfiguration Create()
     {
         return new MapperConfiguration();
+    }
+
+    /// <summary>
+    /// Adds a type converter.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
+    /// <param name="converter"></param>
+    /// <returns></returns>
+    public MapperConfiguration RegisterTypeConverter<T, U>(Func<T, U> converter) {
+        TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);
+        Tuple<Type, Type> k = new Tuple<Type, Type>(typeof(T), typeof(U));
+        this.CustomTypeConverter[k] = typeConverter;
+        return this;
     }
 
     /// <summary>
@@ -218,6 +234,6 @@ public class MapperConfiguration
                 }
             }
         }
-        return new ObjectMapper(this.TypeConfiguration);
+        return new ObjectMapper(this.TypeConfiguration, this.CustomTypeConverter);
     }
 }

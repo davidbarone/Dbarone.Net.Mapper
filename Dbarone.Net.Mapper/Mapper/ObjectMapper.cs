@@ -1,12 +1,16 @@
 namespace Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions;
+using System.Linq.Expressions;
 
 public class ObjectMapper
 {
     private IDictionary<Type, MapperTypeConfiguration> configuration;
-    internal ObjectMapper(IDictionary<Type, MapperTypeConfiguration> configuration)
+    private IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters;
+
+    internal ObjectMapper(IDictionary<Type, MapperTypeConfiguration> configuration, IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters)
     {
         this.configuration = configuration;
+        this.customTypeConverters = customTypeConverters;
     }
 
     public object MapOne(Type fromType, Type toType, object obj)
@@ -27,10 +31,27 @@ public class ObjectMapper
             }
             var fromObj = fromRule!.Getter.Invoke(obj!);
 
-            // Get type of from
-            if (toRule.DataType.IsBuiltInType() && fromRule.DataType.IsBuiltInType())
+            // Get type of from member:
+            if (toRule.DataType != fromRule.DataType)
+            {
+                // Check for custom type converter:
+                var validConverterKey = this.customTypeConverters.Keys.FirstOrDefault(k => k.Item1 == fromRule.DataType && k.Item2 == toRule.DataType);
+                if (validConverterKey != null)
+                {
+                    ITypeConverter typeConverter = this.customTypeConverters[validConverterKey];
+                    var convertedObject = typeConverter.Convert(fromObj);
+                    toRule.Setter.Invoke(newInstance, convertedObject);
+                }
+                else
+                {
+                    throw new MapperException($"Cannot map from type: {fromRule.DataType} to type: {toRule.DataType}. Are you missing a Type Converter?");
+                }
+            }
+            else if (toRule.DataType.IsBuiltInType() && fromRule.DataType.IsBuiltInType())
+            {
                 // built-in type -> built-in type
                 toRule.Setter.Invoke(newInstance, fromObj);
+            }
             else if (
                 // enum -> enum
                 toRule.DataType.IsEnum &&
