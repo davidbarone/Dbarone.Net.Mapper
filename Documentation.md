@@ -79,7 +79,7 @@
 ### Summary:
  Creates configuration for a [ObjectMapper](#dbaronenetmapperobjectmapper) mapper object. Before being able to map any objects and types, you must create a mapper configuration, and from this generate a [ObjectMapper](#dbaronenetmapperobjectmapper) object. 
 
-> ### method: GetTypeConfigurationCount
+> ### method: GetTypeConfigurationCount {#dbaronenetmappermapperconfigurationgettypeconfigurationcount}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfigurationCount`</small>
 #### Signature
 ``` c#
@@ -98,7 +98,7 @@ None
 None
 #### Examples:
 None
-> ### method: GetTypeConfiguration
+> ### method: GetTypeConfiguration {#dbaronenetmappermapperconfigurationgettypeconfiguration(systemtype)}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfiguration(System.Type)`</small>
 #### Signature
 ``` c#
@@ -119,7 +119,7 @@ None
 None
 #### Examples:
 None
-> ### method: Create
+> ### method: Create {#dbaronenetmappermapperconfigurationcreate}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Create`</small>
 #### Signature
 ``` c#
@@ -138,11 +138,11 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterConverter<T, U>
+> ### method: RegisterConverter<T, U> {#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1})}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
 #### Signature
 ``` c#
-MapperConfiguration.RegisterConverter<T, U>(System.Func``0,``1 converter)
+MapperConfiguration.RegisterConverter<T, U>(System.Func<T,U> converter)
 ```
 #### Summary
  Adds a type converter. Type converters are used to convert simple / native types where the members in the source and destinations have different types. 
@@ -162,11 +162,11 @@ MapperConfiguration.RegisterConverter<T, U>(System.Func``0,``1 converter)
 None
 #### Examples:
 None
-> ### method: RegisterTypes
+> ### method: RegisterTypes {#dbaronenetmappermapperconfigurationregistertypes(systemtype[],dbaronenetmappermapperoptions)}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterTypes(System.Type[],Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
-MapperConfiguration.RegisterTypes(System.Type types, Dbarone.Net.Mapper.MapperOptions options)
+MapperConfiguration.RegisterTypes(System.Type[] types, Dbarone.Net.Mapper.MapperOptions options)
 ```
 #### Summary
  Registers a collection of types. 
@@ -184,7 +184,7 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterType<T>
+> ### method: RegisterType<T> {#dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions)}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType``1(Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
@@ -225,7 +225,7 @@ The following example shows how to register a type:
 ```
 
 
-> ### method: RegisterType
+> ### method: RegisterType {#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions)}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType(System.Type,Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
@@ -247,7 +247,7 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterMap<T, U>
+> ### method: RegisterMap<T, U> {#dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions)}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterMap``2(Dbarone.Net.Mapper.MapperOptions,Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
@@ -272,11 +272,11 @@ MapperConfiguration.RegisterMap<T, U>(Dbarone.Net.Mapper.MapperOptions sourceOpt
 None
 #### Examples:
 None
-> ### method: Ignore<T>
+> ### method: Ignore<T> {#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}})}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Ignore``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}})`</small>
 #### Signature
 ``` c#
-MapperConfiguration.Ignore<T>(System.Linq.Expressions.ExpressionSystem.Func``0,System.Object} member)
+MapperConfiguration.Ignore<T>(System.Linq.Expressions.Expression<System.Func<T,System.Object>> member)
 ```
 #### Summary
  Defines a member that will not be mapped. 
@@ -295,11 +295,11 @@ MapperConfiguration.Ignore<T>(System.Linq.Expressions.ExpressionSystem.Func``0,S
 None
 #### Examples:
 None
-> ### method: Rename<T>
+> ### method: Rename<T> {#dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring)}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)`</small>
 #### Signature
 ``` c#
-MapperConfiguration.Rename<T>(System.Linq.Expressions.ExpressionSystem.Func``0,System.Object} member, System.String newName)
+MapperConfiguration.Rename<T>(System.Linq.Expressions.Expression<System.Func<T,System.Object>> member, System.String newName)
 ```
 #### Summary
  Defines a custom name for a member when mapping to other types. 
@@ -321,11 +321,11 @@ Exception thrown: [T:System.ArgumentNullException](#T:System.ArgumentNullExcepti
 
 #### Examples:
 None
-> ### method: MapMember<T, U>
+> ### method: MapMember<T, U> {#dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}})}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.MapMember``2(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Linq.Expressions.Expression{System.Func{``1,System.Object}})`</small>
 #### Signature
 ``` c#
-MapperConfiguration.MapMember<T, U>(System.Linq.Expressions.ExpressionSystem.Func``0,System.Object} fromMember, System.Linq.Expressions.ExpressionSystem.Func``1,System.Object} toMember)
+MapperConfiguration.MapMember<T, U>(System.Linq.Expressions.Expression<System.Func<T,System.Object>> fromMember, System.Linq.Expressions.Expression<System.Func<U,System.Object>> toMember)
 ```
 #### Summary
  Maps a member from source to destination using lambda expressions. 
@@ -346,7 +346,7 @@ MapperConfiguration.MapMember<T, U>(System.Linq.Expressions.ExpressionSystem.Fun
 None
 #### Examples:
 None
-> ### method: Build
+> ### method: Build {#dbaronenetmappermapperconfigurationbuild}
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Build`</small>
 #### Signature
 ``` c#
@@ -479,7 +479,7 @@ None
 #### Summary
  Provides the member resolving strategy for this type. 
 
-> ### method: GetMemberRule
+> ### method: GetMemberRule {#dbaronenetmappermappertypeconfigurationgetmemberrule(systemlinqexpressionsexpression)}
 <small>id: `M:Dbarone.Net.Mapper.MapperTypeConfiguration.GetMemberRule(System.Linq.Expressions.Expression)`</small>
 #### Signature
 ``` c#
@@ -594,7 +594,7 @@ Returns: A value
 ### Summary:
  The ObjectMapper class provides mapping functions to transform objects from one type to another. 
 
-> ### method: MapOne
+> ### method: MapOne {#dbaronenetmapperobjectmappermapone(systemtype,systemtype,systemobject)}
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne(System.Type,System.Type,System.Object)`</small>
 #### Signature
 ``` c#
@@ -619,11 +619,11 @@ Exception thrown: [T:System.Exception](#T:System.Exception):
 
 #### Examples:
 None
-> ### method: MapOne<T, U>
+> ### method: MapOne<T, U> {#dbaronenetmapperobjectmappermapone``2(``0)}
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`</small>
 #### Signature
 ``` c#
-ObjectMapper.MapOne<T, U>(``0 obj)
+ObjectMapper.MapOne<T, U>(T obj)
 ```
 #### Summary
  Maps / transforms an object from one type to another. 
@@ -643,11 +643,11 @@ ObjectMapper.MapOne<T, U>(``0 obj)
 None
 #### Examples:
 None
-> ### method: MapMany<T, U>
+> ### method: MapMany<T, U> {#dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0})}
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`</small>
 #### Signature
 ``` c#
-ObjectMapper.MapMany<T, U>(System.Collections.Generic.IEnumerable``0 obj)
+ObjectMapper.MapMany<T, U>(System.Collections.Generic.IEnumerable<T> obj)
 ```
 #### Summary
  Maps a collection, list or array of items. 
@@ -675,7 +675,7 @@ None
 ### Summary:
  Interface for classes that can convert values / types. 
 
-> ### method: Convert
+> ### method: Convert {#dbaronenetmapperitypeconverterconvert(systemobject)}
 <small>id: `M:Dbarone.Net.Mapper.ITypeConverter.Convert(System.Object)`</small>
 #### Signature
 ``` c#
@@ -706,11 +706,11 @@ None
 |T: |The source type.|
 |U: |The destination type.|
 
-> ### method: #ctor
+> ### method: #ctor {#dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1})}
 <small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.#ctor(System.Func{`0,`1})`</small>
 #### Signature
 ``` c#
-TypeConverter<A, B>.#ctor(System.Func`0,`1 converter)
+TypeConverter<A, B>.#ctor(System.Func<`0,`1> converter)
 ```
 #### Summary
  Creates a TypeConverter instance using a m 
@@ -727,7 +727,7 @@ None
 None
 #### Examples:
 None
-> ### method: Convert
+> ### method: Convert {#dbaronenetmappertypeconverter`2convert(systemobject)}
 <small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.Convert(System.Object)`</small>
 #### Signature
 ``` c#
@@ -788,7 +788,7 @@ None
 ### Summary:
  Mapper exception class. 
 
-> ### method: #ctor
+> ### method: #ctor {#mapperexception#ctor}
 <small>id: `M:MapperException.#ctor`</small>
 #### Signature
 ``` c#
@@ -807,7 +807,7 @@ None
 None
 #### Examples:
 None
-> ### method: #ctor
+> ### method: #ctor {#mapperexception#ctor(systemstring)}
 <small>id: `M:MapperException.#ctor(System.String)`</small>
 #### Signature
 ``` c#

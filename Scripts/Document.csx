@@ -101,7 +101,7 @@ $@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
 "},
                     // Method
                     {"method", (model) =>
-$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
+$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name} {"{#"}{model.IdParts.FullyQualifiedNameLink}{"}"}
 <small>id: `{model.IdParts.Id}`</small>
 #### Signature
 {model.signature}
@@ -473,10 +473,12 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
         {
             if (c == '[' || c == '{')
             {
+                current += c;
                 inField = true;
             }
             else if ((c == ']' || c == '}') && inField == true)
             {
+                current += c;
                 inField = false;
             }
             else if (inField == false && c == ',')
@@ -506,6 +508,11 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     if (signatureArgs.Length > 2)
     {
         signatureArgs = signatureArgs.Substring(0, signatureArgs.Length - 2);
+    }
+    signatureArgs = signatureArgs.Replace("{", "<").Replace("}", ">");
+    for (var i = 0; i < typeParameterNames.Count(); i++)
+    {
+        signatureArgs = signatureArgs.Replace($"``{i}", typeParameterNames[i]);
     }
     return $"``` c#\n{idParts.Parent}.{idParts.Name}({signatureArgs})\n```";
 
