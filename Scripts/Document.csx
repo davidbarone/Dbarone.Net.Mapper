@@ -84,7 +84,7 @@ $@"
 
                     // Field
                     {"field", (model) =>
-$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
+$@">### {model.IdParts.MemberType}: {model.IdParts.Name}
 <small>id: `{model.IdParts.Id}`</small>
 
 #### Summary
@@ -93,7 +93,7 @@ $@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
                     
                     // Property
                     {"property", (model) =>
-$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
+$@">### {model.IdParts.MemberType}: {model.IdParts.Name}
 <small>id: `{model.IdParts.Id}`</small>
 
 #### Summary
@@ -101,7 +101,7 @@ $@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
 "},
                     // Method
                     {"method", (model) =>
-$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name} {"{#"}{model.IdParts.FullyQualifiedNameLink}{"}"}
+$@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.MemberType}: {model.IdParts.Name}
 <small>id: `{model.IdParts.Id}`</small>
 #### Signature
 {model.signature}

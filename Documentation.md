@@ -79,7 +79,7 @@
 ### Summary:
  Creates configuration for a [ObjectMapper](#dbaronenetmapperobjectmapper) mapper object. Before being able to map any objects and types, you must create a mapper configuration, and from this generate a [ObjectMapper](#dbaronenetmapperobjectmapper) object. 
 
-> ### method: GetTypeConfigurationCount {#dbaronenetmappermapperconfigurationgettypeconfigurationcount}
+>### <a id='dbaronenetmappermapperconfigurationgettypeconfigurationcount'></a>method: GetTypeConfigurationCount
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfigurationCount`</small>
 #### Signature
 ``` c#
@@ -98,7 +98,7 @@ None
 None
 #### Examples:
 None
-> ### method: GetTypeConfiguration {#dbaronenetmappermapperconfigurationgettypeconfiguration(systemtype)}
+>### <a id='dbaronenetmappermapperconfigurationgettypeconfiguration(systemtype)'></a>method: GetTypeConfiguration
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfiguration(System.Type)`</small>
 #### Signature
 ``` c#
@@ -119,7 +119,7 @@ None
 None
 #### Examples:
 None
-> ### method: Create {#dbaronenetmappermapperconfigurationcreate}
+>### <a id='dbaronenetmappermapperconfigurationcreate'></a>method: Create
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Create`</small>
 #### Signature
 ``` c#
@@ -138,7 +138,7 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterConverter<T, U> {#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1})}
+>### <a id='dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1})'></a>method: RegisterConverter<T, U>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
 #### Signature
 ``` c#
@@ -162,7 +162,7 @@ MapperConfiguration.RegisterConverter<T, U>(System.Func<T,U> converter)
 None
 #### Examples:
 None
-> ### method: RegisterTypes {#dbaronenetmappermapperconfigurationregistertypes(systemtype[],dbaronenetmappermapperoptions)}
+>### <a id='dbaronenetmappermapperconfigurationregistertypes(systemtype[],dbaronenetmappermapperoptions)'></a>method: RegisterTypes
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterTypes(System.Type[],Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
@@ -184,7 +184,7 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterType<T> {#dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions)}
+>### <a id='dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions)'></a>method: RegisterType<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType``1(Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
@@ -225,7 +225,7 @@ The following example shows how to register a type:
 ```
 
 
-> ### method: RegisterType {#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions)}
+>### <a id='dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions)'></a>method: RegisterType
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType(System.Type,Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
@@ -247,7 +247,7 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterMap<T, U> {#dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions)}
+>### <a id='dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions)'></a>method: RegisterMap<T, U>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterMap``2(Dbarone.Net.Mapper.MapperOptions,Dbarone.Net.Mapper.MapperOptions)`</small>
 #### Signature
 ``` c#
@@ -272,7 +272,7 @@ MapperConfiguration.RegisterMap<T, U>(Dbarone.Net.Mapper.MapperOptions sourceOpt
 None
 #### Examples:
 None
-> ### method: Ignore<T> {#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}})}
+>### <a id='dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}})'></a>method: Ignore<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Ignore``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}})`</small>
 #### Signature
 ``` c#
@@ -295,7 +295,7 @@ MapperConfiguration.Ignore<T>(System.Linq.Expressions.Expression<System.Func<T,S
 None
 #### Examples:
 None
-> ### method: Rename<T> {#dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring)}
+>### <a id='dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring)'></a>method: Rename<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)`</small>
 #### Signature
 ``` c#
@@ -321,7 +321,7 @@ Exception thrown: [T:System.ArgumentNullException](#T:System.ArgumentNullExcepti
 
 #### Examples:
 None
-> ### method: MapMember<T, U> {#dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}})}
+>### <a id='dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}})'></a>method: MapMember<T, U>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.MapMember``2(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Linq.Expressions.Expression{System.Func{``1,System.Object}})`</small>
 #### Signature
 ``` c#
@@ -346,7 +346,7 @@ MapperConfiguration.MapMember<T, U>(System.Linq.Expressions.Expression<System.Fu
 None
 #### Examples:
 None
-> ### method: Build {#dbaronenetmappermapperconfigurationbuild}
+>### <a id='dbaronenetmappermapperconfigurationbuild'></a>method: Build
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Build`</small>
 #### Signature
 ``` c#
@@ -373,37 +373,37 @@ None
 ### Summary:
  Defines the rules for a single member mapping. 
 
-> ### property: MemberName
+>### property: MemberName
 <small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.MemberName`</small>
 
 #### Summary
  Member name for the mapping rule. 
 
-> ### property: DataType
+>### property: DataType
 <small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.DataType`</small>
 
 #### Summary
  Member data type. 
 
-> ### property: InternalMemberName
+>### property: InternalMemberName
 <small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.InternalMemberName`</small>
 
 #### Summary
  The internal member name. Mapping from source to destination is done via matching internal names. 
 
-> ### property: Ignore
+>### property: Ignore
 <small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.Ignore`</small>
 
 #### Summary
  Set to true to ignore this member in the mapping configuration. 
 
-> ### property: Getter
+>### property: Getter
 <small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.Getter`</small>
 
 #### Summary
  Delegate method to get the value from the instance. 
 
-> ### property: Setter
+>### property: Setter
 <small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.Setter`</small>
 
 #### Summary
@@ -417,31 +417,31 @@ None
 ### Summary:
  Defines a set of mapping options. 
 
-> ### property: IncludeFields
+>### property: IncludeFields
 <small>id: `P:Dbarone.Net.Mapper.MapperOptions.IncludeFields`</small>
 
 #### Summary
  Set to true to include mapping of fields as well as properties. Default is false. 
 
-> ### property: IncludePrivateMembers
+>### property: IncludePrivateMembers
 <small>id: `P:Dbarone.Net.Mapper.MapperOptions.IncludePrivateMembers`</small>
 
 #### Summary
  Set to true to include private fields and properties. Default is false.1 
 
-> ### property: MemberNameCaseType
+>### property: MemberNameCaseType
 <small>id: `P:Dbarone.Net.Mapper.MapperOptions.MemberNameCaseType`</small>
 
 #### Summary
  The default casing convention for members of the type. Default is CaseType.None. 
 
-> ### property: MemberNameTranslation
+>### property: MemberNameTranslation
 <small>id: `P:Dbarone.Net.Mapper.MapperOptions.MemberNameTranslation`</small>
 
 #### Summary
  Optional member name translation function 
 
-> ### property: AssertMapEndPoint
+>### property: AssertMapEndPoint
 <small>id: `P:Dbarone.Net.Mapper.MapperOptions.AssertMapEndPoint`</small>
 
 #### Summary
@@ -455,31 +455,31 @@ None
 ### Summary:
  Defines the configuration of a single type. 
 
-> ### property: Type
+>### property: Type
 <small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.Type`</small>
 
 #### Summary
  The type the configuration relates to. 
 
-> ### property: Options
+>### property: Options
 <small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.Options`</small>
 
 #### Summary
  Defines the options for the map registration 
 
-> ### property: MemberConfiguration
+>### property: MemberConfiguration
 <small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.MemberConfiguration`</small>
 
 #### Summary
  Defines the member configuration. 
 
-> ### property: MemberResolver
+>### property: MemberResolver
 <small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.MemberResolver`</small>
 
 #### Summary
  Provides the member resolving strategy for this type. 
 
-> ### method: GetMemberRule {#dbaronenetmappermappertypeconfigurationgetmemberrule(systemlinqexpressionsexpression)}
+>### <a id='dbaronenetmappermappertypeconfigurationgetmemberrule(systemlinqexpressionsexpression)'></a>method: GetMemberRule
 <small>id: `M:Dbarone.Net.Mapper.MapperTypeConfiguration.GetMemberRule(System.Linq.Expressions.Expression)`</small>
 #### Signature
 ``` c#
@@ -500,7 +500,7 @@ None
 None
 #### Examples:
 None
-> ### property: CreateInstance
+>### property: CreateInstance
 <small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.CreateInstance`</small>
 
 #### Summary
@@ -514,19 +514,19 @@ None
 ### Summary:
  Defines the mapper end point type. 
 
-> ### field: None
+>### field: None
 <small>id: `F:Dbarone.Net.Mapper.MapperEndPoint.None`</small>
 
 #### Summary
  No end point type specified. 
 
-> ### field: Source
+>### field: Source
 <small>id: `F:Dbarone.Net.Mapper.MapperEndPoint.Source`</small>
 
 #### Summary
  Source mapper endpoint. 
 
-> ### field: Destination
+>### field: Destination
 <small>id: `F:Dbarone.Net.Mapper.MapperEndPoint.Destination`</small>
 
 #### Summary
@@ -594,7 +594,7 @@ Returns: A value
 ### Summary:
  The ObjectMapper class provides mapping functions to transform objects from one type to another. 
 
-> ### method: MapOne {#dbaronenetmapperobjectmappermapone(systemtype,systemtype,systemobject)}
+>### <a id='dbaronenetmapperobjectmappermapone(systemtype,systemtype,systemobject)'></a>method: MapOne
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne(System.Type,System.Type,System.Object)`</small>
 #### Signature
 ``` c#
@@ -619,7 +619,7 @@ Exception thrown: [T:System.Exception](#T:System.Exception):
 
 #### Examples:
 None
-> ### method: MapOne<T, U> {#dbaronenetmapperobjectmappermapone``2(``0)}
+>### <a id='dbaronenetmapperobjectmappermapone``2(``0)'></a>method: MapOne<T, U>
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`</small>
 #### Signature
 ``` c#
@@ -643,7 +643,7 @@ ObjectMapper.MapOne<T, U>(T obj)
 None
 #### Examples:
 None
-> ### method: MapMany<T, U> {#dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0})}
+>### <a id='dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0})'></a>method: MapMany<T, U>
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`</small>
 #### Signature
 ``` c#
@@ -675,7 +675,7 @@ None
 ### Summary:
  Interface for classes that can convert values / types. 
 
-> ### method: Convert {#dbaronenetmapperitypeconverterconvert(systemobject)}
+>### <a id='dbaronenetmapperitypeconverterconvert(systemobject)'></a>method: Convert
 <small>id: `M:Dbarone.Net.Mapper.ITypeConverter.Convert(System.Object)`</small>
 #### Signature
 ``` c#
@@ -706,7 +706,7 @@ None
 |T: |The source type.|
 |U: |The destination type.|
 
-> ### method: #ctor {#dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1})}
+>### <a id='dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1})'></a>method: #ctor
 <small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.#ctor(System.Func{`0,`1})`</small>
 #### Signature
 ``` c#
@@ -727,7 +727,7 @@ None
 None
 #### Examples:
 None
-> ### method: Convert {#dbaronenetmappertypeconverter`2convert(systemobject)}
+>### <a id='dbaronenetmappertypeconverter`2convert(systemobject)'></a>method: Convert
 <small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.Convert(System.Object)`</small>
 #### Signature
 ``` c#
@@ -756,25 +756,25 @@ None
 ### Summary:
  Defines the default member naming convention for the type. 
 
-> ### field: None
+>### field: None
 <small>id: `F:NamingConvention.None`</small>
 
 #### Summary
  No defined naming convention used. 
 
-> ### field: CamelCaseNamingConvention
+>### field: CamelCaseNamingConvention
 <small>id: `F:NamingConvention.CamelCaseNamingConvention`</small>
 
 #### Summary
  Members are named in CamelCase, for example 'memberName'. 
 
-> ### field: PascalCaseNamingConvention
+>### field: PascalCaseNamingConvention
 <small>id: `F:NamingConvention.PascalCaseNamingConvention`</small>
 
 #### Summary
  Members are named in PascalCase, for example: 'MemberName'. 
 
-> ### field: SnakeCasingConvention
+>### field: SnakeCasingConvention
 <small>id: `F:NamingConvention.SnakeCasingConvention`</small>
 
 #### Summary
@@ -788,7 +788,7 @@ None
 ### Summary:
  Mapper exception class. 
 
-> ### method: #ctor {#mapperexception#ctor}
+>### <a id='mapperexception#ctor'></a>method: #ctor
 <small>id: `M:MapperException.#ctor`</small>
 #### Signature
 ``` c#
@@ -807,7 +807,7 @@ None
 None
 #### Examples:
 None
-> ### method: #ctor {#mapperexception#ctor(systemstring)}
+>### <a id='mapperexception#ctor(systemstring)'></a>method: #ctor
 <small>id: `M:MapperException.#ctor(System.String)`</small>
 #### Signature
 ``` c#
