@@ -1,4 +1,4 @@
-namespace Dbarone.Net.Mapper;
+namespace Dbarone.Net.Mapper.Tests;
 
 public class CustomerWithDifferentTypesA {
     public int CustomerId { get; set; }

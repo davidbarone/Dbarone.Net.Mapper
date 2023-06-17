@@ -3,50 +3,10 @@ using Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions.Object;
 using System.Linq.Expressions;
 
-public enum EnumValue
-{
-    A,
-    B,
-    C
-}
-
-public class ClassA
-{
-    public int IntValue { get; set; } = int.MaxValue;
-    public float FloatValue { get; set; } = float.MaxValue;
-    public string StringValue { get; set; } = "foobar";
-    public EnumValue EnumValue { get; set; } = EnumValue.A;
-    public Nullable<short> ShortValue { get; set; } = short.MaxValue;
-}
-
-public class ClassB
-{
-    public int IntValue { get; set; }
-    public float FloatValue { get; set; }
-    public string StringValue { get; set; } = default!;
-    public EnumValue EnumValue { get; set; }
-    public Nullable<short> ShortValue { get; set; } = short.MaxValue;
-}
-
-public class CustomerEntity
-{
-    public int CustomerId { get; set; }
-    public string Name { get; set; } = default!;
-    public int AddressId { get; set; }
-    public string Country { get; set; } = default!;
-
-    public char Rating { get; set; }
-}
-
-public class CustomerModel
-{
-    public string Name { get; set; } = default!;
-}
-
 public class MapperTests
 {
     [Fact]
-    public void TestMapOne()
+    public void MapOne_SameMembers_ShouldMap()
     {
         var mapper = MapperConfiguration.Create().RegisterType<ClassA>().RegisterType<ClassB>().Build();
 
@@ -56,8 +16,8 @@ public class MapperTests
         Assert.True(a2.ValueEquals(a));
     }
 
-    //[Fact]
-    public void TestMapMany()
+    [Fact]
+    public void MapMany_DifferentMembers_ShouldMap()
     {
         var customers = new List<CustomerEntity>(){
             new CustomerEntity(){CustomerId = 1, Name = "ABC Bicycles", AddressId = 1, Country = "AU", Rating = 'A'},
@@ -73,7 +33,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void TestChildObjects()
+    public void MapOne_WithChildObjects_ShouldMap()
     {
         CustomerWithChildAddress obj = new CustomerWithChildAddress()
         {
@@ -96,7 +56,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void TestChildObjectsWithoutMappingShouldThrowError()
+    public void MapOne_WithChildObjectsNoChildRegistration_ShouldThrowError()
     {
         CustomerWithChildAddress obj = new CustomerWithChildAddress()
         {
@@ -120,7 +80,7 @@ public class MapperTests
     }
 
     [Fact]
-    public void TestMappingDifferentTypesWithoutTypeConverterShouldThrowError()
+    public void MapOne_DifferentTypesWithoutTypeConverter_ShouldThrowError()
     {
         CustomerWithDifferentTypesA custA = new CustomerWithDifferentTypesA()
         {

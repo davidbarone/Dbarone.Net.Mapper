@@ -1,3 +1,5 @@
+namespace Dbarone.Net.Mapper.Tests;
+
 /// <summary>
 /// This class has 8 field/property members in total:
 /// - 2 * public properties

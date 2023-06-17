@@ -1,10 +1,25 @@
-namespace Dbarone.Net.Mapper;
+namespace Dbarone.Net.Mapper.Tests;
 
 public class MapperConfigurationTests
 {
+    [Fact]
+    public void MapperBuilder_RegisterTypes_ShouldBuild()
+    {
+        var config = MapperConfiguration.Create()
+        .RegisterType<CustomerA>(new MapperOptions
+        {
+            MemberNameCaseType = Extensions.CaseType.CamelCase
+        })
+        .RegisterType<CustomerB>(new MapperOptions
+        {
+            MemberNameCaseType = Extensions.CaseType.CamelCase
+        })
+        .Ignore<CustomerB>(c => c.CustomerId)
+        .Build();
+    }
 
     [Fact]
-    public void TestConfigurationSimpleCustomer()
+    public void MapperBuilder_RegisterSingle_Returns2MemberRules()
     {
         var config = MapperConfiguration.Create().RegisterType<SimpleCustomer>();
         Assert.Equal(1, config.GetTypeConfigurationCount());
@@ -19,7 +34,7 @@ public class MapperConfigurationTests
     [InlineData(false, true, 3)]
     [InlineData(true, false, 3)]
     [InlineData(true, true, 8)]
-    public void TestConfigurationSimpleCustomerWithPrivatePropertiesAndFields(bool includePrivateMembers, bool includeFields, int expectedMemberCount)
+    public void MapperBuilder_IncludePrivateFieldsProperties_ShouldReturnCorrectMemberRules(bool includePrivateMembers, bool includeFields, int expectedMemberCount)
     {
         var config = MapperConfiguration.Create().RegisterType<SimpleCustomerWithPrivatePropertiesAndFields>(new MapperOptions
         {

@@ -1,3 +1,4 @@
+namespace Dbarone.Net.Mapper.Tests;
 
 /// <summary>
 /// Address class (used within CustomerWithAddressObject).

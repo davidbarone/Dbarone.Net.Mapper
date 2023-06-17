@@ -1,4 +1,4 @@
-namespace Dbarone.Net.Mapper;
+namespace Dbarone.Net.Mapper.Tests;
 
 /// <summary>
 /// Simple customer entity.
