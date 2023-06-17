@@ -74,15 +74,20 @@ Namespace: `{model.IdParts.Namespace}`
 
                     // Method
                     {"method", (model) =>
-$@"### {model.IdParts.MemberName}: {model.IdParts.Parent}.{model.IdParts.Name}
-id: `{model.IdParts.Id}`
+$@"> ### {model.IdParts.MemberName}: {model.IdParts.Parent}.{model.IdParts.Name}
+<small>id: `{model.IdParts.Id}`</small>
 
+#### Summary
 {model.summary}
+#### Type Parameters:
 {model.typeparametersHeader}
 {model.typeparameters}
+#### Parameters:
 {model.paramHeader}
 {model.parameters}
+#### Exceptions Thrown:
 {model.exceptions}
+#### Examples:
 {model.examples}
 "},
                     {"event", (model) => $"### {model.Name}\n{model.Text}\n---\n"},
@@ -115,12 +120,12 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                     {"method", x=> new Dictionary<string, object>{
                         {"IdParts", new IdParts(x.Attribute("name").Value)},
                         {"summary", x.Elements("summary").ToMarkDown()},
-                        {"typeparametersHeader", x.Elements("typeparam").Any() ? "|Param | Description |\n|-----|-----|" : ""},
+                        {"typeparametersHeader", x.Elements("typeparam").Any() ? "|Param | Description |\n|-----|-----|" : "None"},
                         {"typeparameters", x.Elements("typeparam").Any() ? x.Elements("typeparam").ToMarkDown() : ""},
-                        {"paramHeader", x.Elements("param").Any() ? "|Name | Description |\n|-----|------|" : ""},
+                        {"paramHeader", x.Elements("param").Any() ? "|Name | Description |\n|-----|------|" : "None"},
                         {"parameters", x.Elements("param").Any() ? x.Elements("param").ToMarkDown() : ""},
-                        {"exceptions", (x.Element("exception") != null) ? x.Element("exception").ToMarkDown() : ""},
-                        {"examples", x.Elements("example").Any() ? $"\n#### Examples:\n{x.Elements("example").ToMarkDown()}\n" : ""},
+                        {"exceptions", (x.Element("exception") != null) ? x.Element("exception").ToMarkDown() : "None"},
+                        {"examples", x.Elements("example").Any() ? $"\n#### Examples:\n{x.Elements("example").ToMarkDown()}\n" : "None"},
                     }},
                     {"event", x=>fxNameAndText("name", x)},
                     {"summary", x=> new Dictionary<string, object> {{"Text", x.Nodes().ToMarkDown()}}},

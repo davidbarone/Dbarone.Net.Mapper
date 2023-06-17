@@ -33,161 +33,221 @@ Namespace: `Dbarone.Net.Mapper`
 
 
 
-### method: MapperConfiguration.GetTypeConfigurationCount
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfigurationCount`
+> ### method: MapperConfiguration.GetTypeConfigurationCount
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfigurationCount`</small>
 
+#### Summary
  Returns the number of types configured. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.GetTypeConfiguration
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfiguration(System.Type)`</small>
 
-
-
-
-### method: MapperConfiguration.GetTypeConfiguration
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfiguration(System.Type)`
-
+#### Summary
  Gets the type configuration for a specific type. 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |type: |The type to get the configuration for.|
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.Create
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Create`</small>
 
-
-### method: MapperConfiguration.Create
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.Create`
-
+#### Summary
  Creates a new MapperConfiguration instance. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.RegisterConverter``2
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
 
-
-
-
-### method: MapperConfiguration.RegisterConverter``2
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`
-
+#### Summary
  Adds a type converter. 
 
+#### Type Parameters:
 |Param | Description |
 |-----|-----|
 |T: ||
 |U: ||
 
+#### Parameters:
 |Name | Description |
 |-----|------|
 |converter: ||
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.RegisterTypes
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterTypes(System.Type[],Dbarone.Net.Mapper.MapperOptions)`</small>
 
-
-### method: MapperConfiguration.RegisterTypes
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterTypes(System.Type[],Dbarone.Net.Mapper.MapperOptions)`
-
+#### Summary
  Registers a collection of types. 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |types: ||
 |options: ||
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.RegisterType``1
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType``1(Dbarone.Net.Mapper.MapperOptions)`</small>
 
-
-### method: MapperConfiguration.RegisterType``1
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType``1(Dbarone.Net.Mapper.MapperOptions)`
-
+#### Summary
  Registers a single type. 
 
+#### Type Parameters:
 |Param | Description |
 |-----|-----|
 |T: ||
 
+#### Parameters:
 |Name | Description |
 |-----|------|
 |options: ||
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.RegisterType
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType(System.Type,Dbarone.Net.Mapper.MapperOptions)`</small>
 
-
-### method: MapperConfiguration.RegisterType
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType(System.Type,Dbarone.Net.Mapper.MapperOptions)`
-
+#### Summary
  Registers a single type. 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |type: ||
 |options: ||
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.Ignore``1
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Ignore``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}})`</small>
 
-
-### method: MapperConfiguration.Ignore``1
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.Ignore``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}})`
-
+#### Summary
  Defines a member that will not be mapped. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.Rename``1
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)`</small>
 
-
-
-
-### method: MapperConfiguration.Rename``1
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)`
-
+#### Summary
  Defines a custom name for a member when mapping to other types. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.MapMember``2
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.MapMember``2(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Linq.Expressions.Expression{System.Func{``1,System.Object}})`</small>
 
-
-
-
-### method: MapperConfiguration.MapMember``2
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.MapMember``2(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Linq.Expressions.Expression{System.Func{``1,System.Object}})`
-
+#### Summary
  Maps a member from source to destination using lambda expressions. 
 
+#### Type Parameters:
 |Param | Description |
 |-----|-----|
 |T: ||
 |U: ||
 
+#### Parameters:
 |Name | Description |
 |-----|------|
 |fromMember: ||
 |toMember: ||
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.ApplyMemberAction``1
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.ApplyMemberAction``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Action{Dbarone.Net.Mapper.MapperMemberConfiguration})`</small>
 
-
-### method: MapperConfiguration.ApplyMemberAction``1
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.ApplyMemberAction``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Action{Dbarone.Net.Mapper.MapperMemberConfiguration})`
-
+#### Summary
  Selects a member, then applies an action to the member mapping rule. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperConfiguration.Build
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Build`</small>
 
-
-
-
-### method: MapperConfiguration.Build
-id: `M:Dbarone.Net.Mapper.MapperConfiguration.Build`
-
+#### Summary
  Builds a configured object mapper. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
-
-
-
-
+#### Exceptions Thrown:
+None
+#### Examples:
+None
 
 ---
 ## Dbarone.Net.Mapper.MapperMemberConfiguration
@@ -269,17 +329,22 @@ Namespace: `Dbarone.Net.Mapper`
  Provides the member resolving strategy for this type. 
 
 ---
-### method: MapperTypeConfiguration.GetMemberRule
-id: `M:Dbarone.Net.Mapper.MapperTypeConfiguration.GetMemberRule(System.Linq.Expressions.Expression)`
+> ### method: MapperTypeConfiguration.GetMemberRule
+<small>id: `M:Dbarone.Net.Mapper.MapperTypeConfiguration.GetMemberRule(System.Linq.Expressions.Expression)`</small>
 
+#### Summary
  Resolves a member/unary expression to a member configuration. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
-
-
-
-
+#### Exceptions Thrown:
+None
+#### Examples:
+None
 ### P:Dbarone.Net.Mapper.MapperTypeConfiguration.CreateInstance
  Create a new instance of the type. 
 
@@ -358,55 +423,70 @@ Namespace: `Dbarone.Net.Mapper`
 
  The ObjectMapper class provides mapping functions to transform objects from one type to another. 
 
-### method: ObjectMapper.MapOne
-id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne(System.Type,System.Type,System.Object)`
+> ### method: ObjectMapper.MapOne
+<small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne(System.Type,System.Type,System.Object)`</small>
 
+#### Summary
  Maps / transforms an object from one type to another. 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |fromType: |The type to transform the object from.|
 |toType: |The type to transform the object to.|
 |obj: |The object being transformed from. Must be assignable to `fromType`.|
 
+#### Exceptions Thrown:
 
 Exception thrown: [T:System.Exception](#T:System.Exception): 
 
+#### Examples:
+None
+> ### method: ObjectMapper.MapOne``2
+<small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`</small>
 
-### method: ObjectMapper.MapOne``2
-id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`
-
+#### Summary
  Maps / transforms an object from one type to another. 
 
+#### Type Parameters:
 |Param | Description |
 |-----|-----|
 |T: ||
 |U: ||
 
+#### Parameters:
 |Name | Description |
 |-----|------|
 |obj: ||
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: ObjectMapper.MapMany``2
+<small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`</small>
 
-
-### method: ObjectMapper.MapMany``2
-id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`
-
+#### Summary
  Maps a collection, list or array of items. 
 
+#### Type Parameters:
 |Param | Description |
 |-----|-----|
 |T: |The type of the source object.|
 |U: |The type of the destination object.|
 
+#### Parameters:
 |Name | Description |
 |-----|------|
 |obj: |The source object. Must be an enumerable, collection, list or array of type U.|
 
-
-
+#### Exceptions Thrown:
+None
+#### Examples:
+None
 
 ---
 ## Dbarone.Net.Mapper.ITypeConverter
@@ -414,19 +494,24 @@ Namespace: `Dbarone.Net.Mapper`
 
  Interface for classes that can convert values / types. 
 
-### method: ITypeConverter.Convert
-id: `M:Dbarone.Net.Mapper.ITypeConverter.Convert(System.Object)`
+> ### method: ITypeConverter.Convert
+<small>id: `M:Dbarone.Net.Mapper.ITypeConverter.Convert(System.Object)`</small>
 
+#### Summary
  Converts an object. 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |obj: |The object to be converted.|
 
-
-
+#### Exceptions Thrown:
+None
+#### Examples:
+None
 
 ---
 ## Dbarone.Net.Mapper.TypeConverter`2
@@ -436,32 +521,42 @@ Namespace: `Dbarone.Net.Mapper`
 |T: |The source type.|
 |U: |The destination type.|
 
-### method: TypeConverter`2.#ctor
-id: `M:Dbarone.Net.Mapper.TypeConverter`2.#ctor(System.Func{`0,`1})`
+> ### method: TypeConverter`2.#ctor
+<small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.#ctor(System.Func{`0,`1})`</small>
 
+#### Summary
  Creates a TypeConverter instance using a m 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |converter: ||
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: TypeConverter`2.Convert
+<small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.Convert(System.Object)`</small>
 
-
-### method: TypeConverter`2.Convert
-id: `M:Dbarone.Net.Mapper.TypeConverter`2.Convert(System.Object)`
-
+#### Summary
  Implementation of interface Convert method. 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |obj: |The object to be converted.|
 
-
-
+#### Exceptions Thrown:
+None
+#### Examples:
+None
 
 ---
 ## NamingConvention
@@ -492,27 +587,37 @@ Namespace: ``
 
  Mapper exception class. 
 
-### method: MapperException.#ctor
-id: `M:MapperException.#ctor`
+> ### method: MapperException.#ctor
+<small>id: `M:MapperException.#ctor`</small>
 
+#### Summary
  Parameterless constructor. 
 
+#### Type Parameters:
+None
 
+#### Parameters:
+None
 
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: MapperException.#ctor
+<small>id: `M:MapperException.#ctor(System.String)`</small>
 
-
-
-
-### method: MapperException.#ctor
-id: `M:MapperException.#ctor(System.String)`
-
+#### Summary
  Create a mapper exception with message. 
 
+#### Type Parameters:
+None
 
-
+#### Parameters:
 |Name | Description |
 |-----|------|
 |message: ||
 
-
-
+#### Exceptions Thrown:
+None
+#### Examples:
+None
