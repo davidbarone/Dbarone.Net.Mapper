@@ -2,6 +2,21 @@
     Name: C# XML Comments to Markdown
     Purpose: Converts C# XML comments file to markdown.
     Notes: Based on https://gist.github.com/lontivero/593fc51f1208555112e0
+
+    This script only documents from the XML file. It does not merge
+    data from the assembly itself (via reflection). Therefore
+    some things cannot be rendered easily:
+    - Return types from methods
+    - Full signature definition    
+
+    Other libraries worth investigating:
+    - https://github.com/lijunle/Vsxmd/blob/master/Vsxmd/Program.cs
+    - https://stackoverflow.com/questions/1312166/print-full-signature-of-a-method-from-a-methodinfo
+    
+    Member ID strings
+    - These need to be parsed & transformed to make more readable:
+    - https://ewsoftware.github.io/XMLCommentsGuide/html/ee5d612e-914f-411f-bd95-23478b15e4de.htm
+    - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/
    ------------------------------------------------------ */
 
 #r "System.Xml.XDocument"
@@ -68,14 +83,25 @@ $@"
 "},
 
                     // Field
-                    {"field", (model) => $"### {model.Name}\n{model.Text}\n---\n"},
+                    {"field", (model) =>
+$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
+<small>id: `{model.IdParts.Id}`</small>
+
+#### Summary
+{model.summary}
+"},
                     
                     // Property
-                    {"property", (model) => $"### {model.Name}\n{model.Text}\n---\n"},
+                    {"property", (model) =>
+$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
+<small>id: `{model.IdParts.Id}`</small>
 
+#### Summary
+{model.summary}
+"},
                     // Method
                     {"method", (model) =>
-$@"> ### {model.IdParts.MemberName}: {model.IdParts.Name}
+$@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
 <small>id: `{model.IdParts.Id}`</small>
 
 #### Summary
@@ -110,19 +136,24 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                         {"members", x.Element("members").Elements("member").ToMarkDown()},
                         {"toc", x.Element("members").Elements("member")
                         .Select(toc => new IdParts(toc.Attribute("name").Value))
-                        .Where(toc => toc.MemberName == "type")
+                        .Where(toc => toc.MemberType == MemberType.type)
                         .Select(toc => $"- [{toc.FullyQualifiedName}](#{toc.FullyQualifiedNameLink})\n")
                         .Aggregate("", (current, next) => current + "" + next)}
                     }},
                     {"type", x=> fxIdAndText("name", x)},
 
-/*
-                    {"type", x=> new Dictionary<string, object>{
-                        {"Name", x.Attribute("name").Value}
+                    //{"field", x=> fxNameAndText("name", x)},
+                    {"field", x=> new Dictionary<string, object> {
+                        {"IdParts", new IdParts(x.Attribute("name").Value)},
+                        {"summary", x.Elements("summary").ToMarkDown()}
                     }},
-*/
-                    {"field", x=> fxNameAndText("name", x)},
-                    {"property", x=> fxNameAndText("name", x)},
+
+                    //{"property", x=> fxNameAndText("name", x)},
+                    {"property", x=> new Dictionary<string, object> {
+                        {"IdParts", new IdParts(x.Attribute("name").Value)},
+                        {"summary", x.Elements("summary").ToMarkDown()}
+                    }},
+
                     //{"method",x=>d("name", x)},
                     {"method", x=> new Dictionary<string, object>{
                         {"IdParts", new IdParts(x.Attribute("name").Value)},
@@ -149,39 +180,88 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                     {"none", x => new Dictionary<string, object> {}}
                 };
 
+
+/// <summary>
+/// The member type.
+/// </summary>
+internal enum MemberType : byte
+{
+    @namespace,
+    type,
+    field,
+    property,
+    method,
+    @event,
+    errorString
+}
+
+
 /// <summary>
 /// Represents the parts making up a comment document id.
 /// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
 /// </summary>
 internal class IdParts
 {
+    /// <summary>
+    /// The full member id string. In format [MemberType]:[memberid]
+    /// </summary>
     public string Id { get; set; }
-    public string MemberName { get; set; }
+
+    /// <summary>
+    /// The member name
+    /// </summary>
+    public MemberType MemberType { get; set; }
     public string FullyQualifiedName { get; set; }
+
+    /// <summary>
+    /// Unique link tag based on fully qualified name. Used for generaing links for TOC etc.
+    /// </summary>
     public string FullyQualifiedNameLink { get; set; }
+
+    /// <summary>
+    /// Arguments (if exist for methods and properties).
+    /// </summary>
+    public string Arguments { get; set; }
+
+    /// <summary>
+    /// The namespace name.
+    /// </summary>
     public string Namespace { get; set; }
+
+    /// <summary>
+    /// The name of the parent.
+    /// </summary>
     public string Parent { get; set; }
+
+    /// <summary>
+    /// The name of the member.
+    /// </summary>
     public string Name { get; set; }
 
     public IdParts(string id)
     {
+        Console.WriteLine($"Processing: {id}...");
         this.Id = id;
-        Console.WriteLine(id);
         var splits = id.Split(':');
         switch (splits[0])
         {
-            case "N": this.MemberName = "namespace"; break;
-            case "F": this.MemberName = "field"; break;
-            case "P": this.MemberName = "property"; break;
-            case "T": this.MemberName = "type"; break;
-            case "E": this.MemberName = "event"; break;
-            case "M": this.MemberName = "method"; break;
-            case "!": this.MemberName = "error"; break;
-            default: this.MemberName = "none"; break;
+            case "N": this.MemberType = MemberType.@namespace; break;
+            case "F": this.MemberType = MemberType.field; break;
+            case "P": this.MemberType = MemberType.property; break;
+            case "T": this.MemberType = MemberType.type; break;
+            case "E": this.MemberType = MemberType.@event; break;
+            case "M": this.MemberType = MemberType.method; break;
+            case "!": this.MemberType = MemberType.errorString; break;
+            default: this.MemberType = MemberType.errorString; break;
         }
         this.FullyQualifiedName = splits[1];
         this.FullyQualifiedNameLink = this.FullyQualifiedName.Replace(".", "").ToLower();
         var fqnParts = this.FullyQualifiedName.Split('(');  // look for first '('. Required for Methods and properties with arguments.
+        if (fqnParts.Length == 2)
+        {
+            this.Arguments = fqnParts[1];
+            this.Arguments = this.Arguments.Substring(0, this.Arguments.Length - 1);    // remove last ')'
+        }
         var nameParts = fqnParts[0].Split('.');
         this.Name = nameParts[nameParts.Length - 1];
         if ("FPEM".Contains(splits[0]))
@@ -190,24 +270,6 @@ internal class IdParts
             this.Namespace = string.Join('.', nameParts.Take(nameParts.Length - 2));
         }
         this.Namespace = string.Join('.', nameParts.Take(nameParts.Length - 1));
-    }
-}
-
-/// <summary>
-/// Represents an XML comments fragment containing an outer element with
-/// a 'name' attribute (usually containing an 'id' value), and inner
-/// elements containing text descriptions. As so many of the XML comments
-/// are in this format, we create a special structure for this.
-/// </summary>
-internal class IdAndText
-{
-    public IdParts IdParts { get; set; }
-    public string Text { get; set; }
-
-    public IdAndText(string id, string text)
-    {
-        this.IdParts = new IdParts(id);
-        this.Text = text;
     }
 }
 
@@ -268,7 +330,7 @@ internal static string ToMarkDown(this XNode e)
         if (name == "member")
         {
             var idParts = new IdParts(el.Attribute("name").Value);
-            name = idParts.MemberName;
+            name = idParts.MemberType.ToString();
         }
         if (name == "see")
         {
@@ -285,6 +347,7 @@ internal static string ToMarkDown(this XNode e)
 
     return "";
 }
+
 
 internal static string ToMarkDown(this IEnumerable<XNode> es)
 {

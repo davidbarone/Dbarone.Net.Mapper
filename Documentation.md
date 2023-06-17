@@ -257,30 +257,42 @@ None
 ### Summary:
  Defines the rules for a single member mapping. 
 
-### P:Dbarone.Net.Mapper.MapperMemberConfiguration.MemberName
+> ### property: MemberName
+<small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.MemberName`</small>
+
+#### Summary
  Member name for the mapping rule. 
 
----
-### P:Dbarone.Net.Mapper.MapperMemberConfiguration.DataType
+> ### property: DataType
+<small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.DataType`</small>
+
+#### Summary
  Member data type. 
 
----
-### P:Dbarone.Net.Mapper.MapperMemberConfiguration.InternalMemberName
+> ### property: InternalMemberName
+<small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.InternalMemberName`</small>
+
+#### Summary
  The internal member name. Mapping from source to destination is done via matching internal names. 
 
----
-### P:Dbarone.Net.Mapper.MapperMemberConfiguration.Ignore
+> ### property: Ignore
+<small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.Ignore`</small>
+
+#### Summary
  Set to true to ignore this member in the mapping configuration. 
 
----
-### P:Dbarone.Net.Mapper.MapperMemberConfiguration.Getter
+> ### property: Getter
+<small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.Getter`</small>
+
+#### Summary
  Delegate method to get the value from the instance. 
 
----
-### P:Dbarone.Net.Mapper.MapperMemberConfiguration.Setter
+> ### property: Setter
+<small>id: `P:Dbarone.Net.Mapper.MapperMemberConfiguration.Setter`</small>
+
+#### Summary
  Delegate method to set the value to the instance. 
 
----
 
 ---
 ## MapperOptions
@@ -289,26 +301,36 @@ None
 ### Summary:
  Defines a set of mapping options. 
 
-### P:Dbarone.Net.Mapper.MapperOptions.IncludeFields
+> ### property: IncludeFields
+<small>id: `P:Dbarone.Net.Mapper.MapperOptions.IncludeFields`</small>
+
+#### Summary
  Set to true to include mapping of fields as well as properties. Default is false. 
 
----
-### P:Dbarone.Net.Mapper.MapperOptions.IncludePrivateMembers
+> ### property: IncludePrivateMembers
+<small>id: `P:Dbarone.Net.Mapper.MapperOptions.IncludePrivateMembers`</small>
+
+#### Summary
  Set to true to include private fields and properties. Default is false.1 
 
----
-### P:Dbarone.Net.Mapper.MapperOptions.MemberNameCaseType
+> ### property: MemberNameCaseType
+<small>id: `P:Dbarone.Net.Mapper.MapperOptions.MemberNameCaseType`</small>
+
+#### Summary
  The default casing convention for members of the type. Default is CaseType.None. 
 
----
-### P:Dbarone.Net.Mapper.MapperOptions.MemberNameTranslation
+> ### property: MemberNameTranslation
+<small>id: `P:Dbarone.Net.Mapper.MapperOptions.MemberNameTranslation`</small>
+
+#### Summary
  Optional member name translation function 
 
----
-### P:Dbarone.Net.Mapper.MapperOptions.AssertMapEndPoint
+> ### property: AssertMapEndPoint
+<small>id: `P:Dbarone.Net.Mapper.MapperOptions.AssertMapEndPoint`</small>
+
+#### Summary
  Defines implicit assertion of mapping rules prior to any map function call. Defaults to 'None'. 
 
----
 
 ---
 ## MapperTypeConfiguration
@@ -317,22 +339,30 @@ None
 ### Summary:
  Defines the configuration of a single type. 
 
-### P:Dbarone.Net.Mapper.MapperTypeConfiguration.Type
+> ### property: Type
+<small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.Type`</small>
+
+#### Summary
  The type the configuration relates to. 
 
----
-### P:Dbarone.Net.Mapper.MapperTypeConfiguration.Options
+> ### property: Options
+<small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.Options`</small>
+
+#### Summary
  Defines the options for the map registration 
 
----
-### P:Dbarone.Net.Mapper.MapperTypeConfiguration.MemberConfiguration
+> ### property: MemberConfiguration
+<small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.MemberConfiguration`</small>
+
+#### Summary
  Defines the member configuration. 
 
----
-### P:Dbarone.Net.Mapper.MapperTypeConfiguration.MemberResolver
+> ### property: MemberResolver
+<small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.MemberResolver`</small>
+
+#### Summary
  Provides the member resolving strategy for this type. 
 
----
 > ### method: GetMemberRule
 <small>id: `M:Dbarone.Net.Mapper.MapperTypeConfiguration.GetMemberRule(System.Linq.Expressions.Expression)`</small>
 
@@ -349,10 +379,12 @@ None
 None
 #### Examples:
 None
-### P:Dbarone.Net.Mapper.MapperTypeConfiguration.CreateInstance
+> ### property: CreateInstance
+<small>id: `P:Dbarone.Net.Mapper.MapperTypeConfiguration.CreateInstance`</small>
+
+#### Summary
  Create a new instance of the type. 
 
----
 
 ---
 ## MapperEndPoint
@@ -361,18 +393,24 @@ None
 ### Summary:
  Defines the mapper end point type. 
 
-### F:Dbarone.Net.Mapper.MapperEndPoint.None
+> ### field: None
+<small>id: `F:Dbarone.Net.Mapper.MapperEndPoint.None`</small>
+
+#### Summary
  No end point type specified. 
 
----
-### F:Dbarone.Net.Mapper.MapperEndPoint.Source
+> ### field: Source
+<small>id: `F:Dbarone.Net.Mapper.MapperEndPoint.Source`</small>
+
+#### Summary
  Source mapper endpoint. 
 
----
-### F:Dbarone.Net.Mapper.MapperEndPoint.Destination
+> ### field: Destination
+<small>id: `F:Dbarone.Net.Mapper.MapperEndPoint.Destination`</small>
+
+#### Summary
  Destination mapper endpoint. 
 
----
 
 ---
 ## ClassMemberResolver
@@ -579,22 +617,30 @@ None
 ### Summary:
  Defines the default member naming convention for the type. 
 
-### F:NamingConvention.None
+> ### field: None
+<small>id: `F:NamingConvention.None`</small>
+
+#### Summary
  No defined naming convention used. 
 
----
-### F:NamingConvention.CamelCaseNamingConvention
+> ### field: CamelCaseNamingConvention
+<small>id: `F:NamingConvention.CamelCaseNamingConvention`</small>
+
+#### Summary
  Members are named in CamelCase, for example 'memberName'. 
 
----
-### F:NamingConvention.PascalCaseNamingConvention
+> ### field: PascalCaseNamingConvention
+<small>id: `F:NamingConvention.PascalCaseNamingConvention`</small>
+
+#### Summary
  Members are named in PascalCase, for example: 'MemberName'. 
 
----
-### F:NamingConvention.SnakeCasingConvention
+> ### field: SnakeCasingConvention
+<small>id: `F:NamingConvention.SnakeCasingConvention`</small>
+
+#### Summary
  Members are named in SnakeCase, for example 'member_name'. 
 
----
 
 ---
 ## MapperException
