@@ -60,10 +60,11 @@ $@"# Assembly: {model.assembly}
                     {"type", (model) =>
 $@"
 ---
-## {model.IdParts.FullyQualifiedName}
-Namespace: `{model.IdParts.Namespace}`
-
-{model.Text}
+## {model.IdParts.Name}
+### Namespace:
+`{model.IdParts.Namespace}`
+### Summary:
+{((model.Text == null || model.Text.Trim() == "") ? "TBD" : model.Text)}
 "},
 
                     // Field
@@ -74,7 +75,7 @@ Namespace: `{model.IdParts.Namespace}`
 
                     // Method
                     {"method", (model) =>
-$@"> ### {model.IdParts.MemberName}: {model.IdParts.Parent}.{model.IdParts.Name}
+$@"> ### {model.IdParts.MemberName}: {model.IdParts.Name}
 <small>id: `{model.IdParts.Id}`</small>
 
 #### Summary
@@ -114,6 +115,12 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                         .Aggregate("", (current, next) => current + "" + next)}
                     }},
                     {"type", x=> fxIdAndText("name", x)},
+
+/*
+                    {"type", x=> new Dictionary<string, object>{
+                        {"Name", x.Attribute("name").Value}
+                    }},
+*/
                     {"field", x=> fxNameAndText("name", x)},
                     {"property", x=> fxNameAndText("name", x)},
                     //{"method",x=>d("name", x)},

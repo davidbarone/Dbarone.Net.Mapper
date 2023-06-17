@@ -21,19 +21,20 @@
 
 
 ---
-## Dbarone.Net.Mapper.MapperIgnoreAttribute
-Namespace: `Dbarone.Net.Mapper`
-
+## MapperIgnoreAttribute
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Indicates that property should not be mapped. 
 
 
 ---
-## Dbarone.Net.Mapper.MapperConfiguration
-Namespace: `Dbarone.Net.Mapper`
-
-
-
-> ### method: MapperConfiguration.GetTypeConfigurationCount
+## MapperConfiguration
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+TBD
+> ### method: GetTypeConfigurationCount
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfigurationCount`</small>
 
 #### Summary
@@ -49,7 +50,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.GetTypeConfiguration
+> ### method: GetTypeConfiguration
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfiguration(System.Type)`</small>
 
 #### Summary
@@ -67,7 +68,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.Create
+> ### method: Create
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Create`</small>
 
 #### Summary
@@ -83,7 +84,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.RegisterConverter``2
+> ### method: RegisterConverter``2
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
 
 #### Summary
@@ -104,7 +105,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.RegisterTypes
+> ### method: RegisterTypes
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterTypes(System.Type[],Dbarone.Net.Mapper.MapperOptions)`</small>
 
 #### Summary
@@ -123,7 +124,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.RegisterType``1
+> ### method: RegisterType``1
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType``1(Dbarone.Net.Mapper.MapperOptions)`</small>
 
 #### Summary
@@ -143,7 +144,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.RegisterType
+> ### method: RegisterType
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType(System.Type,Dbarone.Net.Mapper.MapperOptions)`</small>
 
 #### Summary
@@ -162,7 +163,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.Ignore``1
+> ### method: Ignore``1
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Ignore``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}})`</small>
 
 #### Summary
@@ -178,7 +179,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.Rename``1
+> ### method: Rename``1
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)`</small>
 
 #### Summary
@@ -194,7 +195,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.MapMember``2
+> ### method: MapMember``2
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.MapMember``2(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Linq.Expressions.Expression{System.Func{``1,System.Object}})`</small>
 
 #### Summary
@@ -216,7 +217,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.ApplyMemberAction``1
+> ### method: ApplyMemberAction``1
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.ApplyMemberAction``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Action{Dbarone.Net.Mapper.MapperMemberConfiguration})`</small>
 
 #### Summary
@@ -232,7 +233,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperConfiguration.Build
+> ### method: Build
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Build`</small>
 
 #### Summary
@@ -250,9 +251,10 @@ None
 None
 
 ---
-## Dbarone.Net.Mapper.MapperMemberConfiguration
-Namespace: `Dbarone.Net.Mapper`
-
+## MapperMemberConfiguration
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Defines the rules for a single member mapping. 
 
 ### P:Dbarone.Net.Mapper.MapperMemberConfiguration.MemberName
@@ -281,9 +283,10 @@ Namespace: `Dbarone.Net.Mapper`
 ---
 
 ---
-## Dbarone.Net.Mapper.MapperOptions
-Namespace: `Dbarone.Net.Mapper`
-
+## MapperOptions
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Defines a set of mapping options. 
 
 ### P:Dbarone.Net.Mapper.MapperOptions.IncludeFields
@@ -308,9 +311,10 @@ Namespace: `Dbarone.Net.Mapper`
 ---
 
 ---
-## Dbarone.Net.Mapper.MapperTypeConfiguration
-Namespace: `Dbarone.Net.Mapper`
-
+## MapperTypeConfiguration
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Defines the configuration of a single type. 
 
 ### P:Dbarone.Net.Mapper.MapperTypeConfiguration.Type
@@ -329,7 +333,7 @@ Namespace: `Dbarone.Net.Mapper`
  Provides the member resolving strategy for this type. 
 
 ---
-> ### method: MapperTypeConfiguration.GetMemberRule
+> ### method: GetMemberRule
 <small>id: `M:Dbarone.Net.Mapper.MapperTypeConfiguration.GetMemberRule(System.Linq.Expressions.Expression)`</small>
 
 #### Summary
@@ -351,9 +355,10 @@ None
 ---
 
 ---
-## Dbarone.Net.Mapper.MapperEndPoint
-Namespace: `Dbarone.Net.Mapper`
-
+## MapperEndPoint
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Defines the mapper end point type. 
 
 ### F:Dbarone.Net.Mapper.MapperEndPoint.None
@@ -370,60 +375,67 @@ Namespace: `Dbarone.Net.Mapper`
 ---
 
 ---
-## Dbarone.Net.Mapper.ClassMemberResolver
-Namespace: `Dbarone.Net.Mapper`
-
+## ClassMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  General resolver for classes. 
 
 
 ---
-## Dbarone.Net.Mapper.CreateInstance
-Namespace: `Dbarone.Net.Mapper`
-
+## CreateInstance
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Delegate to create a new instance of an object. 
 |args: |Optional args to pass into the constructor.|
 Returns: Returns an instance of an object.
 
 
 ---
-## Dbarone.Net.Mapper.DictionaryMemberResolver
-Namespace: `Dbarone.Net.Mapper`
-
+## DictionaryMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Member resolver for dictionaries. 
 
 
 ---
-## Dbarone.Net.Mapper.Getter
-Namespace: `Dbarone.Net.Mapper`
-
+## Getter
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Defines a basic getter delegate. 
 |obj: |The object providing the value|
 Returns: A value
 
 
 ---
-## Dbarone.Net.Mapper.IMemberResolver
-Namespace: `Dbarone.Net.Mapper`
-
+## IMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Interface for describing methods to 
 
 
 ---
-## Dbarone.Net.Mapper.Setter
-Namespace: `Dbarone.Net.Mapper`
-
+## Setter
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Defines a basic setter delegate. 
 |target: |The object to set the value in.|
 |value: |The value to set.|
 
 
 ---
-## Dbarone.Net.Mapper.ObjectMapper
-Namespace: `Dbarone.Net.Mapper`
-
+## ObjectMapper
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  The ObjectMapper class provides mapping functions to transform objects from one type to another. 
 
-> ### method: ObjectMapper.MapOne
+> ### method: MapOne
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne(System.Type,System.Type,System.Object)`</small>
 
 #### Summary
@@ -445,7 +457,7 @@ Exception thrown: [T:System.Exception](#T:System.Exception):
 
 #### Examples:
 None
-> ### method: ObjectMapper.MapOne``2
+> ### method: MapOne``2
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`</small>
 
 #### Summary
@@ -466,7 +478,7 @@ None
 None
 #### Examples:
 None
-> ### method: ObjectMapper.MapMany``2
+> ### method: MapMany``2
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`</small>
 
 #### Summary
@@ -489,12 +501,13 @@ None
 None
 
 ---
-## Dbarone.Net.Mapper.ITypeConverter
-Namespace: `Dbarone.Net.Mapper`
-
+## ITypeConverter
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Interface for classes that can convert values / types. 
 
-> ### method: ITypeConverter.Convert
+> ### method: Convert
 <small>id: `M:Dbarone.Net.Mapper.ITypeConverter.Convert(System.Object)`</small>
 
 #### Summary
@@ -514,14 +527,15 @@ None
 None
 
 ---
-## Dbarone.Net.Mapper.TypeConverter`2
-Namespace: `Dbarone.Net.Mapper`
-
+## TypeConverter`2
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
  Converts an object using a generic lambda function or Func. 
 |T: |The source type.|
 |U: |The destination type.|
 
-> ### method: TypeConverter`2.#ctor
+> ### method: #ctor
 <small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.#ctor(System.Func{`0,`1})`</small>
 
 #### Summary
@@ -539,7 +553,7 @@ None
 None
 #### Examples:
 None
-> ### method: TypeConverter`2.Convert
+> ### method: Convert
 <small>id: `M:Dbarone.Net.Mapper.TypeConverter`2.Convert(System.Object)`</small>
 
 #### Summary
@@ -560,8 +574,9 @@ None
 
 ---
 ## NamingConvention
-Namespace: ``
-
+### Namespace:
+``
+### Summary:
  Defines the default member naming convention for the type. 
 
 ### F:NamingConvention.None
@@ -583,11 +598,12 @@ Namespace: ``
 
 ---
 ## MapperException
-Namespace: ``
-
+### Namespace:
+``
+### Summary:
  Mapper exception class. 
 
-> ### method: MapperException.#ctor
+> ### method: #ctor
 <small>id: `M:MapperException.#ctor`</small>
 
 #### Summary
@@ -603,7 +619,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapperException.#ctor
+> ### method: #ctor
 <small>id: `M:MapperException.#ctor(System.String)`</small>
 
 #### Summary
