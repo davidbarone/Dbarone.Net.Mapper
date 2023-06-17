@@ -2,6 +2,9 @@ namespace Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions;
 using System.Linq.Expressions;
 
+/// <summary>
+/// The ObjectMapper class provides mapping functions to transform objects from one type to another. 
+/// </summary>
 public class ObjectMapper
 {
     private IDictionary<Type, MapperTypeConfiguration> configuration;
@@ -13,7 +16,16 @@ public class ObjectMapper
         this.customTypeConverters = customTypeConverters;
     }
 
-    public object MapOne(Type fromType, Type toType, object obj)
+    /// <summary>
+    /// Maps / transforms an object from one type to another.
+    /// </summary>
+    /// <param name="fromType">The type to transform the object from.</param>
+    /// <param name="toType">The type to transform the object to.</param>
+    /// <param name="obj">The object being transformed from. Must be assignable to `fromType`.</param>
+    /// <returns>Returns a mapped object of type `toType`.</returns>
+    /// <exception cref="Exception"></exception>
+    /// <exception cref="MapperException"></exception>
+    public object MapOne(Type fromType, Type toType, object? obj)
     {
         MapperTypeConfiguration fromTypeConfiguration = configuration[fromType];
         MapperTypeConfiguration toTypeConfiguration = configuration[toType];
@@ -29,7 +41,7 @@ public class ObjectMapper
             {
                 throw new Exception($"Cannot find member: {toRule.InternalMemberName} in source mapping configuration.");
             }
-            var fromObj = fromRule!.Getter.Invoke(obj!);
+            var fromObj = fromRule.Getter.Invoke(obj!);
 
             // Get type of from member:
             if (toRule.DataType != fromRule.DataType)
@@ -40,7 +52,7 @@ public class ObjectMapper
                 {
                     ITypeConverter typeConverter = this.customTypeConverters[validConverterKey];
                     var convertedObject = typeConverter.Convert(fromObj);
-                    toRule.Setter.Invoke(newInstance, convertedObject);
+                    toRule.Setter.Invoke(newInstance, convertedObject!);
                 }
                 else
                 {
@@ -84,6 +96,13 @@ public class ObjectMapper
         return newInstance;
     }
 
+    /// <summary>
+    /// Maps / transforms an object from one type to another.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
+    /// <param name="obj"></param>
+    /// <returns></returns>
     public U? MapOne<T, U>(T? obj)
     {
         return (U)MapOne(typeof(T), typeof(U), obj);
