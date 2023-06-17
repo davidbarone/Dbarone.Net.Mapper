@@ -30,6 +30,8 @@ public class MapperTypeConfiguration
     /// <summary>
     /// Resolves a member/unary expression to a member configuration.
     /// </summary>
+    /// <param name="expr">A unary expression to select a member.</param>
+    /// <returns>Retuens the <see cref="MapperMemberConfiguration" /> instance matching the member selected.</returns>
     public MapperMemberConfiguration? GetMemberRule(Expression expr)
     {
         return this.MemberConfiguration.FirstOrDefault(x => x.MemberName == expr.GetMemberPath());

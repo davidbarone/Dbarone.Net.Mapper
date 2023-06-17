@@ -103,7 +103,8 @@ $@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
                     {"method", (model) =>
 $@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
 <small>id: `{model.IdParts.Id}`</small>
-
+#### Signature
+{model.signature}
 #### Summary
 {model.summary}
 #### Type Parameters:
@@ -156,6 +157,7 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                     //{"method",x=>d("name", x)},
                     {"method", x=> new Dictionary<string, object>{
                         {"IdParts", new IdParts(x.Attribute("name").Value)},
+                        {"signature", CreateSignature(x.Attribute("name").Value, x.Elements("typeparam").ToList(), x.Elements("param").ToList())},
                         {"summary", x.Elements("summary").ToMarkDown()},
                         {"typeparametersHeader", x.Elements("typeparam").Any() ? "|Param | Description |\n|-----|-----|" : "None"},
                         {"typeparameters", x.Elements("typeparam").Any() ? x.Elements("typeparam").ToMarkDown() : ""},
@@ -205,40 +207,54 @@ internal class IdParts
     /// <summary>
     /// The full member id string. In format [MemberType]:[memberid]
     /// </summary>
-    public string Id { get; set; }
+    public string Id { get; set; } = default!;
 
     /// <summary>
-    /// The member name
+    /// The member type.
     /// </summary>
-    public MemberType MemberType { get; set; }
-    public string FullyQualifiedName { get; set; }
+    public MemberType MemberType { get; set; } = MemberType.errorString;
+
+    /// <summary>
+    /// The id value after the initial ':' character.
+    /// </summary>
+    public string FullyQualifiedName { get; set; } = default!;
 
     /// <summary>
     /// Unique link tag based on fully qualified name. Used for generaing links for TOC etc.
     /// </summary>
-    public string FullyQualifiedNameLink { get; set; }
+    public string FullyQualifiedNameLink { get; set; } = default!;
+
+    /// <summary>
+    /// The number of generic type arguments on the parent type / class. 
+    /// </summary>
+    public int ParentTypeArguments { get; set; } = default!;
+
+    /// <summary>
+    /// The number of generic type arguments on the current member. 
+    /// </summary>
+    public int TypeArguments { get; set; } = default!;
 
     /// <summary>
     /// Arguments (if exist for methods and properties).
     /// </summary>
-    public string Arguments { get; set; }
+    public string Arguments { get; set; } = "";
 
     /// <summary>
     /// The namespace name.
     /// </summary>
-    public string Namespace { get; set; }
+    public string Namespace { get; set; } = default!;
 
     /// <summary>
     /// The name of the parent.
     /// </summary>
-    public string Parent { get; set; }
+    public string Parent { get; set; } = default!;
 
     /// <summary>
     /// The name of the member.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
-    public IdParts(string id, IList<XElement> typeParameters = null, IList<XElement> parameters = null)
+    public IdParts(string id)
     {
         Console.WriteLine($"Processing: {id}...");
         this.Id = id;
@@ -270,8 +286,8 @@ internal class IdParts
         this.Name = nameGenericSplits[0];
         if (nameGenericSplits.Length == 2)
         {
-            var numberOfParameters = int.Parse(nameGenericSplits[1]);
-            switch (numberOfParameters)
+            this.TypeArguments = int.Parse(nameGenericSplits[1]);
+            switch (this.TypeArguments)
             {
                 case 1:
                     this.Name += "<T>";
@@ -288,29 +304,6 @@ internal class IdParts
             }
         }
 
-        // Check name for type generics. (contains '`' characters)
-        nameGenericSplits = this.Name.Split("`");
-        this.Name = nameGenericSplits[0];
-        if (nameGenericSplits.Length == 2)
-        {
-            var numberOfParameters = int.Parse(nameGenericSplits[1]);
-            switch (numberOfParameters)
-            {
-                case 1:
-                    this.Name += "<A>";
-                    break;
-                case 2:
-                    this.Name += "<A, B>";
-                    break;
-                case 3:
-                    this.Name += "<A, B, C>";
-                    break;
-                case 4:
-                    this.Name += "<A, B, C, D>";
-                    break;
-            }
-        }
-
         if ("FPEM".Contains(splits[0]))
         {
             // For fields, properties, events, methods, the
@@ -323,8 +316,8 @@ internal class IdParts
             this.Parent = parentGenericsSplits[0];
             if (parentGenericsSplits.Length == 2)
             {
-                var numberOfTypeParameters = int.Parse(parentGenericsSplits[1]);
-                switch (numberOfTypeParameters)
+                this.ParentTypeArguments = int.Parse(parentGenericsSplits[1]);
+                switch (this.ParentTypeArguments)
                 {
                     case 1:
                         this.Parent += "<A>";
@@ -449,4 +442,73 @@ static string ToCodeBlock(this XElement el)
         }
     }
     return s;
+}
+
+/// <summary>
+/// Creates a pseudo signature that can be displayed in documentation. Merges the member id string
+/// and type parameters and parameters. Does not generate completely accurate signature, as some
+/// information can only be derived by reflecting over the actual assembly (for example method
+/// return types are not stored in the documentation - they have to be read from assembly's meta
+/// data. Additionally, the scope of members is not defined).
+/// </summary>
+/// <param name="id"></param>
+/// <param name="typeParameters"></param>
+/// <param name="typeParameters"></param>
+internal static string CreateSignature(string id, IList<XElement> typeParameters, IList<XElement> parameters)
+{
+    var idParts = new IdParts(id);
+    List<string> typeParameterNames = typeParameters.Select(p => p.Attribute("name").Value).ToList();
+    List<string> parameterNames = parameters.Select(p => p.Attribute("name").Value).ToList();
+
+    // Type<T>.Method<U>(parm1type parm1name, ...)
+    var arguments = idParts.Arguments;
+    List<string> argumentTypes = new List<string>();
+    if (arguments.Length > 0)
+    {
+        Console.WriteLine(arguments);
+        Console.WriteLine("---------------------------");
+        bool inField = false;
+        string current = "";
+        foreach (var c in arguments)
+        {
+            if (c == '[' || c == '{')
+            {
+                inField = true;
+            }
+            else if ((c == ']' || c == '}') && inField == true)
+            {
+                inField = false;
+            }
+            else if (inField == false && c == ',')
+            {
+                argumentTypes.Add(current);
+                current = "";
+            }
+            else
+            {
+                current += c;
+            }
+        }
+        argumentTypes.Add(current);
+    }
+
+    if (parameterNames.Count() != argumentTypes.Count())
+    {
+        throw new Exception($"Member: {idParts.Name}, Parameter count: {parameterNames.Count} != argument types: {argumentTypes.Count()}.");
+    }
+
+    // Finally, construct the signature:
+    string signatureArgs = "";
+    for (var i = 0; i < argumentTypes.Count(); i++)
+    {
+        signatureArgs += $"{argumentTypes[i]} {parameterNames[i]}, ";
+    }
+    if (signatureArgs.Length > 2)
+    {
+        signatureArgs = signatureArgs.Substring(0, signatureArgs.Length - 2);
+    }
+    return $@"``` c#
+{idParts.Parent}.{idParts.Name}({signatureArgs})
+```";
+
 }

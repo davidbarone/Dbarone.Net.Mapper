@@ -4,7 +4,8 @@ using Dbarone.Net.Extensions;
 using System.Reflection;
 
 /// <summary>
-/// Creates configuration for a <see cref="ObjectMapper" /> mapper object.
+/// Creates configuration for a <see cref="ObjectMapper" /> mapper object. Before being able to map any objects and types, you must create
+/// a mapper configuration, and from this generate a <see cref="ObjectMapper" /> object.
 /// </summary>
 public class MapperConfiguration
 {
@@ -189,6 +190,9 @@ public class MapperConfiguration
     /// <summary>
     /// Defines a member that will not be mapped.
     /// </summary>
+    /// <typeparam name="T">The source object type.</typeparam>
+    /// <param name="member">A unary member expression to select a member on the source object type.</param>
+    /// <returns>Returns a <see cref="MapperConfiguration" /> object.</returns>
     public MapperConfiguration Ignore<T>(Expression<Func<T, object>> member)
     {
         var type = typeof(T);
@@ -201,6 +205,11 @@ public class MapperConfiguration
     /// <summary>
     /// Defines a custom name for a member when mapping to other types.
     /// </summary>
+    /// <typeparam name="T">The source object type.</typeparam>
+    /// <param name="member">A unary member expression to select a member on the source object type.</param>
+    /// <param name="newName">The new name for the member.</param>
+    /// <returns>Returns a <see cref="MapperConfiguration" /> object.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public MapperConfiguration Rename<T>(Expression<Func<T, object>> member, string newName)
     {
         if (newName.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(newName));
@@ -224,9 +233,6 @@ public class MapperConfiguration
         throw new NotSupportedException();
     }
 
-    /// <summary>
-    /// Selects a member, then applies an action to the member mapping rule.
-    /// </summary>
     private MapperConfiguration ApplyMemberAction<T>(Expression<Func<T, object>> member, Action<MapperMemberConfiguration> action)
     {
         var type = typeof(T);
