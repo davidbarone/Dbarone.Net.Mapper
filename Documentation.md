@@ -1,27 +1,71 @@
 # Assembly: Dbarone.Net.Mapper
 ## Contents
-- [Dbarone.Net.Mapper.MapperIgnoreAttribute](#dbaronenetmappermapperignoreattribute)
-- [Dbarone.Net.Mapper.MapperConfiguration](#dbaronenetmappermapperconfiguration)
-- [Dbarone.Net.Mapper.MapperMemberConfiguration](#dbaronenetmappermappermemberconfiguration)
-- [Dbarone.Net.Mapper.MapperOptions](#dbaronenetmappermapperoptions)
-- [Dbarone.Net.Mapper.MapperTypeConfiguration](#dbaronenetmappermappertypeconfiguration)
-- [Dbarone.Net.Mapper.MapperEndPoint](#dbaronenetmappermapperendpoint)
-- [Dbarone.Net.Mapper.ClassMemberResolver](#dbaronenetmapperclassmemberresolver)
-- [Dbarone.Net.Mapper.CreateInstance](#dbaronenetmappercreateinstance)
-- [Dbarone.Net.Mapper.DictionaryMemberResolver](#dbaronenetmapperdictionarymemberresolver)
-- [Dbarone.Net.Mapper.Getter](#dbaronenetmappergetter)
-- [Dbarone.Net.Mapper.IMemberResolver](#dbaronenetmapperimemberresolver)
-- [Dbarone.Net.Mapper.Setter](#dbaronenetmappersetter)
-- [Dbarone.Net.Mapper.ObjectMapper](#dbaronenetmapperobjectmapper)
-- [Dbarone.Net.Mapper.ITypeConverter](#dbaronenetmapperitypeconverter)
-- [Dbarone.Net.Mapper.TypeConverter`2](#dbaronenetmappertypeconverter`2)
+- [MapperIgnoreAttribute](#dbaronenetmappermapperignoreattribute)
+- [MapperConfiguration](#dbaronenetmappermapperconfiguration)
+  - [GetTypeConfigurationCount](#dbaronenetmappermapperconfigurationgettypeconfigurationcount)
+  - [GetTypeConfiguration](#dbaronenetmappermapperconfigurationgettypeconfiguration(systemtype))
+  - [Create](#dbaronenetmappermapperconfigurationcreate)
+  - [RegisterConverter<T, U>](#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1}))
+  - [RegisterTypes](#dbaronenetmappermapperconfigurationregistertypes(systemtype[],dbaronenetmappermapperoptions))
+  - [RegisterType<T>](#dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions))
+  - [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions))
+  - [Ignore<T>](#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}}))
+  - [Rename<T>](#dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring))
+  - [MapMember<T, U>](#dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}}))
+  - [ApplyMemberAction<T>](#dbaronenetmappermapperconfigurationapplymemberaction``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemaction{dbaronenetmappermappermemberconfiguration}))
+  - [Build](#dbaronenetmappermapperconfigurationbuild)
+- [MapperMemberConfiguration](#dbaronenetmappermappermemberconfiguration)
+  - [MemberName](#dbaronenetmappermappermemberconfigurationmembername)
+  - [DataType](#dbaronenetmappermappermemberconfigurationdatatype)
+  - [InternalMemberName](#dbaronenetmappermappermemberconfigurationinternalmembername)
+  - [Ignore](#dbaronenetmappermappermemberconfigurationignore)
+  - [Getter](#dbaronenetmappermappermemberconfigurationgetter)
+  - [Setter](#dbaronenetmappermappermemberconfigurationsetter)
+- [MapperOptions](#dbaronenetmappermapperoptions)
+  - [IncludeFields](#dbaronenetmappermapperoptionsincludefields)
+  - [IncludePrivateMembers](#dbaronenetmappermapperoptionsincludeprivatemembers)
+  - [MemberNameCaseType](#dbaronenetmappermapperoptionsmembernamecasetype)
+  - [MemberNameTranslation](#dbaronenetmappermapperoptionsmembernametranslation)
+  - [AssertMapEndPoint](#dbaronenetmappermapperoptionsassertmapendpoint)
+- [MapperTypeConfiguration](#dbaronenetmappermappertypeconfiguration)
+  - [Type](#dbaronenetmappermappertypeconfigurationtype)
+  - [Options](#dbaronenetmappermappertypeconfigurationoptions)
+  - [MemberConfiguration](#dbaronenetmappermappertypeconfigurationmemberconfiguration)
+  - [MemberResolver](#dbaronenetmappermappertypeconfigurationmemberresolver)
+  - [GetMemberRule](#dbaronenetmappermappertypeconfigurationgetmemberrule(systemlinqexpressionsexpression))
+  - [CreateInstance](#dbaronenetmappermappertypeconfigurationcreateinstance)
+- [MapperEndPoint](#dbaronenetmappermapperendpoint)
+  - [None](#dbaronenetmappermapperendpointnone)
+  - [Source](#dbaronenetmappermapperendpointsource)
+  - [Destination](#dbaronenetmappermapperendpointdestination)
+- [ClassMemberResolver](#dbaronenetmapperclassmemberresolver)
+- [CreateInstance](#dbaronenetmappercreateinstance)
+- [DictionaryMemberResolver](#dbaronenetmapperdictionarymemberresolver)
+- [Getter](#dbaronenetmappergetter)
+- [IMemberResolver](#dbaronenetmapperimemberresolver)
+- [Setter](#dbaronenetmappersetter)
+- [ObjectMapper](#dbaronenetmapperobjectmapper)
+  - [MapOne](#dbaronenetmapperobjectmappermapone(systemtype,systemtype,systemobject))
+  - [MapOne<T, U>](#dbaronenetmapperobjectmappermapone``2(``0))
+  - [MapMany<T, U>](#dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0}))
+- [ITypeConverter](#dbaronenetmapperitypeconverter)
+  - [Convert](#dbaronenetmapperitypeconverterconvert(systemobject))
+- [TypeConverter<A, B>](#dbaronenetmappertypeconverter`2)
+  - [#ctor](#dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1}))
+  - [Convert](#dbaronenetmappertypeconverter`2convert(systemobject))
 - [NamingConvention](#namingconvention)
+  - [None](#namingconventionnone)
+  - [CamelCaseNamingConvention](#namingconventioncamelcasenamingconvention)
+  - [PascalCaseNamingConvention](#namingconventionpascalcasenamingconvention)
+  - [SnakeCasingConvention](#namingconventionsnakecasingconvention)
 - [MapperException](#mapperexception)
+  - [#ctor](#mapperexception#ctor)
+  - [#ctor](#mapperexception#ctor(systemstring))
 
 
 
 ---
-## MapperIgnoreAttribute
+## Dbarone.Net.Mapper.MapperIgnoreAttribute
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -29,7 +73,7 @@
 
 
 ---
-## MapperConfiguration
+## Dbarone.Net.Mapper.MapperConfiguration
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -84,7 +128,7 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterConverter``2
+> ### method: RegisterConverter<T, U>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
 
 #### Summary
@@ -124,7 +168,7 @@ None
 None
 #### Examples:
 None
-> ### method: RegisterType``1
+> ### method: RegisterType<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType``1(Dbarone.Net.Mapper.MapperOptions)`</small>
 
 #### Summary
@@ -163,7 +207,7 @@ None
 None
 #### Examples:
 None
-> ### method: Ignore``1
+> ### method: Ignore<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Ignore``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}})`</small>
 
 #### Summary
@@ -179,7 +223,7 @@ None
 None
 #### Examples:
 None
-> ### method: Rename``1
+> ### method: Rename<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)`</small>
 
 #### Summary
@@ -195,7 +239,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapMember``2
+> ### method: MapMember<T, U>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.MapMember``2(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Linq.Expressions.Expression{System.Func{``1,System.Object}})`</small>
 
 #### Summary
@@ -217,7 +261,7 @@ None
 None
 #### Examples:
 None
-> ### method: ApplyMemberAction``1
+> ### method: ApplyMemberAction<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.ApplyMemberAction``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Action{Dbarone.Net.Mapper.MapperMemberConfiguration})`</small>
 
 #### Summary
@@ -251,7 +295,7 @@ None
 None
 
 ---
-## MapperMemberConfiguration
+## Dbarone.Net.Mapper.MapperMemberConfiguration
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -295,7 +339,7 @@ None
 
 
 ---
-## MapperOptions
+## Dbarone.Net.Mapper.MapperOptions
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -333,7 +377,7 @@ None
 
 
 ---
-## MapperTypeConfiguration
+## Dbarone.Net.Mapper.MapperTypeConfiguration
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -387,7 +431,7 @@ None
 
 
 ---
-## MapperEndPoint
+## Dbarone.Net.Mapper.MapperEndPoint
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -413,7 +457,7 @@ None
 
 
 ---
-## ClassMemberResolver
+## Dbarone.Net.Mapper.ClassMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -421,7 +465,7 @@ None
 
 
 ---
-## CreateInstance
+## Dbarone.Net.Mapper.CreateInstance
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -431,7 +475,7 @@ Returns: Returns an instance of an object.
 
 
 ---
-## DictionaryMemberResolver
+## Dbarone.Net.Mapper.DictionaryMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -439,7 +483,7 @@ Returns: Returns an instance of an object.
 
 
 ---
-## Getter
+## Dbarone.Net.Mapper.Getter
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -449,7 +493,7 @@ Returns: A value
 
 
 ---
-## IMemberResolver
+## Dbarone.Net.Mapper.IMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -457,7 +501,7 @@ Returns: A value
 
 
 ---
-## Setter
+## Dbarone.Net.Mapper.Setter
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -467,7 +511,7 @@ Returns: A value
 
 
 ---
-## ObjectMapper
+## Dbarone.Net.Mapper.ObjectMapper
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -495,7 +539,7 @@ Exception thrown: [T:System.Exception](#T:System.Exception):
 
 #### Examples:
 None
-> ### method: MapOne``2
+> ### method: MapOne<T, U>
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`</small>
 
 #### Summary
@@ -516,7 +560,7 @@ None
 None
 #### Examples:
 None
-> ### method: MapMany``2
+> ### method: MapMany<T, U>
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`</small>
 
 #### Summary
@@ -539,7 +583,7 @@ None
 None
 
 ---
-## ITypeConverter
+## Dbarone.Net.Mapper.ITypeConverter
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
@@ -565,7 +609,7 @@ None
 None
 
 ---
-## TypeConverter`2
+## Dbarone.Net.Mapper.TypeConverter`2
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:

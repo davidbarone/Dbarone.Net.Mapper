@@ -75,7 +75,7 @@ $@"# Assembly: {model.assembly}
                     {"type", (model) =>
 $@"
 ---
-## {model.IdParts.Name}
+## {model.IdParts.FullyQualifiedName}
 ### Namespace:
 `{model.IdParts.Namespace}`
 ### Summary:
@@ -136,8 +136,8 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                         {"members", x.Element("members").Elements("member").ToMarkDown()},
                         {"toc", x.Element("members").Elements("member")
                         .Select(toc => new IdParts(toc.Attribute("name").Value))
-                        .Where(toc => toc.MemberType == MemberType.type)
-                        .Select(toc => $"- [{toc.FullyQualifiedName}](#{toc.FullyQualifiedNameLink})\n")
+                        //.Where(toc => toc.MemberType == MemberType.type)
+                        .Select(toc => (toc.MemberType==MemberType.type ? "- " : "  - ") + $"[{toc.Name}](#{toc.FullyQualifiedNameLink})\n")
                         .Aggregate("", (current, next) => current + "" + next)}
                     }},
                     {"type", x=> fxIdAndText("name", x)},
@@ -238,7 +238,7 @@ internal class IdParts
     /// </summary>
     public string Name { get; set; }
 
-    public IdParts(string id)
+    public IdParts(string id, IList<XElement> typeParameters = null, IList<XElement> parameters = null)
     {
         Console.WriteLine($"Processing: {id}...");
         this.Id = id;
@@ -264,10 +264,82 @@ internal class IdParts
         }
         var nameParts = fqnParts[0].Split('.');
         this.Name = nameParts[nameParts.Length - 1];
+
+        // Check name for generics. (contains '``' characters)
+        var nameGenericSplits = this.Name.Split("``");
+        this.Name = nameGenericSplits[0];
+        if (nameGenericSplits.Length == 2)
+        {
+            var numberOfParameters = int.Parse(nameGenericSplits[1]);
+            switch (numberOfParameters)
+            {
+                case 1:
+                    this.Name += "<T>";
+                    break;
+                case 2:
+                    this.Name += "<T, U>";
+                    break;
+                case 3:
+                    this.Name += "<T, U, V>";
+                    break;
+                case 4:
+                    this.Name += "<T, U, V, W>";
+                    break;
+            }
+        }
+
+        // Check name for type generics. (contains '`' characters)
+        nameGenericSplits = this.Name.Split("`");
+        this.Name = nameGenericSplits[0];
+        if (nameGenericSplits.Length == 2)
+        {
+            var numberOfParameters = int.Parse(nameGenericSplits[1]);
+            switch (numberOfParameters)
+            {
+                case 1:
+                    this.Name += "<A>";
+                    break;
+                case 2:
+                    this.Name += "<A, B>";
+                    break;
+                case 3:
+                    this.Name += "<A, B, C>";
+                    break;
+                case 4:
+                    this.Name += "<A, B, C, D>";
+                    break;
+            }
+        }
+
         if ("FPEM".Contains(splits[0]))
         {
+            // For fields, properties, events, methods, the
+            // parent == containing type.
             this.Parent = nameParts[nameParts.Length - 2];
             this.Namespace = string.Join('.', nameParts.Take(nameParts.Length - 2));
+
+            // Check type for generics (single '`' character)
+            var parentGenericsSplits = this.Parent.Split('`');
+            this.Parent = parentGenericsSplits[0];
+            if (parentGenericsSplits.Length == 2)
+            {
+                var numberOfTypeParameters = int.Parse(parentGenericsSplits[1]);
+                switch (numberOfTypeParameters)
+                {
+                    case 1:
+                        this.Parent += "<A>";
+                        break;
+                    case 2:
+                        this.Parent += "<A, B>";
+                        break;
+                    case 3:
+                        this.Parent += "<A, B, C>";
+                        break;
+                    case 4:
+                        this.Parent += "<A, B, C, D>";
+                        break;
+                }
+            }
         }
         this.Namespace = string.Join('.', nameParts.Take(nameParts.Length - 1));
     }
