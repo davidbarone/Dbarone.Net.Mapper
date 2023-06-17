@@ -77,7 +77,8 @@
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
-TBD
+ Creates configuration for a [ObjectMapper](#dbaronenetmapperobjectmapper) mapper object. 
+
 > ### method: GetTypeConfigurationCount
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfigurationCount`</small>
 
@@ -172,22 +173,40 @@ None
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType``1(Dbarone.Net.Mapper.MapperOptions)`</small>
 
 #### Summary
- Registers a single type. 
+ Registers a type using generic types. 
 
 #### Type Parameters:
 |Param | Description |
 |-----|-----|
-|T: ||
+|T: |The type of the entity to register.|
 
 #### Parameters:
 |Name | Description |
 |-----|------|
-|options: ||
+|options: |optional configuration for the mapping.|
 
 #### Exceptions Thrown:
 None
 #### Examples:
-None
+
+#### Examples:
+
+
+The following example shows how to register a type:
+``` c#
+    // Configure mapper
+    var mapper = MapperConfiguration
+        .Create()
+        .RegisterType<CustomerEntity>()
+        .RegisterType<CustomerModel>()
+        .Build();
+        
+    // Map object
+    var obj2 = mapper.MapOne<CustomerEntity, CustomerModel>(obj1); 
+    
+```
+
+
 > ### method: RegisterType
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterType(System.Type,Dbarone.Net.Mapper.MapperOptions)`</small>
 

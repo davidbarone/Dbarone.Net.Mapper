@@ -121,8 +121,7 @@ $@"> ### {model.IdParts.MemberType}: {model.IdParts.Name}
                     {"summary", (model) => $"{model.Text}\n"},
                     {"remarks", (model) => $"\n>{model.Name}\n"},
                     {"example", (model) => $"\n{model.Text}\n"},
-                    {"seePage", (model) => $"[[{model.Text}|{model.Name}]]"},
-                    {"seeAnchor", (model) => $"[{model.Text}]({model.Name})"},
+                    {"see", (model) => $"[{model.IdParts.Name}](#{model.IdParts.FullyQualifiedNameLink})"},
                     {"param", (model) => $"|{model.Name}: |{model.Text}|\n" },
                     {"typeparam", (model) => $"|{model.Name}: |{model.Text}|\n" },
                     {"exception", (model) => $"\nException thrown: [{model.Name}](#{model.Name}): {model.Text}\n" },
@@ -169,10 +168,11 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                     {"summary", x=> new Dictionary<string, object> {{"Text", x.Nodes().ToMarkDown()}}},
                     {"remarks", x => new Dictionary<string, object> {{"Text", x.Nodes().ToMarkDown()}}},
                     {"example", x => new Dictionary<string, object> {{"Text", x.ToCodeBlock()}}},
-                    {"seePage", x=> fxNameAndText("cref", x) },
-                    {"seeAnchor", x=> {
-                        var xx = fxNameAndText("cref", x);
-                        xx["Name"] = xx["Name"].ToString().ToLower(); return new Dictionary<string, object> {{"Text", xx}}; }},
+                    {"see", x=> {
+                        var nameAndText = fxNameAndText("cref", x);
+                        nameAndText["IdParts"] = new IdParts(nameAndText["Name"].ToString());
+                        return nameAndText;
+                    }},
                     {"param", x => fxNameAndText("name", x) },
                     {"typeparam", x => fxNameAndText("name", x) },
                     {"exception", x => fxNameAndText("cref", x) },
@@ -404,11 +404,7 @@ internal static string ToMarkDown(this XNode e)
             var idParts = new IdParts(el.Attribute("name").Value);
             name = idParts.MemberType.ToString();
         }
-        if (name == "see")
-        {
-            var anchor = el.Attribute("cref").Value.StartsWith("!:#");
-            name = anchor ? "seeAnchor" : "seePage";
-        }
+
         var model = DictionaryToExpando(methods[name](el));
         Console.WriteLine($"About to render template for [{name}]...");
         return templates[name](model);

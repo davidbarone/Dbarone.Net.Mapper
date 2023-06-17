@@ -4,7 +4,7 @@ using Dbarone.Net.Extensions;
 using System.Reflection;
 
 /// <summary>
-/// 
+/// Creates configuration for a <see cref="ObjectMapper" /> mapper object.
 /// </summary>
 public class MapperConfiguration
 {
@@ -72,10 +72,25 @@ public class MapperConfiguration
     }
 
     /// <summary>
-    /// Registers a single type.
+    /// Registers a type using generic types.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="options"></param>
+    /// <typeparam name="T">The type of the entity to register.</typeparam>
+    /// <param name="options">optional configuration for the mapping.</param>
+    /// <example>
+    /// The following example shows how to register a type:
+    /// <code>
+    /// // Configure mapper
+    /// var mapper = MapperConfiguration
+    ///     .Create()
+    ///     .RegisterType&lt;CustomerEntity&gt;()
+    ///     .RegisterType&lt;CustomerModel&gt;()
+    ///     .Build();
+    ///     
+    /// // Map object
+    /// var obj2 = mapper.MapOne&lt;CustomerEntity, CustomerModel&gt;(obj1); 
+    /// </code>
+    /// </example>
+    /// <returns></returns>
     public MapperConfiguration RegisterType<T>(MapperOptions? options = null)
     {
         return RegisterType(typeof(T), options);
