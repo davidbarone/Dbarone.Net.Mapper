@@ -12,6 +12,7 @@
 - [Dbarone.Net.Mapper.Getter](#dbaronenetmappergetter)
 - [Dbarone.Net.Mapper.IMemberResolver](#dbaronenetmapperimemberresolver)
 - [Dbarone.Net.Mapper.Setter](#dbaronenetmappersetter)
+- [Dbarone.Net.Mapper.ObjectMapper](#dbaronenetmapperobjectmapper)
 - [Dbarone.Net.Mapper.ITypeConverter](#dbaronenetmapperitypeconverter)
 - [Dbarone.Net.Mapper.TypeConverter`2](#dbaronenetmappertypeconverter`2)
 - [NamingConvention](#namingconvention)
@@ -349,6 +350,46 @@ Namespace: `Dbarone.Net.Mapper`
  Defines a basic setter delegate. 
 |target: |The object to set the value in.|
 |value: |The value to set.|
+
+
+---
+## Dbarone.Net.Mapper.ObjectMapper
+Namespace: `Dbarone.Net.Mapper`
+
+ The ObjectMapper class provides mapping functions to transform objects from one type to another. 
+
+### method: ObjectMapper.MapOne
+id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne(System.Type,System.Type,System.Object)`
+
+ Maps / transforms an object from one type to another. 
+
+
+
+|Name | Description |
+|-----|------|
+|fromType: |The type to transform the object from.|
+|toType: |The type to transform the object to.|
+|obj: |The object being transformed from. Must be assignable to `fromType`.|
+
+
+Exception thrown: [T:System.Exception](#T:System.Exception): 
+
+
+### method: ObjectMapper.MapOne``2
+id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`
+
+ Maps / transforms an object from one type to another. 
+
+|Param | Description |
+|-----|-----|
+|T: ||
+|U: ||
+
+|Name | Description |
+|-----|------|
+|obj: ||
+
+
 
 ### method: ObjectMapper.MapMany``2
 id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`
