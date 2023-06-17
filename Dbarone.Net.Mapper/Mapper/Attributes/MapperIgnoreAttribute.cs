@@ -3,8 +3,9 @@ using System;
 namespace Dbarone.Net.Mapper
 {
     /// <summary>
-    /// Indicates that property should not be mapped.
+    /// Attribute to indicate that a property should not be mapped.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property|AttributeTargets.Field)]
     public class MapperIgnoreAttribute : Attribute
     {
     }

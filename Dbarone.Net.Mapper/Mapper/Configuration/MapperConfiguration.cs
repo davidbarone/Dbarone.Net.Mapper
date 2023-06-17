@@ -25,32 +25,34 @@ public class MapperConfiguration
     }
 
     /// <summary>
-    /// Gets the type configuration for a specific type.
+    /// Gets the <see cref="MapperTypeConfiguration" /> configuration for a specific type.
     /// </summary>
     /// <param name="type">The type to get the configuration for.</param>
-    /// <returns>Type configuration for the type.</returns>
+    /// <returns>Returns a <see cref="MapperTypeConfiguration" /> object representing the specified configuration.</returns>
     public MapperTypeConfiguration GetTypeConfiguration(Type type)
     {
         return TypeConfiguration[type];
     }
 
     /// <summary>
-    /// Creates a new MapperConfiguration instance.
+    /// Creates a new <see cref="MapperConfiguration" /> instance.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>returns a new <see cref="MapperConfiguration" /> instance.</returns>
     public static MapperConfiguration Create()
     {
         return new MapperConfiguration();
     }
 
     /// <summary>
-    /// Adds a type converter.
+    /// Adds a type converter. Type converters are used to convert simple / native types where the members in the
+    /// source and destinations have different types.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="U"></typeparam>
-    /// <param name="converter"></param>
-    /// <returns></returns>
-    public MapperConfiguration RegisterConverter<T, U>(Func<T, U> converter) {
+    /// <typeparam name="T">The type of the source member.</typeparam>
+    /// <typeparam name="U">The type of the destination member.</typeparam>
+    /// <param name="converter">A converter func.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration RegisterConverter<T, U>(Func<T, U> converter)
+    {
         TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);
         Tuple<Type, Type> k = new Tuple<Type, Type>(typeof(T), typeof(U));
         this.Converters[k] = typeConverter;
@@ -60,8 +62,8 @@ public class MapperConfiguration
     /// <summary>
     /// Registers a collection of types.
     /// </summary>
-    /// <param name="types"></param>
-    /// <param name="options"></param>
+    /// <param name="types">An array of Types.</param>
+    /// <param name="options">An optional <see cref="MapperOptions" /> object containing configuration details for all the types to be registered.</param>
     public MapperConfiguration RegisterTypes(Type[] types, MapperOptions? options = null)
     {
         foreach (var type in types)
@@ -75,7 +77,7 @@ public class MapperConfiguration
     /// Registers a type using generic types.
     /// </summary>
     /// <typeparam name="T">The type of the entity to register.</typeparam>
-    /// <param name="options">optional configuration for the mapping.</param>
+    /// <param name="options">An optional <see cref="MapperOptions" /> object containing configuration details for the type being registered.</param>
     /// <example>
     /// The following example shows how to register a type:
     /// <code>
@@ -96,22 +98,11 @@ public class MapperConfiguration
         return RegisterType(typeof(T), options);
     }
 
-    private IEnumerable<MemberInfo> GetMembers(Type type, MapperOptions options)
-    {
-        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
-        if (options.IncludePrivateMembers)
-        {
-            bindingFlags |= BindingFlags.NonPublic;
-        }
-        var members = type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
-        return members;
-    }
-
     /// <summary>
     /// Registers a single type.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="options"></param>
+    /// <param name="type">The type to be registered.</param>
+    /// <param name="options">An optional <see cref="MapperOptions" /> object containing configuration details for the type being registered.</param>
     public MapperConfiguration RegisterType(Type type, MapperOptions? options = null)
     {
         if (options == null)
@@ -145,6 +136,22 @@ public class MapperConfiguration
         return this;
     }
 
+    /// <summary>
+    /// Registers a specific type-to-type configuration. When registering via <see cref="RegisterType" /> only 1 endpoint
+    /// is specified, and the <see cref="ObjectMapper" /> automatically joins members based on member name. In cases
+    /// where a specific mapping between 2 types is required, this method can be used to provide custom behaviour.
+    /// </summary>
+    /// <typeparam name="T">The source type to map.</typeparam>
+    /// <typeparam name="U">The destination type to map.</typeparam>
+    /// <param name="sourceOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the source type being registered.</param>
+    /// <param name="destinationOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the destination type being registered.</param>
+    /// <returns></returns>
+    public MapperConfiguration RegisterMap<T, U>(MapperOptions sourceOptions, MapperOptions destinationOptions)
+    {
+        RegisterMap(typeof(T), sourceOptions, typeof(U), destinationOptions);
+        return this;
+    }
+
     public MapperConfiguration RegisterMap(Type sourceType, MapperOptions sourceOptions, Type destinationType, MapperOptions destinationOptions)
     {
         var key = new Tuple<Type, Type>(
@@ -166,10 +173,17 @@ public class MapperConfiguration
         return this;
     }
 
-    public MapperConfiguration RegisterMap<T, U>(MapperOptions sourceOptions, MapperOptions destinationOptions)
+
+
+    private IEnumerable<MemberInfo> GetMembers(Type type, MapperOptions options)
     {
-        RegisterMap(typeof(T), sourceOptions, typeof(U), destinationOptions);
-        return this;
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+        if (options.IncludePrivateMembers)
+        {
+            bindingFlags |= BindingFlags.NonPublic;
+        }
+        var members = type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
+        return members;
     }
 
     /// <summary>
@@ -230,11 +244,10 @@ public class MapperConfiguration
         return this;
     }
 
-
     /// <summary>
-    /// Builds a configured object mapper.
+    /// Takes all the configuration and builds an <see cref="ObjectMapper" /> object that can then be used to map objects.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Returns a configured <see cref="ObjectMapper" /> object.</returns>
     public ObjectMapper Build()
     {
         // Set InternalMemberName

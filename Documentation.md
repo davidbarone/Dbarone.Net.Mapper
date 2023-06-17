@@ -9,6 +9,7 @@
   - [RegisterTypes](#dbaronenetmappermapperconfigurationregistertypes(systemtype[],dbaronenetmappermapperoptions))
   - [RegisterType<T>](#dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions))
   - [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions))
+  - [RegisterMap<T, U>](#dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions))
   - [Ignore<T>](#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}}))
   - [Rename<T>](#dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring))
   - [MapMember<T, U>](#dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}}))
@@ -69,7 +70,7 @@
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary:
- Indicates that property should not be mapped. 
+ Attribute to indicate that a property should not be mapped. 
 
 
 ---
@@ -99,7 +100,7 @@ None
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.GetTypeConfiguration(System.Type)`</small>
 
 #### Summary
- Gets the type configuration for a specific type. 
+ Gets the [MapperTypeConfiguration](#dbaronenetmappermappertypeconfiguration) configuration for a specific type. 
 
 #### Type Parameters:
 None
@@ -117,7 +118,7 @@ None
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Create`</small>
 
 #### Summary
- Creates a new MapperConfiguration instance. 
+ Creates a new [MapperConfiguration](#dbaronenetmappermapperconfiguration) instance. 
 
 #### Type Parameters:
 None
@@ -133,18 +134,18 @@ None
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
 
 #### Summary
- Adds a type converter. 
+ Adds a type converter. Type converters are used to convert simple / native types where the members in the source and destinations have different types. 
 
 #### Type Parameters:
 |Param | Description |
 |-----|-----|
-|T: ||
-|U: ||
+|T: |The type of the source member.|
+|U: |The type of the destination member.|
 
 #### Parameters:
 |Name | Description |
 |-----|------|
-|converter: ||
+|converter: |A converter func.|
 
 #### Exceptions Thrown:
 None
@@ -162,8 +163,8 @@ None
 #### Parameters:
 |Name | Description |
 |-----|------|
-|types: ||
-|options: ||
+|types: |An array of Types.|
+|options: |An optional [MapperOptions](#dbaronenetmappermapperoptions) object containing configuration details for all the types to be registered.|
 
 #### Exceptions Thrown:
 None
@@ -183,7 +184,7 @@ None
 #### Parameters:
 |Name | Description |
 |-----|------|
-|options: |optional configuration for the mapping.|
+|options: |An optional [MapperOptions](#dbaronenetmappermapperoptions) object containing configuration details for the type being registered.|
 
 #### Exceptions Thrown:
 None
@@ -219,8 +220,30 @@ None
 #### Parameters:
 |Name | Description |
 |-----|------|
-|type: ||
-|options: ||
+|type: |The type to be registered.|
+|options: |An optional [MapperOptions](#dbaronenetmappermapperoptions) object containing configuration details for the type being registered.|
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+> ### method: RegisterMap<T, U>
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterMap``2(Dbarone.Net.Mapper.MapperOptions,Dbarone.Net.Mapper.MapperOptions)`</small>
+
+#### Summary
+ Registers a specific type-to-type configuration. When registering via [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions)) only 1 endpoint is specified, and the [ObjectMapper](#dbaronenetmapperobjectmapper) automatically joins members based on member name. In cases where a specific mapping between 2 types is required, this method can be used to provide custom behaviour. 
+
+#### Type Parameters:
+|Param | Description |
+|-----|-----|
+|T: |The source type to map.|
+|U: |The destination type to map.|
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|sourceOptions: |An optional [MapperOptions](#dbaronenetmappermapperoptions) object containing configuration details for the source type being registered.|
+|destinationOptions: |An optional [MapperOptions](#dbaronenetmappermapperoptions) object containing configuration details for the destination type being registered.|
 
 #### Exceptions Thrown:
 None
@@ -300,7 +323,7 @@ None
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Build`</small>
 
 #### Summary
- Builds a configured object mapper. 
+ Takes all the configuration and builds an [ObjectMapper](#dbaronenetmapperobjectmapper) object that can then be used to map objects. 
 
 #### Type Parameters:
 None
