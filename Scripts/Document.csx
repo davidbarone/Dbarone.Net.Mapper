@@ -507,8 +507,6 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     {
         signatureArgs = signatureArgs.Substring(0, signatureArgs.Length - 2);
     }
-    return $@"``` c#
-{idParts.Parent}.{idParts.Name}({signatureArgs})
-```";
+    return $"``` c#\n{idParts.Parent}.{idParts.Name}({signatureArgs})\n```";
 
 }
