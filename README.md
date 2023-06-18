@@ -38,8 +38,23 @@ In order to map objects between types, those types must be registered within the
 
 The above example shows a simple mapping scenario. The mapper function (MapOne) maps a single object into another object / type. It does this by connecting members (properties and fields) with matching names. In the most basic example, if the CustomerModel CustomerDto types above have the same member names, then no additional configuration is required.
 
+Multiple types can be registered in one go:
+
+``` C#
+
+        // Get all the 'dto' types in the current assembly.
+        var dtoTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Name.EndsWith("dto")).ToArray();
+
+        var mapper = MapperConfiguration.Create()
+            .RegisterTypes(dtoTypes).Build();
+
+        // do some mapping now...
+
+```
+A MappingOptions can also be provided, so that groups of types can be configured with similar settings.
+
 ### Mapper Options
-When registering types, a mapper options set of values can be included. This defines how the type should be treated during mapping operations.
+When registering types, mapper options can be included. This defines how the type should be treated during mapping operations.
 
 ### Including fields and private members
 By default, mapper will only map public properties. This behaviour can be overriden within the MapperOptions value:
@@ -60,4 +75,43 @@ By default, mapper will only map public properties. This behaviour can be overri
         // obj2 now contains all values of obj1.
 
 ```
+### Member renaming strategy
+A member renaming strategy can be applied to types that are registered with the mapper configuration. Member renaming strategies are employed to rename members based on a rule. Mapping strategies implement the `IMemberRenameStrategy` interface. By default, no member renaming strategy is used. In this case, actual type member names are compared and matched between source and destination types to produce a set mapping rules. However, the following classes can be used to provide a general renaming strategy:
 
+| Class                            | Description                                              |
+| -------------------------------- | -------------------------------------------------------- |
+| CaseChangeMemberRenameStrategy   | Replaces members of a particular case with another case. |
+| PrefixSuffixMemberRenameStrategy | Removes prefix or suffix characters on member names.     |
+
+An example of using a member renaming strategy is shown below:
+
+``` C#
+public class EntityWithPascalCaseMembers
+{
+    public int EntityId { get; set; }
+    public string EntityName { get; set; } = default!;
+}
+
+public class EntityWithSnakeCaseMembers
+{
+    public int entity_id { get; set; }
+    public string entity_name { get; set; } = default!;
+}
+
+public class Main {
+
+    public void DoMapping() {
+
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<EntityWithSnakeCaseMembers>(new MapperOptions() {
+                MemberRenameStrategy = new CaseChangeMemberRenameStrategy(CaseType.SnakeCase, CaseType.LowerCase)
+            })
+            .RegisterType<EntityWithPascalCaseMembers>(new MapperOptions() {
+                MemberRenameStrategy = new CaseChangeMemberRenameStrategy(CaseType.PascalCase, CaseType.LowerCase)
+            })
+            .Build();
+
+        EntityWithPascalCaseMembers pascalObj = mapper.MapOne<EntityWithSnakeCaseMembers, EntityWithPascalCaseMembers>(snakeObj);
+    }
+}
+```

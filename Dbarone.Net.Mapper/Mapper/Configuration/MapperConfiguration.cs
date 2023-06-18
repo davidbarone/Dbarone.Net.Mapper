@@ -336,7 +336,8 @@ public class MapperConfiguration
                 {
                     if (v.Options.MemberRenameStrategy != null)
                     {
-                        item.InternalMemberName = v.Options.MemberRenameStrategy.RenameMember(item.MemberName);
+                        var newName = v.Options.MemberRenameStrategy.RenameMember(item.MemberName);
+                        item.InternalMemberName = newName;
                     }
                     else
                     {

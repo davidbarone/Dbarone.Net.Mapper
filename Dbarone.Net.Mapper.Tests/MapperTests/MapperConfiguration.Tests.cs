@@ -1,4 +1,6 @@
 namespace Dbarone.Net.Mapper.Tests;
+using System.Reflection;
+using Dbarone.Net.Extensions;
 
 public class MapperConfigurationTests
 {
@@ -6,16 +8,20 @@ public class MapperConfigurationTests
     public void MapperBuilder_RegisterTypes_ShouldBuild()
     {
         var config = MapperConfiguration.Create()
-        .RegisterType<CustomerA>(new MapperOptions
-        {
-            MemberNameCaseType = Extensions.CaseType.CamelCase
-        })
-        .RegisterType<CustomerB>(new MapperOptions
-        {
-            MemberNameCaseType = Extensions.CaseType.CamelCase
-        })
+        .RegisterType<CustomerA>()
+        .RegisterType<CustomerB>()
         .Ignore<CustomerB>(c => c.CustomerId)
         .Build();
+    }
+
+    public void MapperConfiguration_AddMultipleTypes_ShouldBuild()
+    {
+        var dtoTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Name.EndsWith("dto")).ToArray();
+
+        var mapper = MapperConfiguration.Create()
+            .RegisterTypes(dtoTypes).Build();
+
+        // do some mapping now...
     }
 
     [Fact]
@@ -55,5 +61,29 @@ public class MapperConfigurationTests
             .Rename<CustomerEntity>(c => c.CustomerId, "Name");  // 2 Name members now exist.
 
         Assert.Throws<MapperException>(() => config.Build());
+    }
+
+    [Fact]
+    public void MapperConfiguration_UseCaseChangeMemberRenameStrategy_ShouldMatchMembers()
+    {
+        var snakeObj = new EntityWithSnakeCaseMembers()
+        {
+            entity_id = 123,
+            entity_name = "this is an entity name"
+        };
+
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<EntityWithSnakeCaseMembers>(new MapperOptions()
+            {
+                MemberRenameStrategy = new CaseChangeMemberRenameStrategy(CaseType.SnakeCase, CaseType.LowerCase)
+            })
+            .RegisterType<EntityWithPascalCaseMembers>(new MapperOptions()
+            {
+                MemberRenameStrategy = new CaseChangeMemberRenameStrategy(CaseType.PascalCase, CaseType.LowerCase)
+            })
+            .Build();
+
+        var pascalObj = mapper.MapOne<EntityWithSnakeCaseMembers, EntityWithPascalCaseMembers>(snakeObj);
+        Assert.Equal(123, pascalObj!.EntityId);
     }
 }

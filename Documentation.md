@@ -28,7 +28,6 @@
 - [MapperOptions](#dbaronenetmappermapperoptions)
   - [IncludeFields](#dbaronenetmappermapperoptionsincludefields)
   - [IncludePrivateMembers](#dbaronenetmappermapperoptionsincludeprivatemembers)
-  - [MemberNameCaseType](#dbaronenetmappermapperoptionsmembernamecasetype)
   - [MemberRenameStrategy](#dbaronenetmappermapperoptionsmemberrenamestrategy)
   - [AssertMapEndPoint](#dbaronenetmappermapperoptionsassertmapendpoint)
 - [MapperTypeConfiguration](#dbaronenetmappermappertypeconfiguration)
@@ -42,6 +41,17 @@
   - [None](#dbaronenetmappermapperendpointnone)
   - [Source](#dbaronenetmappermapperendpointsource)
   - [Destination](#dbaronenetmappermapperendpointdestination)
+- [CaseChangeMemberRenameStrategy](#dbaronenetmappercasechangememberrenamestrategy)
+  - [#ctor](#dbaronenetmappercasechangememberrenamestrategy#ctor(dbaronenetextensionscasetype,dbaronenetextensionscasetype))
+  - [RenameMember](#dbaronenetmappercasechangememberrenamestrategyrenamemember(systemstring))
+- [IMemberRenameStrategy](#dbaronenetmapperimemberrenamestrategy)
+  - [RenameMember](#dbaronenetmapperimemberrenamestrategyrenamemember(systemstring))
+- [PrefixSuffix](#dbaronenetmapperprefixsuffix)
+  - [Prefix](#dbaronenetmapperprefixsuffixprefix)
+  - [Suffix](#dbaronenetmapperprefixsuffixsuffix)
+- [PrefixSuffixMemberRenameStrategy](#dbaronenetmapperprefixsuffixmemberrenamestrategy)
+  - [#ctor](#dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring))
+  - [RenameMember](#dbaronenetmapperprefixsuffixmemberrenamestrategyrenamemember(systemstring))
 - [ClassMemberResolver](#dbaronenetmapperclassmemberresolver)
 - [CreateInstance](#dbaronenetmappercreateinstance)
 - [DictionaryMemberResolver](#dbaronenetmapperdictionarymemberresolver)
@@ -53,16 +63,8 @@
   - [MapOne<T, U>](#dbaronenetmapperobjectmappermapone``2(``0))
   - [MapMany<T, U>](#dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0}))
   - [Validate<T, U>](#dbaronenetmapperobjectmappervalidate``2)
-- [IMemberRenameStrategy](#dbaronenetmapperimemberrenamestrategy)
-  - [RenameMember](#dbaronenetmapperimemberrenamestrategyrenamemember(systemstring))
 - [ITypeConverter](#dbaronenetmapperitypeconverter)
   - [Convert](#dbaronenetmapperitypeconverterconvert(systemobject))
-- [PrefixSuffix](#dbaronenetmapperprefixsuffix)
-  - [Prefix](#dbaronenetmapperprefixsuffixprefix)
-  - [Suffix](#dbaronenetmapperprefixsuffixsuffix)
-- [PrefixSuffixMemberRenameStrategy](#dbaronenetmapperprefixsuffixmemberrenamestrategy)
-  - [#ctor](#dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring))
-  - [RenameMember](#dbaronenetmapperprefixsuffixmemberrenamestrategyrenamemember(systemstring))
 - [TypeConverter`2](#dbaronenetmappertypeconverter`2)
   - [#ctor](#dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1}))
   - [Convert](#dbaronenetmappertypeconverter`2convert(systemobject))
@@ -523,12 +525,6 @@ None
 
 
 <small>[Back to top](#top)</small>
->### property: MemberNameCaseType
-#### Summary
- The default casing convention for members of the type. Default is CaseType.None. 
-
-
-<small>[Back to top](#top)</small>
 >### property: MemberRenameStrategy
 #### Summary
  Optional member renaming strategy. 
@@ -625,6 +621,162 @@ None
 #### Summary
  Destination mapper endpoint. 
 
+
+<small>[Back to top](#top)</small>
+
+---
+## Dbarone.Net.Mapper.CaseChangeMemberRenameStrategy
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ Converts member names from specified case type to a common (lowercase). Implementation of [IMemberRenameStrategy](#dbaronenetmapperimemberrenamestrategy). 
+
+>### <a id='dbaronenetmappercasechangememberrenamestrategy#ctor(dbaronenetextensionscasetype,dbaronenetextensionscasetype)'></a>method: #ctor
+#### Signature
+``` c#
+CaseChangeMemberRenameStrategy.#ctor(Dbarone.Net.Extensions.CaseType matchCase, Dbarone.Net.Extensions.CaseType newCase)
+```
+#### Summary
+ Creates a new instance. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|matchCase: |The case to match.|
+|newCase: |The case to change the member to.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappercasechangememberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
+#### Signature
+``` c#
+CaseChangeMemberRenameStrategy.RenameMember(System.String member)
+```
+#### Summary
+ Renames a member. If the case of the member matches the `matchCase`, then it is converted to `newCase`. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|member: |The input member name.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+
+---
+## Dbarone.Net.Mapper.IMemberRenameStrategy
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ Interface for classes that can provide member renaming strategies. 
+
+>### <a id='dbaronenetmapperimemberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
+#### Signature
+``` c#
+IMemberRenameStrategy.RenameMember(System.String member)
+```
+#### Summary
+ Renames member names. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|member: |The member name.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+
+---
+## Dbarone.Net.Mapper.PrefixSuffix
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ Denotes either prefix or suffix. 
+
+>### field: Prefix
+#### Summary
+ Prefix (start of string). 
+
+
+<small>[Back to top](#top)</small>
+>### field: Suffix
+#### Summary
+ Suffix (end of string). 
+
+
+<small>[Back to top](#top)</small>
+
+---
+## Dbarone.Net.Mapper.PrefixSuffixMemberRenameStrategy
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ Removes prefix/suffix characters from member names. 
+
+>### <a id='dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring)'></a>method: #ctor
+#### Signature
+``` c#
+PrefixSuffixMemberRenameStrategy.#ctor(Dbarone.Net.Mapper.PrefixSuffix stringType, System.String stringToRemove)
+```
+#### Summary
+ Creates a new instance. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|stringType: |The [PrefixSuffix](#dbaronenetmapperprefixsuffix) type.|
+|stringToRemove: |The string to remove.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperprefixsuffixmemberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
+#### Signature
+``` c#
+PrefixSuffixMemberRenameStrategy.RenameMember(System.String member)
+```
+#### Summary
+ Renames a member, removing either a Pre or Post 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|member: ||
+
+#### Exceptions:
+None
+#### Examples:
+None
 
 <small>[Back to top](#top)</small>
 
@@ -790,36 +942,6 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.IMemberRenameStrategy
-### Namespace:
-`Dbarone.Net.Mapper`
-### Summary:
- Interface for classes that can provide member renaming strategies. 
-
->### <a id='dbaronenetmapperimemberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
-#### Signature
-``` c#
-IMemberRenameStrategy.RenameMember(System.String member)
-```
-#### Summary
- Renames member names. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|member: |The member name.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
-
----
 ## Dbarone.Net.Mapper.ITypeConverter
 ### Namespace:
 `Dbarone.Net.Mapper`
@@ -841,79 +963,6 @@ None
 |Name | Description |
 |-----|------|
 |obj: |The object to be converted.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
-
----
-## Dbarone.Net.Mapper.PrefixSuffix
-### Namespace:
-`Dbarone.Net.Mapper`
-### Summary:
- Denotes either prefix or suffix. 
-
->### field: Prefix
-#### Summary
- Prefix (start of string). 
-
-
-<small>[Back to top](#top)</small>
->### field: Suffix
-#### Summary
- Suffix (end of string). 
-
-
-<small>[Back to top](#top)</small>
-
----
-## Dbarone.Net.Mapper.PrefixSuffixMemberRenameStrategy
-### Namespace:
-`Dbarone.Net.Mapper`
-### Summary:
- Removes prefix/suffix characters from member names. 
-
->### <a id='dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring)'></a>method: #ctor
-#### Signature
-``` c#
-PrefixSuffixMemberRenameStrategy.#ctor(Dbarone.Net.Mapper.PrefixSuffix stringType, System.String stringToRemove)
-```
-#### Summary
- Creates a new instance. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|stringType: |The [PrefixSuffix](#dbaronenetmapperprefixsuffix) type.|
-|stringToRemove: |The string to remove.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperprefixsuffixmemberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
-#### Signature
-``` c#
-PrefixSuffixMemberRenameStrategy.RenameMember(System.String member)
-```
-#### Summary
- Renames a member, removing either a Pre or Post 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|member: ||
 
 #### Exceptions:
 None

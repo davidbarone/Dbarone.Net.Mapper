@@ -17,11 +17,6 @@ public class MapperOptions
     public bool IncludePrivateMembers { get; set; } = false;
 
     /// <summary>
-    /// The default casing convention for members of the type. Default is CaseType.None.
-    /// </summary>
-    public CaseType MemberNameCaseType { get; set; } = CaseType.None;
-
-    /// <summary>
     /// Optional member renaming strategy.
     /// </summary>
     public IMemberRenameStrategy? MemberRenameStrategy { get; set; } = null;
