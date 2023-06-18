@@ -11,10 +11,11 @@ public class MapperConfiguration
 {
     private IDictionary<Type, MapperTypeConfiguration> TypeConfiguration { get; set; } = new Dictionary<Type, MapperTypeConfiguration>();
     private IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> MapConfiguration { get; set; } = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
-
     private IDictionary<Tuple<Type, Type>, ITypeConverter> Converters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
 
     internal MapperConfiguration() { }
+
+    #region Configuration
 
     /// <summary>
     /// Returns the number of types configured.
@@ -35,6 +36,10 @@ public class MapperConfiguration
         return TypeConfiguration[type];
     }
 
+    #endregion
+
+    #region ctor
+
     /// <summary>
     /// Creates a new <see cref="MapperConfiguration" /> instance.
     /// </summary>
@@ -44,21 +49,9 @@ public class MapperConfiguration
         return new MapperConfiguration();
     }
 
-    /// <summary>
-    /// Adds a type converter. Type converters are used to convert simple / native types where the members in the
-    /// source and destinations have different types.
-    /// </summary>
-    /// <typeparam name="T">The type of the source member.</typeparam>
-    /// <typeparam name="U">The type of the destination member.</typeparam>
-    /// <param name="converter">A converter func.</param>
-    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration RegisterConverter<T, U>(Func<T, U> converter)
-    {
-        TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);
-        Tuple<Type, Type> k = new Tuple<Type, Type>(typeof(T), typeof(U));
-        this.Converters[k] = typeConverter;
-        return this;
-    }
+    #endregion
+
+    #region Register Types
 
     /// <summary>
     /// Registers a collection of types.
@@ -137,6 +130,10 @@ public class MapperConfiguration
         return this;
     }
 
+    #endregion
+
+    #region Register Map
+
     /// <summary>
     /// Registers a specific type-to-type configuration. When registering via <see cref="RegisterType" /> only 1 endpoint
     /// is specified, and the <see cref="ObjectMapper" /> automatically joins members based on member name. In cases
@@ -174,18 +171,9 @@ public class MapperConfiguration
         return this;
     }
 
+    #endregion 
 
-
-    private IEnumerable<MemberInfo> GetMembers(Type type, MapperOptions options)
-    {
-        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
-        if (options.IncludePrivateMembers)
-        {
-            bindingFlags |= BindingFlags.NonPublic;
-        }
-        var members = type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
-        return members;
-    }
+    #region Ignore Members
 
     /// <summary>
     /// Defines a member that will not be mapped.
@@ -203,6 +191,47 @@ public class MapperConfiguration
     }
 
     /// <summary>
+    /// Sets one or more members on a type to be ignored for mapping purposes.
+    /// </summary>
+    /// <param name="type">The type.</param>
+    /// <param name="members">The list of members to ignore</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> object.</returns>
+    public MapperConfiguration Ignore(Type type, params string[] members)
+    {
+        var typeConfig = this.TypeConfiguration.First(c => c.Key == type).Value;
+        foreach (var member in members)
+        {
+            var memberConfig = typeConfig.MemberConfiguration.First(m => m.MemberName.Equals(member, StringComparison.Ordinal));
+            memberConfig.Ignore = true;
+        }
+        return this;
+    }
+
+    #endregion
+
+    #region Converters
+
+    /// <summary>
+    /// Adds a type converter. Type converters are used to convert simple / native types where the members in the
+    /// source and destinations have different types.
+    /// </summary>
+    /// <typeparam name="T">The type of the source member.</typeparam>
+    /// <typeparam name="U">The type of the destination member.</typeparam>
+    /// <param name="converter">A converter func.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration RegisterConverter<T, U>(Func<T, U> converter)
+    {
+        TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);
+        Tuple<Type, Type> k = new Tuple<Type, Type>(typeof(T), typeof(U));
+        this.Converters[k] = typeConverter;
+        return this;
+    }
+
+    #endregion
+
+    #region Rename members
+
+    /// <summary>
     /// Defines a custom name for a member when mapping to other types.
     /// </summary>
     /// <typeparam name="T">The source object type.</typeparam>
@@ -218,6 +247,37 @@ public class MapperConfiguration
         {
             p.InternalMemberName = newName;
         });
+    }
+
+    /// <summary>
+    /// Defines a custom name for a member when mapping to other types.
+    /// </summary>
+    /// <param name="type">The type containing the member.</param>
+    /// <param name="member">The member to rename.</param>
+    /// <param name="newName">The new name for the member.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public MapperConfiguration Rename(Type type, string member, string newName)
+    {
+        var typeConfig = this.TypeConfiguration.First(c => c.Key == type).Value;
+        var memberConfig = typeConfig.MemberConfiguration.First(m => m.MemberName.Equals(member, StringComparison.Ordinal));
+        memberConfig.InternalMemberName = newName;
+        return this;
+    }
+
+    #endregion
+
+    #region Private Members
+
+    private IEnumerable<MemberInfo> GetMembers(Type type, MapperOptions options)
+    {
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+        if (options.IncludePrivateMembers)
+        {
+            bindingFlags |= BindingFlags.NonPublic;
+        }
+        var members = type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
+        return members;
     }
 
     /// <summary>
@@ -251,6 +311,14 @@ public class MapperConfiguration
     }
 
     /// <summary>
+    /// Validates the mapper configuration
+    /// </summary>
+    public void Validate() {
+        // ensure all mapping rules are connected
+
+    }
+
+    /// <summary>
     /// Takes all the configuration and builds an <see cref="ObjectMapper" /> object that can then be used to map objects.
     /// </summary>
     /// <returns>Returns a configured <see cref="ObjectMapper" /> object.</returns>
@@ -262,12 +330,21 @@ public class MapperConfiguration
             var v = this.TypeConfiguration[k];
             foreach (var item in v.MemberConfiguration)
             {
+                // only modify internal name if not already pre-set.
                 if (item.InternalMemberName.IsNullOrWhiteSpace())
                 {
-                    item.InternalMemberName = v.Options.MemberNameTranslation.Invoke(item.MemberName);
+                    if (v.Options.MemberRenameStrategy != null)
+                    {
+                        item.InternalMemberName = v.Options.MemberRenameStrategy.RenameMember(item.MemberName);
+                    } else {
+                        // default - make internal name = member name
+                        item.InternalMemberName = item.MemberName;
+                    }
                 }
             }
         }
         return new ObjectMapper(this.TypeConfiguration, this.Converters);
     }
+
+    #endregion
 }

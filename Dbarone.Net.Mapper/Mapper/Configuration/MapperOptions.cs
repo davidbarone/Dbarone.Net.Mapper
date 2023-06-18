@@ -22,9 +22,9 @@ public class MapperOptions
     public CaseType MemberNameCaseType { get; set; } = CaseType.None;
 
     /// <summary>
-    /// Optional member name translation function
+    /// Optional member renaming strategy.
     /// </summary>
-    public Func<string, string> MemberNameTranslation { get; set; } = s => s;
+    public IMemberRenameStrategy? MemberRenameStrategy { get; set; } = null;
 
     /// <summary>
     /// Defines implicit assertion of mapping rules prior to any map function call. Defaults to 'None'.

@@ -124,4 +124,14 @@ public class ObjectMapper
 
     }
 
+    /// <summary>
+    /// Validates the mapping between two types.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
+    public void Validate<T, U>() {
+        throw new Exception("whoops");
+
+    }
+
 }
