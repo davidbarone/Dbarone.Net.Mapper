@@ -157,7 +157,7 @@ public class MapperTests
     public void Validation_TypesMismatch_ShouldThrowException()
     {
         var mapper = MapperConfiguration.Create()
-            .RegisterType<CustomerWithDifferentTypesA>(new MapperOptions { })
+            .RegisterType<CustomerWithDifferentTypesA>(new MapperOptions { IncludePrivateMembers = true })
             .RegisterType<CustomerWithDifferentTypesB>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Destination })
             .Build();
 
