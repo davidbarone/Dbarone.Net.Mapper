@@ -5,14 +5,17 @@
   - [GetTypeConfigurationCount](#dbaronenetmappermapperconfigurationgettypeconfigurationcount)
   - [GetTypeConfiguration](#dbaronenetmappermapperconfigurationgettypeconfiguration(systemtype))
   - [Create](#dbaronenetmappermapperconfigurationcreate)
-  - [RegisterConverter<T, U>](#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1}))
   - [RegisterTypes](#dbaronenetmappermapperconfigurationregistertypes(systemtype[],dbaronenetmappermapperoptions))
   - [RegisterType<T>](#dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions))
   - [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions))
   - [RegisterMap<T, U>](#dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions))
   - [Ignore<T>](#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}}))
+  - [Ignore](#dbaronenetmappermapperconfigurationignore(systemtype,systemstring[]))
+  - [RegisterConverter<T, U>](#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1}))
   - [Rename<T>](#dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring))
+  - [Rename](#dbaronenetmappermapperconfigurationrename(systemtype,systemstring,systemstring))
   - [MapMember<T, U>](#dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}}))
+  - [Validate](#dbaronenetmappermapperconfigurationvalidate)
   - [Build](#dbaronenetmappermapperconfigurationbuild)
 - [MapperMemberConfiguration](#dbaronenetmappermappermemberconfiguration)
   - [MemberName](#dbaronenetmappermappermemberconfigurationmembername)
@@ -25,7 +28,7 @@
   - [IncludeFields](#dbaronenetmappermapperoptionsincludefields)
   - [IncludePrivateMembers](#dbaronenetmappermapperoptionsincludeprivatemembers)
   - [MemberNameCaseType](#dbaronenetmappermapperoptionsmembernamecasetype)
-  - [MemberNameTranslation](#dbaronenetmappermapperoptionsmembernametranslation)
+  - [MemberRenameStrategy](#dbaronenetmappermapperoptionsmemberrenamestrategy)
   - [AssertMapEndPoint](#dbaronenetmappermapperoptionsassertmapendpoint)
 - [MapperTypeConfiguration](#dbaronenetmappermappertypeconfiguration)
   - [Type](#dbaronenetmappermappertypeconfigurationtype)
@@ -48,8 +51,17 @@
   - [MapOne](#dbaronenetmapperobjectmappermapone(systemtype,systemtype,systemobject))
   - [MapOne<T, U>](#dbaronenetmapperobjectmappermapone``2(``0))
   - [MapMany<T, U>](#dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0}))
+  - [Validate<T, U>](#dbaronenetmapperobjectmappervalidate``2)
+- [IMemberRenameStrategy](#dbaronenetmapperimemberrenamestrategy)
+  - [RenameMember](#dbaronenetmapperimemberrenamestrategyrenamemember(systemstring))
 - [ITypeConverter](#dbaronenetmapperitypeconverter)
   - [Convert](#dbaronenetmapperitypeconverterconvert(systemobject))
+- [PrefixSuffix](#dbaronenetmapperprefixsuffix)
+  - [Prefix](#dbaronenetmapperprefixsuffixprefix)
+  - [Suffix](#dbaronenetmapperprefixsuffixsuffix)
+- [PrefixSuffixMemberRenameStrategy](#dbaronenetmapperprefixsuffixmemberrenamestrategy)
+  - [#ctor](#dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring))
+  - [RenameMember](#dbaronenetmapperprefixsuffixmemberrenamestrategyrenamemember(systemstring))
 - [TypeConverter`2](#dbaronenetmappertypeconverter`2)
   - [#ctor](#dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1}))
   - [Convert](#dbaronenetmappertypeconverter`2convert(systemobject))
@@ -133,35 +145,6 @@ None
 
 #### Parameters:
 None
-hello :tent:
-- [x] Write the press release
-- [ ] Update the website
-- [ ] Contact the media
-
-
-#### Exceptions Thrown:
-None
-#### Examples:
-None
->### <a id='dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1})'></a>method: RegisterConverter<T, U>
-<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
-#### Signature
-``` c#
-MapperConfiguration.RegisterConverter<T, U>(System.Func<T,U> converter)
-```
-#### Summary
- Adds a type converter. Type converters are used to convert simple / native types where the members in the source and destinations have different types. 
-
-#### Type Parameters:
-|Param | Description |
-|-----|-----|
-|T: |The type of the source member.|
-|U: |The type of the destination member.|
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|converter: |A converter func.|
 
 #### Exceptions Thrown:
 None
@@ -264,8 +247,8 @@ MapperConfiguration.RegisterMap<T, U>(Dbarone.Net.Mapper.MapperOptions sourceOpt
 #### Type Parameters:
 |Param | Description |
 |-----|-----|
-|T: |The source type to map.|
-|U: |The destination type to map.|
+|TSource: |The source type to map.|
+|TDestination: |The destination type to map.|
 
 #### Parameters:
 |Name | Description |
@@ -300,6 +283,52 @@ MapperConfiguration.Ignore<T>(System.Linq.Expressions.Expression<System.Func<T,S
 None
 #### Examples:
 None
+>### <a id='dbaronenetmappermapperconfigurationignore(systemtype,systemstring[])'></a>method: Ignore
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Ignore(System.Type,System.String[])`</small>
+#### Signature
+``` c#
+MapperConfiguration.Ignore(System.Type type, System.String[] members)
+```
+#### Summary
+ Sets one or more members on a type to be ignored for mapping purposes. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type.|
+|members: |The list of members to ignore|
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+>### <a id='dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1})'></a>method: RegisterConverter<T, U>
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.RegisterConverter``2(System.Func{``0,``1})`</small>
+#### Signature
+``` c#
+MapperConfiguration.RegisterConverter<T, U>(System.Func<T,U> converter)
+```
+#### Summary
+ Adds a type converter. Type converters are used to convert simple / native types where the members in the source and destinations have different types. 
+
+#### Type Parameters:
+|Param | Description |
+|-----|-----|
+|T: |The type of the source member.|
+|U: |The type of the destination member.|
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|converter: |A converter func.|
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
 >### <a id='dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring)'></a>method: Rename<T>
 <small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.String)`</small>
 #### Signature
@@ -318,6 +347,31 @@ MapperConfiguration.Rename<T>(System.Linq.Expressions.Expression<System.Func<T,S
 |Name | Description |
 |-----|------|
 |member: |A unary member expression to select a member on the source object type.|
+|newName: |The new name for the member.|
+
+#### Exceptions Thrown:
+
+Exception thrown: [T:System.ArgumentNullException](#T:System.ArgumentNullException): 
+
+#### Examples:
+None
+>### <a id='dbaronenetmappermapperconfigurationrename(systemtype,systemstring,systemstring)'></a>method: Rename
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Rename(System.Type,System.String,System.String)`</small>
+#### Signature
+``` c#
+MapperConfiguration.Rename(System.Type type, System.String member, System.String newName)
+```
+#### Summary
+ Defines a custom name for a member when mapping to other types. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type containing the member.|
+|member: |The member to rename.|
 |newName: |The new name for the member.|
 
 #### Exceptions Thrown:
@@ -346,6 +400,25 @@ MapperConfiguration.MapMember<T, U>(System.Linq.Expressions.Expression<System.Fu
 |-----|------|
 |fromMember: ||
 |toMember: ||
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+>### <a id='dbaronenetmappermapperconfigurationvalidate'></a>method: Validate
+<small>id: `M:Dbarone.Net.Mapper.MapperConfiguration.Validate`</small>
+#### Signature
+``` c#
+MapperConfiguration.Validate()
+```
+#### Summary
+ Validates the mapper configuration 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+None
 
 #### Exceptions Thrown:
 None
@@ -440,11 +513,11 @@ None
 #### Summary
  The default casing convention for members of the type. Default is CaseType.None. 
 
->### property: MemberNameTranslation
-<small>id: `P:Dbarone.Net.Mapper.MapperOptions.MemberNameTranslation`</small>
+>### property: MemberRenameStrategy
+<small>id: `P:Dbarone.Net.Mapper.MapperOptions.MemberRenameStrategy`</small>
 
 #### Summary
- Optional member name translation function 
+ Optional member renaming strategy. 
 
 >### property: AssertMapEndPoint
 <small>id: `P:Dbarone.Net.Mapper.MapperOptions.AssertMapEndPoint`</small>
@@ -628,7 +701,7 @@ None
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapOne``2(``0)`</small>
 #### Signature
 ``` c#
-ObjectMapper.MapOne<T, U>(T obj)
+ObjectMapper.MapOne<T, U>(TSource obj)
 ```
 #### Summary
  Maps / transforms an object from one type to another. 
@@ -636,13 +709,13 @@ ObjectMapper.MapOne<T, U>(T obj)
 #### Type Parameters:
 |Param | Description |
 |-----|-----|
-|T: ||
-|U: ||
+|TSource: ||
+|TDestination: ||
 
 #### Parameters:
 |Name | Description |
 |-----|------|
-|obj: ||
+|obj: |Returns an object of the destination type.|
 
 #### Exceptions Thrown:
 None
@@ -652,7 +725,7 @@ None
 <small>id: `M:Dbarone.Net.Mapper.ObjectMapper.MapMany``2(System.Collections.Generic.IEnumerable{``0})`</small>
 #### Signature
 ``` c#
-ObjectMapper.MapMany<T, U>(System.Collections.Generic.IEnumerable<T> obj)
+ObjectMapper.MapMany<T, U>(System.Collections.Generic.IEnumerable<TSource> obj)
 ```
 #### Summary
  Maps a collection, list or array of items. 
@@ -660,13 +733,64 @@ ObjectMapper.MapMany<T, U>(System.Collections.Generic.IEnumerable<T> obj)
 #### Type Parameters:
 |Param | Description |
 |-----|-----|
-|T: |The type of the source object.|
-|U: |The type of the destination object.|
+|TSource: |The type of the source object.|
+|TDestination: |The type of the destination object.|
 
 #### Parameters:
 |Name | Description |
 |-----|------|
 |obj: |The source object. Must be an enumerable, collection, list or array of type U.|
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+>### <a id='dbaronenetmapperobjectmappervalidate``2'></a>method: Validate<T, U>
+<small>id: `M:Dbarone.Net.Mapper.ObjectMapper.Validate``2`</small>
+#### Signature
+``` c#
+ObjectMapper.Validate<T, U>()
+```
+#### Summary
+ Validates the mapping between two types. 
+
+#### Type Parameters:
+|Param | Description |
+|-----|-----|
+|TSource: ||
+|TDestination: ||
+
+#### Parameters:
+None
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+
+---
+## Dbarone.Net.Mapper.IMemberRenameStrategy
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ Interface for classes that can provide member renaming strategies. 
+
+>### <a id='dbaronenetmapperimemberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
+<small>id: `M:Dbarone.Net.Mapper.IMemberRenameStrategy.RenameMember(System.String)`</small>
+#### Signature
+``` c#
+IMemberRenameStrategy.RenameMember(System.String member)
+```
+#### Summary
+ Renames member names. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|member: |The member name.|
 
 #### Exceptions Thrown:
 None
@@ -696,6 +820,77 @@ None
 |Name | Description |
 |-----|------|
 |obj: |The object to be converted.|
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+
+---
+## Dbarone.Net.Mapper.PrefixSuffix
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ Denotes either prefix or suffix. 
+
+>### field: Prefix
+<small>id: `F:Dbarone.Net.Mapper.PrefixSuffix.Prefix`</small>
+
+#### Summary
+ Prefix (start of string). 
+
+>### field: Suffix
+<small>id: `F:Dbarone.Net.Mapper.PrefixSuffix.Suffix`</small>
+
+#### Summary
+ Suffix (end of string). 
+
+
+---
+## Dbarone.Net.Mapper.PrefixSuffixMemberRenameStrategy
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ Removes prefix/suffix characters from member names. 
+
+>### <a id='dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring)'></a>method: #ctor
+<small>id: `M:Dbarone.Net.Mapper.PrefixSuffixMemberRenameStrategy.#ctor(Dbarone.Net.Mapper.PrefixSuffix,System.String)`</small>
+#### Signature
+``` c#
+PrefixSuffixMemberRenameStrategy.#ctor(Dbarone.Net.Mapper.PrefixSuffix stringType, System.String stringToRemove)
+```
+#### Summary
+ Creates a new instance. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|stringType: |The [PrefixSuffix](#dbaronenetmapperprefixsuffix) type.|
+|stringToRemove: |The string to remove.|
+
+#### Exceptions Thrown:
+None
+#### Examples:
+None
+>### <a id='dbaronenetmapperprefixsuffixmemberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
+<small>id: `M:Dbarone.Net.Mapper.PrefixSuffixMemberRenameStrategy.RenameMember(System.String)`</small>
+#### Signature
+``` c#
+PrefixSuffixMemberRenameStrategy.RenameMember(System.String member)
+```
+#### Summary
+ Renames a member, removing either a Pre or Post 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|member: ||
 
 #### Exceptions Thrown:
 None
