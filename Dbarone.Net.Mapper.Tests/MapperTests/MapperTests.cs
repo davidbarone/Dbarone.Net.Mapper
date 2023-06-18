@@ -153,4 +153,15 @@ public class MapperTests
         Assert.Throws<MapperException>(() => mapper.Validate<CustomerA, CustomerB>());
     }
 
+    [Fact]
+    public void Validation_TypesMismatch_ShouldThrowException()
+    {
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<CustomerWithDifferentTypesA>(new MapperOptions { })
+            .RegisterType<CustomerWithDifferentTypesB>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Destination })
+            .Build();
+
+        // This should pass (no assertion rules should apply).
+        Assert.Throws<MapperException>(() => mapper.Validate<CustomerWithDifferentTypesA, CustomerWithDifferentTypesB>());
+    }
 }

@@ -163,6 +163,25 @@ public class ObjectMapper
             }
         }
 
+        // Check types match. Mapper will map all members which are in BOTH source and destination
+        // check all source member rules map to destination rules.
+        var mappedDestinationMembers = destinationConfig
+            .MemberConfiguration
+            .Where(m => sourceConfig
+                .MemberConfiguration
+                .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == true);
+
+        var membersInvalidTypes = mappedDestinationMembers.Where(m =>
+            sourceConfig.MemberConfiguration.First(s => s.InternalMemberName.Equals(m.InternalMemberName, StringComparison.Ordinal)).DataType !=
+            destinationConfig.MemberConfiguration.First(d => d.InternalMemberName.Equals(m.InternalMemberName, StringComparison.Ordinal)).DataType
+        ).ToList();
+
+        if (membersInvalidTypes.Count() > 1)
+        {
+            var errorTypes = membersInvalidTypes.Select(m => m.MemberName).Aggregate("", (current, next) => current + " " + $"[{next}]");
+            throw new MapperException($"The following members have incompatible types and cannot be mapped: {errorTypes}.");
+        }
+
         // if get here, then all good.
 
     }
