@@ -313,7 +313,8 @@ public class MapperConfiguration
     /// <summary>
     /// Validates the mapper configuration
     /// </summary>
-    public void Validate() {
+    public void Validate()
+    {
         // ensure all mapping rules are connected
 
     }
@@ -336,13 +337,28 @@ public class MapperConfiguration
                     if (v.Options.MemberRenameStrategy != null)
                     {
                         item.InternalMemberName = v.Options.MemberRenameStrategy.RenameMember(item.MemberName);
-                    } else {
+                    }
+                    else
+                    {
                         // default - make internal name = member name
                         item.InternalMemberName = item.MemberName;
                     }
                 }
             }
+
+            // Check no duplicate internal names
+            var duplicates = v.MemberConfiguration
+                .GroupBy(g => g.InternalMemberName)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key).ToList();
+
+            if (duplicates.Any())
+            {
+                var duplicateValues = duplicates.Aggregate("", (current, next) => current + " " + $"[{next}]");
+                throw new MapperException($"The following internal member names have been used for multiple members on type: {v.Type}:{duplicateValues}.");
+            }
         }
+
         return new ObjectMapper(this.TypeConfiguration, this.Converters);
     }
 

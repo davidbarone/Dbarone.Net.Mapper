@@ -46,4 +46,14 @@ public class MapperConfigurationTests
         MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(SimpleCustomerWithPrivatePropertiesAndFields));
         Assert.Equal(expectedMemberCount, typeConfig.MemberConfiguration.Count());
     }
+
+    [Fact]
+    public void MapperBuilder_DuplicateInternalNames_ShouldThrowException()
+    {
+        var config = MapperConfiguration.Create()
+            .RegisterType<CustomerEntity>()
+            .Rename<CustomerEntity>(c => c.CustomerId, "Name");  // 2 Name members now exist.
+
+        Assert.Throws<MapperException>(() => config.Build());
+    }
 }
