@@ -55,7 +55,7 @@ By default, mapper will only map public properties. This behaviour can be overri
             .RegisterType<CustomerDto>(new MapperOptions { IncludePrivateMembers = true }) // includes private members
             .Build();
 
-        var obj2 = mapper.MapOne<CustomerModel, CustomerDto>(obj1)
+        CustomerDto obj2 = mapper.MapOne<CustomerModel, CustomerDto>(obj1)
 
         // obj2 now contains all values of obj1.
 
