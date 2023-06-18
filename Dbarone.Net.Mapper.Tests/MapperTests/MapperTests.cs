@@ -112,4 +112,45 @@ public class MapperTests
         Assert.Equal(789, custB!.CustomerRank);
         Assert.Equal(new DateTime(2018, 8, 18), custB!.CustomerDOB);
     }
+
+    [Fact]
+    public void Validation_MembersMatch_ShouldPassValidation()
+    {
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<ClassA>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Source | MapperEndPoint.Destination })
+            .RegisterType<ClassB>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Source | MapperEndPoint.Destination })
+            .Build();
+        mapper.Validate<ClassA, ClassB>();
+    }
+
+    [Fact]
+    public void Validation_SourceMembersDontMatch_ShouldThrowException()
+    {
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<CustomerA>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Source })
+            .RegisterType<CustomerB>(new MapperOptions { })
+            .Build();
+
+        // This should pass (no assertion rules should apply).
+        mapper.Validate<CustomerB, CustomerA>();
+
+        // This should fail (CustomerA has source assertion rule set).
+        Assert.Throws<MapperException>(() => mapper.Validate<CustomerA, CustomerB>());
+    }
+
+    [Fact]
+    public void Validation_DestinationMembersDontMatch_ShouldThrowException()
+    {
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<CustomerA>(new MapperOptions { })
+            .RegisterType<CustomerB>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Destination })
+            .Build();
+
+        // This should pass (no assertion rules should apply).
+        mapper.Validate<CustomerB, CustomerA>();
+
+        // This should fail (CustomerB has destination assertion rule set).
+        Assert.Throws<MapperException>(() => mapper.Validate<CustomerA, CustomerB>());
+    }
+
 }

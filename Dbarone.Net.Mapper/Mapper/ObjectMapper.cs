@@ -99,39 +99,71 @@ public class ObjectMapper
     /// <summary>
     /// Maps / transforms an object from one type to another.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="U"></typeparam>
-    /// <param name="obj"></param>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TDestination"></typeparam>
+    /// <param name="obj">Returns an object of the destination type.</param>
     /// <returns></returns>
-    public U? MapOne<T, U>(T? obj)
+    public TDestination? MapOne<TSource, TDestination>(TSource? obj)
     {
-        return (U)MapOne(typeof(T), typeof(U), obj);
+        return (TDestination?)MapOne(typeof(TSource), typeof(TDestination), obj);
     }
 
     /// <summary>
     /// Maps a collection, list or array of items.
     /// </summary>
-    /// <typeparam name="T">The type of the source object.</typeparam>
-    /// <typeparam name="U">The type of the destination object.</typeparam>
+    /// <typeparam name="TSource">The type of the source object.</typeparam>
+    /// <typeparam name="TDestination">The type of the destination object.</typeparam>
     /// <param name="obj">The source object. Must be an enumerable, collection, list or array of type U.</param>
     /// <returns></returns>
-    public IEnumerable<U?> MapMany<T, U>(IEnumerable<T?> obj)
+    public IEnumerable<TDestination?> MapMany<TSource, TDestination>(IEnumerable<TSource?> obj)
     {
         foreach (var item in obj)
         {
-            yield return MapOne<T, U>(item);
+            yield return MapOne<TSource, TDestination>(item);
         }
-
     }
 
     /// <summary>
     /// Validates the mapping between two types.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="U"></typeparam>
-    public void Validate<T, U>() {
-        throw new Exception("whoops");
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TDestination"></typeparam>
+    public void Validate<TSource, TDestination>()
+    {
+        var sourceConfig = this.configuration.First(c => c.Value.Type == typeof(TSource)).Value;
+        var destinationConfig = this.configuration.First(c => c.Value.Type == typeof(TDestination)).Value;
+
+        if ((sourceConfig.Options.AssertMapEndPoint & MapperEndPoint.Source) == MapperEndPoint.Source)
+        {
+            // check all source member rules map to destination rules.
+            var unmappedSourceMembers = sourceConfig
+                .MemberConfiguration
+                .Where(m => destinationConfig
+                    .MemberConfiguration
+                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
+            if (unmappedSourceMembers.Count() > 0)
+            {
+                var errorMembers = unmappedSourceMembers.Select(m => m.MemberName).Aggregate("", (current, next) => current + " " + $"[{next}]");
+                throw new MapperException($"The following source members are not mapped: {errorMembers}.");
+            }
+        }
+
+        if ((destinationConfig.Options.AssertMapEndPoint & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+        {
+            // check all source member rules map to destination rules.
+            var unmappedDestinationMembers = destinationConfig
+                .MemberConfiguration
+                .Where(m => sourceConfig
+                    .MemberConfiguration
+                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
+            if (unmappedDestinationMembers.Count() > 0)
+            {
+                var errorMembers = unmappedDestinationMembers.Select(m => m.MemberName).Aggregate("", (current, next) => current + " " + $"[{next}]");
+                throw new MapperException($"The following destination members are not mapped: {errorMembers}.");
+            }
+        }
+
+        // if get here, then all good.
 
     }
-
 }

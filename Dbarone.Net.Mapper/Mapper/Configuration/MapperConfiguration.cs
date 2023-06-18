@@ -139,14 +139,14 @@ public class MapperConfiguration
     /// is specified, and the <see cref="ObjectMapper" /> automatically joins members based on member name. In cases
     /// where a specific mapping between 2 types is required, this method can be used to provide custom behaviour.
     /// </summary>
-    /// <typeparam name="T">The source type to map.</typeparam>
-    /// <typeparam name="U">The destination type to map.</typeparam>
+    /// <typeparam name="TSource">The source type to map.</typeparam>
+    /// <typeparam name="TDestination">The destination type to map.</typeparam>
     /// <param name="sourceOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the source type being registered.</param>
     /// <param name="destinationOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the destination type being registered.</param>
     /// <returns></returns>
-    public MapperConfiguration RegisterMap<T, U>(MapperOptions sourceOptions, MapperOptions destinationOptions)
+    public MapperConfiguration RegisterMap<TSource, TDestination>(MapperOptions sourceOptions, MapperOptions destinationOptions)
     {
-        RegisterMap(typeof(T), sourceOptions, typeof(U), destinationOptions);
+        RegisterMap(typeof(TSource), sourceOptions, typeof(TDestination), destinationOptions);
         return this;
     }
 
