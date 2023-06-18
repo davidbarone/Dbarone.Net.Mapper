@@ -65,7 +65,8 @@ static var templates = new Dictionary<string, Func<dynamic, string>>  {
 
                     // Document / Assembly
                     {"doc", (model) =>
-$@"# Assembly: {model.assembly}
+$@"<a id='top'></a>
+# Assembly: {model.assembly}
 ## Contents
 {model.toc}
 
@@ -85,24 +86,23 @@ $@"
                     // Field
                     {"field", (model) =>
 $@">### {model.IdParts.MemberType}: {model.IdParts.Name}
-<small>id: `{model.IdParts.Id}`</small>
-
 #### Summary
 {model.summary}
+
+<small>[Back to top](#top)</small>
 "},
                     
                     // Property
                     {"property", (model) =>
 $@">### {model.IdParts.MemberType}: {model.IdParts.Name}
-<small>id: `{model.IdParts.Id}`</small>
-
 #### Summary
 {model.summary}
+
+<small>[Back to top](#top)</small>
 "},
                     // Method
                     {"method", (model) =>
 $@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.MemberType}: {model.IdParts.Name}
-<small>id: `{model.IdParts.Id}`</small>
 #### Signature
 {model.signature}
 #### Summary
@@ -113,10 +113,12 @@ $@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.Member
 #### Parameters:
 {model.paramHeader}
 {model.parameters}
-#### Exceptions Thrown:
+#### Exceptions:
 {model.exceptions}
 #### Examples:
 {model.examples}
+
+<small>[Back to top](#top)</small>
 "},
                     {"event", (model) => $"### {model.Name}\n{model.Text}\n---\n"},
                     {"summary", (model) => $"{model.Text}\n"},
