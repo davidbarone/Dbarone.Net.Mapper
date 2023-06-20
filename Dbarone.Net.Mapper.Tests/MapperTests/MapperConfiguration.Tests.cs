@@ -86,4 +86,23 @@ public class MapperConfigurationTests
         var pascalObj = mapper.MapOne<EntityWithSnakeCaseMembers, EntityWithPascalCaseMembers>(snakeObj);
         Assert.Equal(123, pascalObj!.EntityId);
     }
+
+    [Fact]
+    public void MapperConfiguration_AddCalculation_ShouldMapCalculation()
+    {
+        Person person = new Person()
+        {
+            PersonId = 1,
+            FirstName = "John",
+            Surname = "Doe",
+            DoB = new DateTime(1960, 8, 26)
+        };
+        var mapper = MapperConfiguration.Create()
+           .RegisterType<Person>()
+           .RegisterType<PersonWithFullName>()
+           .RegisterCalculation<Person, string>("FullName", (p) => p.FirstName + " " + p.Surname)
+           .Build();
+
+        var person2 = mapper.MapOne<Person, PersonWithFullName>(person);
+    }
 }

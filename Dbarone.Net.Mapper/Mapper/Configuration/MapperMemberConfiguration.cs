@@ -38,4 +38,14 @@ public class MapperMemberConfiguration
     /// Delegate method to set the value to the instance.
     /// </summary>
     public Setter Setter { get; set; } = default!;
+
+    /// <summary>
+    /// Set to true if a calculation.
+    /// </summary>
+    public bool IsCalculation => Calculation != null;
+
+    /// <summary>
+    /// Used if the member is a custom calculation.
+    /// </summary>
+    public ITypeConverter Calculation { get; set; } = default!;
 }

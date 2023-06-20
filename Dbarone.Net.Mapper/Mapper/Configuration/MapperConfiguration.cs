@@ -132,6 +132,36 @@ public class MapperConfiguration
 
     #endregion
 
+    #region Calculations
+
+    /// <summary>
+    /// Registers a calculation for a type.
+    /// </summary>
+    /// <typeparam name="TSource">The source entity type.</typeparam>
+    /// <typeparam name="TReturn">The type of the return value for the calculated member.</typeparam>
+    /// <param name="memberName">The calculated member name.</param>
+    /// <param name="calculation">The calculation.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> object.</returns>
+    public MapperConfiguration RegisterCalculation<TSource, TReturn>(string memberName, Func<TSource?, TReturn?> calculation)
+    {
+        var type = typeof(TSource);
+        var typeConfig = this.TypeConfiguration[type];
+        MapperMemberConfiguration calc = new MapperMemberConfiguration()
+        {
+            MemberName = memberName,
+            DataType = typeof(TReturn),
+            InternalMemberName = memberName,
+            Ignore = false,
+            Getter = new TypeConverter<TSource, TReturn>(calculation).Convert,
+            Setter = null,
+            Calculation = new TypeConverter<TSource, TReturn>(calculation)
+        };
+        typeConfig.MemberConfiguration.Add(calc);
+        return this;
+    }
+
+    #endregion
+
     #region Register Map
 
     /// <summary>

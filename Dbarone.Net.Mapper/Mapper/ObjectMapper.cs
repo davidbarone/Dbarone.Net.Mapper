@@ -88,6 +88,10 @@ public class ObjectMapper
                 var childObject = MapOne(fromRule.DataType, toRule.DataType, fromObj);
                 toRule.Setter.Invoke(newInstance, childObject);
             }
+            else if (fromRule.DataType == toRule.DataType)
+            {
+                toRule.Setter.Invoke(newInstance, fromObj);
+            }
             else
             {
                 throw new MapperException($"Cannot map from type: {fromRule.DataType} to {toRule.DataType}. Are you missing a type registration or mapping?");
