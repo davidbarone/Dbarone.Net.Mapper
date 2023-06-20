@@ -117,8 +117,8 @@ public class MapperTests
     public void Validation_MembersMatch_ShouldPassValidation()
     {
         var mapper = MapperConfiguration.Create()
-            .RegisterType<ClassA>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Source | MapperEndPoint.Destination })
-            .RegisterType<ClassB>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Source | MapperEndPoint.Destination })
+            .RegisterType<ClassA>(new MapperOptions { EndPointValidation = MapperEndPoint.Source | MapperEndPoint.Destination })
+            .RegisterType<ClassB>(new MapperOptions { EndPointValidation = MapperEndPoint.Source | MapperEndPoint.Destination })
             .Build();
         mapper.Validate<ClassA, ClassB>();
     }
@@ -127,7 +127,7 @@ public class MapperTests
     public void Validation_SourceMembersDontMatch_ShouldThrowException()
     {
         var mapper = MapperConfiguration.Create()
-            .RegisterType<CustomerA>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Source })
+            .RegisterType<CustomerA>(new MapperOptions { EndPointValidation = MapperEndPoint.Source })
             .RegisterType<CustomerB>(new MapperOptions { })
             .Build();
 
@@ -143,7 +143,7 @@ public class MapperTests
     {
         var mapper = MapperConfiguration.Create()
             .RegisterType<CustomerA>(new MapperOptions { })
-            .RegisterType<CustomerB>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Destination })
+            .RegisterType<CustomerB>(new MapperOptions { EndPointValidation = MapperEndPoint.Destination })
             .Build();
 
         // This should pass (no assertion rules should apply).
@@ -158,7 +158,7 @@ public class MapperTests
     {
         var mapper = MapperConfiguration.Create()
             .RegisterType<CustomerWithDifferentTypesA>(new MapperOptions { IncludePrivateMembers = true })
-            .RegisterType<CustomerWithDifferentTypesB>(new MapperOptions { AssertMapEndPoint = MapperEndPoint.Destination })
+            .RegisterType<CustomerWithDifferentTypesB>(new MapperOptions { EndPointValidation = MapperEndPoint.Destination })
             .Build();
 
         // This should pass (no assertion rules should apply).

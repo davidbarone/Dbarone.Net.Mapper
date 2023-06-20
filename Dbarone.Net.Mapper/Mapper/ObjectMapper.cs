@@ -37,7 +37,7 @@ public class ObjectMapper
             // Get from rule
             var ruleName = toRule.InternalMemberName;
             var fromRule = fromTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(ruleName, StringComparison.CurrentCultureIgnoreCase));
-            if (fromRule == null && (toTypeConfiguration.Options.AssertMapEndPoint & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+            if (fromRule == null && (toTypeConfiguration.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
             {
                 throw new Exception($"Cannot find member: {toRule.InternalMemberName} in source mapping configuration.");
             }
@@ -88,7 +88,7 @@ public class ObjectMapper
                 var childObject = MapOne(fromRule.DataType, toRule.DataType, fromObj);
                 toRule.Setter.Invoke(newInstance, childObject);
             }
-            else if (fromRule.DataType == toRule.DataType)
+            else if (fromRule.DataType == toRule.DataType && (fromRule.DataType.IsValueType))
             {
                 toRule.Setter.Invoke(newInstance, fromObj);
             }
@@ -137,7 +137,7 @@ public class ObjectMapper
         var sourceConfig = this.configuration.First(c => c.Value.Type == typeof(TSource)).Value;
         var destinationConfig = this.configuration.First(c => c.Value.Type == typeof(TDestination)).Value;
 
-        if ((sourceConfig.Options.AssertMapEndPoint & MapperEndPoint.Source) == MapperEndPoint.Source)
+        if ((sourceConfig.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
             // check all source member rules map to destination rules.
             var unmappedSourceMembers = sourceConfig
@@ -152,7 +152,7 @@ public class ObjectMapper
             }
         }
 
-        if ((destinationConfig.Options.AssertMapEndPoint & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+        if ((destinationConfig.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
         {
             // check all source member rules map to destination rules.
             var unmappedDestinationMembers = destinationConfig

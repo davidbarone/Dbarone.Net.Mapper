@@ -115,3 +115,54 @@ public class Main {
     }
 }
 ```
+
+#### EndPointValidation
+
+The mapper can be configured by either registering individual types, or maps (source + destination type pairs). The mapping rules can be validated in 2 places:
+- When the configuration rules are built
+- When a mapper is used to map objects
+
+When the configuration rules are built, map rules can be validated. Note that individual types cannot be validated at this point, as they need to participate in a source + destination map pair to be validated.
+
+Additionally, before any map operations are carried out, a validation takes place.
+
+Validation can be performed on the source, destination, or both end points. This is configured using the `EndPointValidation` mapper option. The default setting is `MapperEndPoint.Destination`.
+
+### Calculations
+
+Sometimes, a map between two types is not straight forward, and a transformation needs to take place. A calculation can be added to the configuration to perform transformations. The following example demonstrates:
+
+``` C#
+    // Assume we have 2 classes:
+    public class Person
+    {
+        public int PersonId { get; set; }
+        public string FirstName { get; set; } = default!;
+        public string Surname { get; set; } = default!;
+        public DateTime DoB { get; set; }
+    }
+
+    public class PersonWithFullName
+    {
+        public int PersonId { get; set; }
+        public string FullName { get; set; } = default!;
+        public DateTime DoB { get; set; }
+    }
+
+    // And we want to map FirstName + Surname => FullName
+    Person person = new Person()
+    {
+        PersonId = 1,
+        FirstName = "John",
+        Surname = "Doe",
+        DoB = new DateTime(1960, 8, 26)
+    };
+    
+    var mapper = MapperConfiguration.Create()
+        .RegisterType<Person>()
+        .RegisterType<PersonWithFullName>()
+        .RegisterCalculation<Person, string>("FullName", (p) => p.FirstName + " " + p.Surname)
+        .Build();
+
+    var person2 = mapper.MapOne<Person, PersonWithFullName>(person);
+```

@@ -24,5 +24,5 @@ public class MapperOptions
     /// <summary>
     /// Defines implicit assertion of mapping rules prior to any map function call. Defaults to 'None'.
     /// </summary>
-    public MapperEndPoint AssertMapEndPoint { get; set; } = MapperEndPoint.None;
+    public MapperEndPoint EndPointValidation { get; set; } = MapperEndPoint.None;
 }
