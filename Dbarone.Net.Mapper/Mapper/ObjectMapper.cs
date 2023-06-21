@@ -37,6 +37,7 @@ public class ObjectMapper
             // Get from rule
             var ruleName = toRule.InternalMemberName;
             var fromRule = fromTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(ruleName, StringComparison.CurrentCultureIgnoreCase));
+            
             if (fromRule == null && (toTypeConfiguration.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
             {
                 throw new Exception($"Cannot find member: {toRule.InternalMemberName} in source mapping configuration.");
@@ -90,6 +91,8 @@ public class ObjectMapper
             }
             else if (fromRule.DataType == toRule.DataType && (fromRule.DataType.IsValueType))
             {
+                // from/to are same type, and ValueType. ValueTypes are automatically copied on assignment.
+                // No need to map properties.
                 toRule.Setter.Invoke(newInstance, fromObj);
             }
             else

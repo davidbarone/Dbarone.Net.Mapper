@@ -104,15 +104,19 @@ public class MapperConfiguration
             options = new MapperOptions();
         }
 
-        // Check whether type is a normal class or a dictionary type.
-        var isDict = type.IsDictionaryType();
-        IMemberResolver memberResolver = new ClassMemberResolver();
-        if (isDict)
+        IMemberResolver memberResolver;
+        if (type.IsValueType) {
+            memberResolver = new StructMemberResolver();
+        }
+        else if (type.IsDictionaryType())
         {
             memberResolver = new DictionaryMemberResolver();
         }
+        else {
+            memberResolver = new ClassMemberResolver();
+        }
 
-        var members = GetMembers(type, options);
+        var members = GetTypeMembers(type, options);
 
         TypeConfiguration[type] = new MapperTypeConfiguration
         {
@@ -297,9 +301,9 @@ public class MapperConfiguration
 
     #endregion
 
-    #region Private Members
+    #region Private Members`
 
-    private IEnumerable<MemberInfo> GetMembers(Type type, MapperOptions options)
+    private IEnumerable<MemberInfo> GetTypeMembers(Type type, MapperOptions options)
     {
         BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
         if (options.IncludePrivateMembers)
