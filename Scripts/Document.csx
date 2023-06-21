@@ -289,21 +289,6 @@ internal class IdParts
         if (nameGenericSplits.Length == 2)
         {
             this.TypeArguments = int.Parse(nameGenericSplits[1]);
-            switch (this.TypeArguments)
-            {
-                case 1:
-                    this.Name += "<T>";
-                    break;
-                case 2:
-                    this.Name += "<T, U>";
-                    break;
-                case 3:
-                    this.Name += "<T, U, V>";
-                    break;
-                case 4:
-                    this.Name += "<T, U, V, W>";
-                    break;
-            }
         }
 
         if ("FPEM".Contains(splits[0]))
@@ -462,6 +447,16 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     List<string> typeParameterNames = typeParameters.Select(p => p.Attribute("name").Value).ToList();
     List<string> parameterNames = parameters.Select(p => p.Attribute("name").Value).ToList();
 
+    if (idParts.TypeArguments!=typeParameterNames.Count()){
+        throw new Exception("Supplied type parameter names do not match the type parameter count");
+    }
+
+
+    var memberTypeArguments = "";
+    if (idParts.TypeArguments > 0) {
+        memberTypeArguments = $"<{string.Join(", ", typeParameterNames)}>";
+    }
+
     // Type<T>.Method<U>(parm1type parm1name, ...)
     var arguments = idParts.Arguments;
     List<string> argumentTypes = new List<string>();
@@ -516,6 +511,6 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     {
         signatureArgs = signatureArgs.Replace($"``{i}", typeParameterNames[i]);
     }
-    return $"``` c#\n{idParts.Parent}.{idParts.Name}({signatureArgs})\n```";
+    return $"``` c#\n{idParts.Parent}.{idParts.Name}{memberTypeArguments}({signatureArgs})\n```";
 
 }

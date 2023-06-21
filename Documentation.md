@@ -7,15 +7,16 @@
   - [GetTypeConfiguration](#dbaronenetmappermapperconfigurationgettypeconfiguration(systemtype))
   - [Create](#dbaronenetmappermapperconfigurationcreate)
   - [RegisterTypes](#dbaronenetmappermapperconfigurationregistertypes(systemtype[],dbaronenetmappermapperoptions))
-  - [RegisterType<T>](#dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions))
+  - [RegisterType](#dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions))
   - [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions))
-  - [RegisterMap<T, U>](#dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions))
-  - [Ignore<T>](#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}}))
+  - [RegisterCalculation](#dbaronenetmappermapperconfigurationregistercalculation``2(systemstring,systemfunc{``0,``1}))
+  - [RegisterMap](#dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions))
+  - [Ignore](#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}}))
   - [Ignore](#dbaronenetmappermapperconfigurationignore(systemtype,systemstring[]))
-  - [RegisterConverter<T, U>](#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1}))
-  - [Rename<T>](#dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring))
+  - [RegisterConverter](#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1}))
+  - [Rename](#dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring))
   - [Rename](#dbaronenetmappermapperconfigurationrename(systemtype,systemstring,systemstring))
-  - [MapMember<T, U>](#dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}}))
+  - [MapMember](#dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}}))
   - [Validate](#dbaronenetmappermapperconfigurationvalidate)
   - [Build](#dbaronenetmappermapperconfigurationbuild)
 - [MapperMemberConfiguration](#dbaronenetmappermappermemberconfiguration)
@@ -25,11 +26,13 @@
   - [Ignore](#dbaronenetmappermappermemberconfigurationignore)
   - [Getter](#dbaronenetmappermappermemberconfigurationgetter)
   - [Setter](#dbaronenetmappermappermemberconfigurationsetter)
+  - [IsCalculation](#dbaronenetmappermappermemberconfigurationiscalculation)
+  - [Calculation](#dbaronenetmappermappermemberconfigurationcalculation)
 - [MapperOptions](#dbaronenetmappermapperoptions)
   - [IncludeFields](#dbaronenetmappermapperoptionsincludefields)
   - [IncludePrivateMembers](#dbaronenetmappermapperoptionsincludeprivatemembers)
   - [MemberRenameStrategy](#dbaronenetmappermapperoptionsmemberrenamestrategy)
-  - [AssertMapEndPoint](#dbaronenetmappermapperoptionsassertmapendpoint)
+  - [EndPointValidation](#dbaronenetmappermapperoptionsendpointvalidation)
 - [MapperTypeConfiguration](#dbaronenetmappermappertypeconfiguration)
   - [Type](#dbaronenetmappermappertypeconfigurationtype)
   - [Options](#dbaronenetmappermappertypeconfigurationoptions)
@@ -58,11 +61,12 @@
 - [Getter](#dbaronenetmappergetter)
 - [IMemberResolver](#dbaronenetmapperimemberresolver)
 - [Setter](#dbaronenetmappersetter)
+- [StructMemberResolver](#dbaronenetmapperstructmemberresolver)
 - [ObjectMapper](#dbaronenetmapperobjectmapper)
   - [MapOne](#dbaronenetmapperobjectmappermapone(systemtype,systemtype,systemobject))
-  - [MapOne<T, U>](#dbaronenetmapperobjectmappermapone``2(``0))
-  - [MapMany<T, U>](#dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0}))
-  - [Validate<T, U>](#dbaronenetmapperobjectmappervalidate``2)
+  - [MapOne](#dbaronenetmapperobjectmappermapone``2(``0))
+  - [MapMany](#dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0}))
+  - [Validate](#dbaronenetmapperobjectmappervalidate``2)
 - [ITypeConverter](#dbaronenetmapperitypeconverter)
   - [Convert](#dbaronenetmapperitypeconverterconvert(systemobject))
 - [TypeConverter`2](#dbaronenetmappertypeconverter`2)
@@ -179,7 +183,7 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions)'></a>method: RegisterType<T>
+>### <a id='dbaronenetmappermapperconfigurationregistertype``1(dbaronenetmappermapperoptions)'></a>method: RegisterType
 #### Signature
 ``` c#
 MapperConfiguration.RegisterType<T>(Dbarone.Net.Mapper.MapperOptions options)
@@ -244,10 +248,36 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions)'></a>method: RegisterMap<T, U>
+>### <a id='dbaronenetmappermapperconfigurationregistercalculation``2(systemstring,systemfunc{``0,``1})'></a>method: RegisterCalculation
 #### Signature
 ``` c#
-MapperConfiguration.RegisterMap<T, U>(Dbarone.Net.Mapper.MapperOptions sourceOptions, Dbarone.Net.Mapper.MapperOptions destinationOptions)
+MapperConfiguration.RegisterCalculation<TSource, TReturn>(System.String memberName, System.Func<TSource,TReturn> calculation)
+```
+#### Summary
+ Registers a calculation for a type. 
+
+#### Type Parameters:
+|Param | Description |
+|-----|-----|
+|TSource: |The source entity type.|
+|TReturn: |The type of the return value for the calculated member.|
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|memberName: |The calculated member name.|
+|calculation: |The calculation.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions)'></a>method: RegisterMap
+#### Signature
+``` c#
+MapperConfiguration.RegisterMap<TSource, TDestination>(Dbarone.Net.Mapper.MapperOptions sourceOptions, Dbarone.Net.Mapper.MapperOptions destinationOptions)
 ```
 #### Summary
  Registers a specific type-to-type configuration. When registering via [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions)) only 1 endpoint is specified, and the [ObjectMapper](#dbaronenetmapperobjectmapper) automatically joins members based on member name. In cases where a specific mapping between 2 types is required, this method can be used to provide custom behaviour. 
@@ -270,7 +300,7 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}})'></a>method: Ignore<T>
+>### <a id='dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}})'></a>method: Ignore
 #### Signature
 ``` c#
 MapperConfiguration.Ignore<T>(System.Linq.Expressions.Expression<System.Func<T,System.Object>> member)
@@ -317,7 +347,7 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1})'></a>method: RegisterConverter<T, U>
+>### <a id='dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1})'></a>method: RegisterConverter
 #### Signature
 ``` c#
 MapperConfiguration.RegisterConverter<T, U>(System.Func<T,U> converter)
@@ -342,7 +372,7 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring)'></a>method: Rename<T>
+>### <a id='dbaronenetmappermapperconfigurationrename``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemstring)'></a>method: Rename
 #### Signature
 ``` c#
 MapperConfiguration.Rename<T>(System.Linq.Expressions.Expression<System.Func<T,System.Object>> member, System.String newName)
@@ -395,7 +425,7 @@ Exception thrown: [T:System.ArgumentNullException](#T:System.ArgumentNullExcepti
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}})'></a>method: MapMember<T, U>
+>### <a id='dbaronenetmappermapperconfigurationmapmember``2(systemlinqexpressionsexpression{systemfunc{``0,systemobject}},systemlinqexpressionsexpression{systemfunc{``1,systemobject}})'></a>method: MapMember
 #### Signature
 ``` c#
 MapperConfiguration.MapMember<T, U>(System.Linq.Expressions.Expression<System.Func<T,System.Object>> fromMember, System.Linq.Expressions.Expression<System.Func<U,System.Object>> toMember)
@@ -505,6 +535,18 @@ None
 
 
 <small>[Back to top](#top)</small>
+>### property: IsCalculation
+#### Summary
+ Set to true if a calculation. 
+
+
+<small>[Back to top](#top)</small>
+>### property: Calculation
+#### Summary
+ Used if the member is a custom calculation. 
+
+
+<small>[Back to top](#top)</small>
 
 ---
 ## Dbarone.Net.Mapper.MapperOptions
@@ -531,7 +573,7 @@ None
 
 
 <small>[Back to top](#top)</small>
->### property: AssertMapEndPoint
+>### property: EndPointValidation
 #### Summary
  Defines implicit assertion of mapping rules prior to any map function call. Defaults to 'None'. 
 
@@ -835,6 +877,14 @@ Returns: A value
 
 
 ---
+## Dbarone.Net.Mapper.StructMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary:
+ General resolver for structs. 
+
+
+---
 ## Dbarone.Net.Mapper.ObjectMapper
 ### Namespace:
 `Dbarone.Net.Mapper`
@@ -867,10 +917,10 @@ Exception thrown: [T:System.Exception](#T:System.Exception):
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperobjectmappermapone``2(``0)'></a>method: MapOne<T, U>
+>### <a id='dbaronenetmapperobjectmappermapone``2(``0)'></a>method: MapOne
 #### Signature
 ``` c#
-ObjectMapper.MapOne<T, U>(TSource obj)
+ObjectMapper.MapOne<TSource, TDestination>(TSource obj)
 ```
 #### Summary
  Maps / transforms an object from one type to another. 
@@ -892,10 +942,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0})'></a>method: MapMany<T, U>
+>### <a id='dbaronenetmapperobjectmappermapmany``2(systemcollectionsgenericienumerable{``0})'></a>method: MapMany
 #### Signature
 ``` c#
-ObjectMapper.MapMany<T, U>(System.Collections.Generic.IEnumerable<TSource> obj)
+ObjectMapper.MapMany<TSource, TDestination>(System.Collections.Generic.IEnumerable<TSource> obj)
 ```
 #### Summary
  Maps a collection, list or array of items. 
@@ -917,10 +967,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperobjectmappervalidate``2'></a>method: Validate<T, U>
+>### <a id='dbaronenetmapperobjectmappervalidate``2'></a>method: Validate
 #### Signature
 ``` c#
-ObjectMapper.Validate<T, U>()
+ObjectMapper.Validate<TSource, TDestination>()
 ```
 #### Summary
  Validates the mapping between two types. 

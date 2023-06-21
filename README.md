@@ -157,7 +157,7 @@ Sometimes, a map between two types is not straight forward, and a transformation
         Surname = "Doe",
         DoB = new DateTime(1960, 8, 26)
     };
-    
+
     var mapper = MapperConfiguration.Create()
         .RegisterType<Person>()
         .RegisterType<PersonWithFullName>()
@@ -166,3 +166,14 @@ Sometimes, a map between two types is not straight forward, and a transformation
 
     var person2 = mapper.MapOne<Person, PersonWithFullName>(person);
 ```
+
+### Ignoring Members
+
+Sometimes, you will want to ignore members from the mapping process. The `Ignore` method can be used:
+
+``` C#
+
+    // Ignore example here...
+
+```
+
