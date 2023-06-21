@@ -84,19 +84,25 @@
 
 
 ---
-## Dbarone.Net.Mapper.MapperIgnoreAttribute
+>## <a id='dbaronenetmappermapperignoreattribute'></a>type: MapperIgnoreAttribute
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Attribute to indicate that a property should not be mapped. 
+
+### Type Parameters:
+None
 
 
 ---
-## Dbarone.Net.Mapper.MapperConfiguration
+>## <a id='dbaronenetmappermapperconfiguration'></a>type: MapperConfiguration
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Creates configuration for a [ObjectMapper](#dbaronenetmapperobjectmapper) mapper object. Before being able to map any objects and types, you must create a mapper configuration, and from this generate a [ObjectMapper](#dbaronenetmapperobjectmapper) object. 
+
+### Type Parameters:
+None
 
 >### <a id='dbaronenetmappermapperconfigurationgettypeconfigurationcount'></a>method: GetTypeConfigurationCount
 #### Signature
@@ -493,11 +499,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.MapperMemberConfiguration
+>## <a id='dbaronenetmappermappermemberconfiguration'></a>type: MapperMemberConfiguration
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Defines the rules for a single member mapping. 
+
+### Type Parameters:
+None
 
 >### property: MemberName
 #### Summary
@@ -549,11 +558,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.MapperOptions
+>## <a id='dbaronenetmappermapperoptions'></a>type: MapperOptions
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Defines a set of mapping options. 
+
+### Type Parameters:
+None
 
 >### property: IncludeFields
 #### Summary
@@ -581,11 +593,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.MapperTypeConfiguration
+>## <a id='dbaronenetmappermappertypeconfiguration'></a>type: MapperTypeConfiguration
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Defines the configuration of a single type. 
+
+### Type Parameters:
+None
 
 >### property: Type
 #### Summary
@@ -641,11 +656,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.MapperEndPoint
+>## <a id='dbaronenetmappermapperendpoint'></a>type: MapperEndPoint
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Defines the mapper end point type. 
+
+### Type Parameters:
+None
 
 >### field: None
 #### Summary
@@ -667,11 +685,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.CaseChangeMemberRenameStrategy
+>## <a id='dbaronenetmappercasechangememberrenamestrategy'></a>type: CaseChangeMemberRenameStrategy
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Converts member names from specified case type to a common (lowercase). Implementation of [IMemberRenameStrategy](#dbaronenetmapperimemberrenamestrategy). 
+
+### Type Parameters:
+None
 
 >### <a id='dbaronenetmappercasechangememberrenamestrategy#ctor(dbaronenetextensionscasetype,dbaronenetextensionscasetype)'></a>method: #ctor
 #### Signature
@@ -720,11 +741,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.IMemberRenameStrategy
+>## <a id='dbaronenetmapperimemberrenamestrategy'></a>type: IMemberRenameStrategy
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Interface for classes that can provide member renaming strategies. 
+
+### Type Parameters:
+None
 
 >### <a id='dbaronenetmapperimemberrenamestrategyrenamemember(systemstring)'></a>method: RenameMember
 #### Signature
@@ -750,11 +774,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.PrefixSuffix
+>## <a id='dbaronenetmapperprefixsuffix'></a>type: PrefixSuffix
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Denotes either prefix or suffix. 
+
+### Type Parameters:
+None
 
 >### field: Prefix
 #### Summary
@@ -770,11 +797,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.PrefixSuffixMemberRenameStrategy
+>## <a id='dbaronenetmapperprefixsuffixmemberrenamestrategy'></a>type: PrefixSuffixMemberRenameStrategy
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Removes prefix/suffix characters from member names. 
+
+### Type Parameters:
+None
 
 >### <a id='dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring)'></a>method: #ctor
 #### Signature
@@ -823,73 +853,91 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.ClassMemberResolver
+>## <a id='dbaronenetmapperclassmemberresolver'></a>type: ClassMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  General resolver for classes. 
 
+### Type Parameters:
+None
+
 
 ---
-## Dbarone.Net.Mapper.CreateInstance
+>## <a id='dbaronenetmappercreateinstance'></a>type: CreateInstance
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Delegate to create a new instance of an object. 
-|args: |Optional args to pass into the constructor.|
-Returns: Returns an instance of an object.
+
+### Type Parameters:
+None
 
 
 ---
-## Dbarone.Net.Mapper.DictionaryMemberResolver
+>## <a id='dbaronenetmapperdictionarymemberresolver'></a>type: DictionaryMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Member resolver for dictionaries. 
 
+### Type Parameters:
+None
+
 
 ---
-## Dbarone.Net.Mapper.Getter
+>## <a id='dbaronenetmappergetter'></a>type: Getter
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Defines a basic getter delegate. 
-|obj: |The object providing the value|
-Returns: A value
+
+### Type Parameters:
+None
 
 
 ---
-## Dbarone.Net.Mapper.IMemberResolver
+>## <a id='dbaronenetmapperimemberresolver'></a>type: IMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Interface for describing methods to 
 
+### Type Parameters:
+None
+
 
 ---
-## Dbarone.Net.Mapper.Setter
+>## <a id='dbaronenetmappersetter'></a>type: Setter
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Defines a basic setter delegate. 
-|target: |The object to set the value in.|
-|value: |The value to set.|
+
+### Type Parameters:
+None
 
 
 ---
-## Dbarone.Net.Mapper.StructMemberResolver
+>## <a id='dbaronenetmapperstructmemberresolver'></a>type: StructMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  General resolver for structs. 
 
+### Type Parameters:
+None
+
 
 ---
-## Dbarone.Net.Mapper.ObjectMapper
+>## <a id='dbaronenetmapperobjectmapper'></a>type: ObjectMapper
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  The ObjectMapper class provides mapping functions to transform objects from one type to another. 
+
+### Type Parameters:
+None
 
 >### <a id='dbaronenetmapperobjectmappermapone(systemtype,systemtype,systemobject)'></a>method: MapOne
 #### Signature
@@ -992,11 +1040,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.ITypeConverter
+>## <a id='dbaronenetmapperitypeconverter'></a>type: ITypeConverter
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Interface for classes that can convert values / types. 
+
+### Type Parameters:
+None
 
 >### <a id='dbaronenetmapperitypeconverterconvert(systemobject)'></a>method: Convert
 #### Signature
@@ -1022,18 +1073,22 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## Dbarone.Net.Mapper.TypeConverter`2
+>## <a id='dbaronenetmappertypeconverter`2'></a>type: TypeConverter`2
 ### Namespace:
 `Dbarone.Net.Mapper`
-### Summary:
+### Summary
  Converts an object using a generic lambda function or Func. 
+
+### Type Parameters:
+|Param | Description |
+|-----|-----|
 |T: |The source type.|
 |U: |The destination type.|
 
 >### <a id='dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1})'></a>method: #ctor
 #### Signature
 ``` c#
-TypeConverter<A, B>.#ctor(System.Func<`0,`1> converter)
+TypeConverter<A, B>.#ctor(System.Func<T,U> converter)
 ```
 #### Summary
  Creates a TypeConverter instance using a m 
@@ -1076,11 +1131,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## NamingConvention
+>## <a id='namingconvention'></a>type: NamingConvention
 ### Namespace:
 ``
-### Summary:
+### Summary
  Defines the default member naming convention for the type. 
+
+### Type Parameters:
+None
 
 >### field: None
 #### Summary
@@ -1108,11 +1166,14 @@ None
 <small>[Back to top](#top)</small>
 
 ---
-## MapperException
+>## <a id='mapperexception'></a>type: MapperException
 ### Namespace:
 ``
-### Summary:
+### Summary
  Mapper exception class. 
+
+### Type Parameters:
+None
 
 >### <a id='mapperexception#ctor'></a>method: #ctor
 #### Signature

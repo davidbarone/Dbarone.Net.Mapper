@@ -31,6 +31,11 @@ using System.Dynamic;
 
 Main(Args.ToArray());
 
+/// <summary>
+/// The current type parameters.
+/// </summary>
+public static IEnumerable<XElement> CurrentTypeParameters = null;
+
 static void Main(string[] args)
 {
     Console.WriteLine("Begin: Document.csx...");
@@ -76,11 +81,14 @@ $@"<a id='top'></a>
                     {"type", (model) =>
 $@"
 ---
-## {model.IdParts.FullyQualifiedName}
+>## <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.MemberType}: {model.IdParts.Name}
 ### Namespace:
 `{model.IdParts.Namespace}`
-### Summary:
-{((model.Text == null || model.Text.Trim() == "") ? "TBD" : model.Text)}
+### Summary
+{model.summary}
+### Type Parameters:
+{model.typeparametersHeader}
+{model.typeparameters}
 "},
 
                     // Field
@@ -142,8 +150,18 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
                         .Select(toc => (toc.MemberType==MemberType.type ? "- " : "  - ") + $"[{toc.Name}](#{toc.FullyQualifiedNameLink})\n")
                         .Aggregate("", (current, next) => current + "" + next)}
                     }},
-                    {"type", x=> fxIdAndText("name", x)},
 
+                    //{"type", x=> fxIdAndText("name", x)},
+                    {"type", x=> {
+                        CurrentTypeParameters = x.Elements("typeparam");
+                        return new Dictionary<string, object> {
+                        {"IdParts", new IdParts(x.Attribute("name").Value)},
+                        {"summary", x.Elements("summary").ToMarkDown()},
+                        {"typeparametersHeader", x.Elements("typeparam").Any() ? "|Param | Description |\n|-----|-----|" : "None"},
+                        {"typeparameters", x.Elements("typeparam").Any() ? x.Elements("typeparam").ToMarkDown() : ""}
+                        };
+                    }},
+                    
                     //{"field", x=> fxNameAndText("name", x)},
                     {"field", x=> new Dictionary<string, object> {
                         {"IdParts", new IdParts(x.Attribute("name").Value)},
@@ -446,11 +464,11 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     var idParts = new IdParts(id);
     List<string> typeParameterNames = typeParameters.Select(p => p.Attribute("name").Value).ToList();
     List<string> parameterNames = parameters.Select(p => p.Attribute("name").Value).ToList();
+    List<string> currentTypeParameterNames = CurrentTypeParameters.Select(p => p.Attribute("name").Value).ToList();
 
     if (idParts.TypeArguments!=typeParameterNames.Count()){
         throw new Exception("Supplied type parameter names do not match the type parameter count");
     }
-
 
     var memberTypeArguments = "";
     if (idParts.TypeArguments > 0) {
@@ -510,6 +528,10 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     for (var i = 0; i < typeParameterNames.Count(); i++)
     {
         signatureArgs = signatureArgs.Replace($"``{i}", typeParameterNames[i]);
+    }
+    for (var i = 0; i < currentTypeParameterNames.Count(); i++)
+    {
+        signatureArgs = signatureArgs.Replace($"`{i}", currentTypeParameterNames[i]);
     }
     return $"``` c#\n{idParts.Parent}.{idParts.Name}{memberTypeArguments}({signatureArgs})\n```";
 
