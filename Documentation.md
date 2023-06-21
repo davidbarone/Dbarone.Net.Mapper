@@ -69,7 +69,7 @@
   - [Validate](#dbaronenetmapperobjectmappervalidate``2)
 - [ITypeConverter](#dbaronenetmapperitypeconverter)
   - [Convert](#dbaronenetmapperitypeconverterconvert(systemobject))
-- [TypeConverter`2](#dbaronenetmappertypeconverter`2)
+- [TypeConverter](#dbaronenetmappertypeconverter`2)
   - [#ctor](#dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1}))
   - [Convert](#dbaronenetmappertypeconverter`2convert(systemobject))
 - [NamingConvention](#namingconvention)
@@ -508,49 +508,49 @@ None
 ### Type Parameters:
 None
 
->### property: MemberName
+>### <a id='dbaronenetmappermappermemberconfigurationmembername'></a>property: MemberName
 #### Summary
  Member name for the mapping rule. 
 
 
 <small>[Back to top](#top)</small>
->### property: DataType
+>### <a id='dbaronenetmappermappermemberconfigurationdatatype'></a>property: DataType
 #### Summary
  Member data type. 
 
 
 <small>[Back to top](#top)</small>
->### property: InternalMemberName
+>### <a id='dbaronenetmappermappermemberconfigurationinternalmembername'></a>property: InternalMemberName
 #### Summary
  The internal member name. Mapping from source to destination is done via matching internal names. 
 
 
 <small>[Back to top](#top)</small>
->### property: Ignore
+>### <a id='dbaronenetmappermappermemberconfigurationignore'></a>property: Ignore
 #### Summary
  Set to true to ignore this member in the mapping configuration. 
 
 
 <small>[Back to top](#top)</small>
->### property: Getter
+>### <a id='dbaronenetmappermappermemberconfigurationgetter'></a>property: Getter
 #### Summary
  Delegate method to get the value from the instance. 
 
 
 <small>[Back to top](#top)</small>
->### property: Setter
+>### <a id='dbaronenetmappermappermemberconfigurationsetter'></a>property: Setter
 #### Summary
  Delegate method to set the value to the instance. 
 
 
 <small>[Back to top](#top)</small>
->### property: IsCalculation
+>### <a id='dbaronenetmappermappermemberconfigurationiscalculation'></a>property: IsCalculation
 #### Summary
  Set to true if a calculation. 
 
 
 <small>[Back to top](#top)</small>
->### property: Calculation
+>### <a id='dbaronenetmappermappermemberconfigurationcalculation'></a>property: Calculation
 #### Summary
  Used if the member is a custom calculation. 
 
@@ -567,25 +567,25 @@ None
 ### Type Parameters:
 None
 
->### property: IncludeFields
+>### <a id='dbaronenetmappermapperoptionsincludefields'></a>property: IncludeFields
 #### Summary
  Set to true to include mapping of fields as well as properties. Default is false. 
 
 
 <small>[Back to top](#top)</small>
->### property: IncludePrivateMembers
+>### <a id='dbaronenetmappermapperoptionsincludeprivatemembers'></a>property: IncludePrivateMembers
 #### Summary
  Set to true to include private fields and properties. Default is false.1 
 
 
 <small>[Back to top](#top)</small>
->### property: MemberRenameStrategy
+>### <a id='dbaronenetmappermapperoptionsmemberrenamestrategy'></a>property: MemberRenameStrategy
 #### Summary
  Optional member renaming strategy. 
 
 
 <small>[Back to top](#top)</small>
->### property: EndPointValidation
+>### <a id='dbaronenetmappermapperoptionsendpointvalidation'></a>property: EndPointValidation
 #### Summary
  Defines implicit assertion of mapping rules prior to any map function call. Defaults to 'None'. 
 
@@ -602,25 +602,25 @@ None
 ### Type Parameters:
 None
 
->### property: Type
+>### <a id='dbaronenetmappermappertypeconfigurationtype'></a>property: Type
 #### Summary
  The type the configuration relates to. 
 
 
 <small>[Back to top](#top)</small>
->### property: Options
+>### <a id='dbaronenetmappermappertypeconfigurationoptions'></a>property: Options
 #### Summary
  Defines the options for the map registration 
 
 
 <small>[Back to top](#top)</small>
->### property: MemberConfiguration
+>### <a id='dbaronenetmappermappertypeconfigurationmemberconfiguration'></a>property: MemberConfiguration
 #### Summary
  Defines the member configuration. 
 
 
 <small>[Back to top](#top)</small>
->### property: MemberResolver
+>### <a id='dbaronenetmappermappertypeconfigurationmemberresolver'></a>property: MemberResolver
 #### Summary
  Provides the member resolving strategy for this type. 
 
@@ -648,7 +648,7 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### property: CreateInstance
+>### <a id='dbaronenetmappermappertypeconfigurationcreateinstance'></a>property: CreateInstance
 #### Summary
  Create a new instance of the type. 
 
@@ -665,19 +665,19 @@ None
 ### Type Parameters:
 None
 
->### field: None
+>### <a id='dbaronenetmappermapperendpointnone'></a>field: None
 #### Summary
  No end point type specified. 
 
 
 <small>[Back to top](#top)</small>
->### field: Source
+>### <a id='dbaronenetmappermapperendpointsource'></a>field: Source
 #### Summary
  Source mapper endpoint. 
 
 
 <small>[Back to top](#top)</small>
->### field: Destination
+>### <a id='dbaronenetmappermapperendpointdestination'></a>field: Destination
 #### Summary
  Destination mapper endpoint. 
 
@@ -783,13 +783,13 @@ None
 ### Type Parameters:
 None
 
->### field: Prefix
+>### <a id='dbaronenetmapperprefixsuffixprefix'></a>field: Prefix
 #### Summary
  Prefix (start of string). 
 
 
 <small>[Back to top](#top)</small>
->### field: Suffix
+>### <a id='dbaronenetmapperprefixsuffixsuffix'></a>field: Suffix
 #### Summary
  Suffix (end of string). 
 
@@ -1073,7 +1073,7 @@ None
 <small>[Back to top](#top)</small>
 
 ---
->## <a id='dbaronenetmappertypeconverter`2'></a>type: TypeConverter`2
+>## <a id='dbaronenetmappertypeconverter`2'></a>type: TypeConverter
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary
@@ -1088,7 +1088,7 @@ None
 >### <a id='dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1})'></a>method: #ctor
 #### Signature
 ``` c#
-TypeConverter<A, B>.#ctor(System.Func<T,U> converter)
+TypeConverter.#ctor(System.Func<T,U> converter)
 ```
 #### Summary
  Creates a TypeConverter instance using a m 
@@ -1110,7 +1110,7 @@ None
 >### <a id='dbaronenetmappertypeconverter`2convert(systemobject)'></a>method: Convert
 #### Signature
 ``` c#
-TypeConverter<A, B>.Convert(System.Object obj)
+TypeConverter.Convert(System.Object obj)
 ```
 #### Summary
  Implementation of interface Convert method. 
@@ -1140,25 +1140,25 @@ None
 ### Type Parameters:
 None
 
->### field: None
+>### <a id='namingconventionnone'></a>field: None
 #### Summary
  No defined naming convention used. 
 
 
 <small>[Back to top](#top)</small>
->### field: CamelCaseNamingConvention
+>### <a id='namingconventioncamelcasenamingconvention'></a>field: CamelCaseNamingConvention
 #### Summary
  Members are named in CamelCase, for example 'memberName'. 
 
 
 <small>[Back to top](#top)</small>
->### field: PascalCaseNamingConvention
+>### <a id='namingconventionpascalcasenamingconvention'></a>field: PascalCaseNamingConvention
 #### Summary
  Members are named in PascalCase, for example: 'MemberName'. 
 
 
 <small>[Back to top](#top)</small>
->### field: SnakeCasingConvention
+>### <a id='namingconventionsnakecasingconvention'></a>field: SnakeCasingConvention
 #### Summary
  Members are named in SnakeCase, for example 'member_name'. 
 

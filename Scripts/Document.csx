@@ -93,7 +93,7 @@ $@"
 
                     // Field
                     {"field", (model) =>
-$@">### {model.IdParts.MemberType}: {model.IdParts.Name}
+$@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.MemberType}: {model.IdParts.Name}
 #### Summary
 {model.summary}
 
@@ -102,7 +102,7 @@ $@">### {model.IdParts.MemberType}: {model.IdParts.Name}
                     
                     // Property
                     {"property", (model) =>
-$@">### {model.IdParts.MemberType}: {model.IdParts.Name}
+$@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.MemberType}: {model.IdParts.Name}
 #### Summary
 {model.summary}
 
@@ -309,6 +309,17 @@ internal class IdParts
             this.TypeArguments = int.Parse(nameGenericSplits[1]);
         }
 
+        if ("T" == splits[0])
+        {
+            // check type member for generics
+            nameGenericSplits = this.Name.Split("`");
+            this.Name = nameGenericSplits[0];
+            if (nameGenericSplits.Length == 2)
+            {
+                this.TypeArguments = int.Parse(nameGenericSplits[1]);
+            }
+        }
+
         if ("FPEM".Contains(splits[0]))
         {
             // For fields, properties, events, methods, the
@@ -322,21 +333,6 @@ internal class IdParts
             if (parentGenericsSplits.Length == 2)
             {
                 this.ParentTypeArguments = int.Parse(parentGenericsSplits[1]);
-                switch (this.ParentTypeArguments)
-                {
-                    case 1:
-                        this.Parent += "<A>";
-                        break;
-                    case 2:
-                        this.Parent += "<A, B>";
-                        break;
-                    case 3:
-                        this.Parent += "<A, B, C>";
-                        break;
-                    case 4:
-                        this.Parent += "<A, B, C, D>";
-                        break;
-                }
             }
         }
         this.Namespace = string.Join('.', nameParts.Take(nameParts.Length - 1));
@@ -466,12 +462,14 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     List<string> parameterNames = parameters.Select(p => p.Attribute("name").Value).ToList();
     List<string> currentTypeParameterNames = CurrentTypeParameters.Select(p => p.Attribute("name").Value).ToList();
 
-    if (idParts.TypeArguments!=typeParameterNames.Count()){
+    if (idParts.TypeArguments != typeParameterNames.Count())
+    {
         throw new Exception("Supplied type parameter names do not match the type parameter count");
     }
 
     var memberTypeArguments = "";
-    if (idParts.TypeArguments > 0) {
+    if (idParts.TypeArguments > 0)
+    {
         memberTypeArguments = $"<{string.Join(", ", typeParameterNames)}>";
     }
 
