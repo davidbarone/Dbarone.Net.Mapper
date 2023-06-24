@@ -1,5 +1,7 @@
+namespace Dbarone.Net.Mapper;
+
 /// <summary>
-/// Mapper exception class.
+/// Mapper exception class. Used for all exceptions thrown by Dbarone.Net.Mapper.
 /// </summary>
 public class MapperException : Exception
 {

@@ -5,7 +5,6 @@ using System.Reflection;
 
 /// <summary>
 /// Defines the rules for a single member mapping.
-/// 
 /// </summary>
 public class MapperMemberConfiguration
 {
@@ -15,7 +14,7 @@ public class MapperMemberConfiguration
     public string MemberName { get; set; } = default!;
 
     /// <summary>
-    /// Member data type.
+    /// Member data type of the member.
     /// </summary>
     public Type DataType { get; set; } = default!;
 
@@ -30,12 +29,12 @@ public class MapperMemberConfiguration
     internal bool Ignore { get; set; }
 
     /// <summary>
-    /// Delegate method to get the value from the instance.
+    /// Delegate method to get the value from the instance. Returns a <see cref="Getter" /> object.
     /// </summary>
     public Getter Getter { get; set; } = default!;
 
     /// <summary>
-    /// Delegate method to set the value to the instance.
+    /// Delegate method to set the value to the instance. Returns a <see cref="Setter" /> object.
     /// </summary>
     public Setter Setter { get; set; } = default!;
 
@@ -45,7 +44,7 @@ public class MapperMemberConfiguration
     public bool IsCalculation => Calculation != null;
 
     /// <summary>
-    /// Used if the member is a custom calculation.
+    /// Used to create a custom calculation. Must be a <see cref="ITypeConverter" /> type.
     /// </summary>
     public ITypeConverter Calculation { get; set; } = default!;
 }

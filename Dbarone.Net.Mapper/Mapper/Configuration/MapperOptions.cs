@@ -17,7 +17,7 @@ public class MapperOptions
     public bool IncludePrivateMembers { get; set; } = false;
 
     /// <summary>
-    /// Optional member renaming strategy.
+    /// Optional member renaming strategy. Must implement <see cref="IMemberRenameStrategy" />.
     /// </summary>
     public IMemberRenameStrategy? MemberRenameStrategy { get; set; } = null;
 

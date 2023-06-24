@@ -5,9 +5,10 @@
 
     This script only documents from the XML file. It does not merge
     data from the assembly itself (via reflection). Therefore
-    some things cannot be rendered easily:
+    some things cannot be documented:
     - Return types from methods
-    - Full signature definition    
+    - Full signature definition
+    - static vs instance members
 
     Other libraries worth investigating:
     - https://github.com/lijunle/Vsxmd/blob/master/Vsxmd/Program.cs
@@ -32,10 +33,14 @@ using System.Dynamic;
 Main(Args.ToArray());
 
 /// <summary>
-/// The current type parameters.
+/// The current generic type type parameters.
 /// </summary>
-public static IEnumerable<XElement> CurrentTypeParameters = null;
+public static IEnumerable<XElement> CurrentGenericTypeParameters = null;
 
+/// <summary>
+/// Entry point
+/// </summary>
+/// <param name="args">Args from OS.</param>
 static void Main(string[] args)
 {
     Console.WriteLine("Begin: Document.csx...");
@@ -43,6 +48,12 @@ static void Main(string[] args)
     var mdFilePath = args[1];
     XmlToMarkdown(xmlFilePath, mdFilePath);
 }
+
+/// <summary>
+/// Converts a C# Xml documentation file to markdown.
+/// </summary>
+/// <param name="xmlFilePath">Path to the C# Xml comments input file.</param>
+/// <param name="mdFilePath">Path to the markdown output file.</param>
 static void XmlToMarkdown(string xmlFilePath, string mdFilePath)
 {
     Console.WriteLine(xmlFilePath);
@@ -56,16 +67,17 @@ static void XmlToMarkdown(string xmlFilePath, string mdFilePath)
     File.WriteAllText(mdFilePath, md);
 }
 
+/// <summary>
+/// Gets the name and text values of an Xml element.
+/// </summary>
 static var fxNameAndText = new Func<string, XElement, IDictionary<string, object>>((att, node) => new Dictionary<string, object> {
                     {"Name", node.Attribute(att).Value},
                     {"Text", node.Nodes().ToMarkDown()}
 });
 
-static var fxIdAndText = new Func<string, XElement, IDictionary<string, object>>((att, node) => new Dictionary<string, object> {
-                    {"IdParts", new IdParts(node.Attribute(att).Value)},
-                    {"Text", node.Nodes().ToMarkDown()}
-});
-
+/// <summary>
+/// Provides the templates for rendering various node types into markdown.
+/// </summary>
 static var templates = new Dictionary<string, Func<dynamic, string>>  {
 
                     // Document / Assembly
@@ -108,6 +120,7 @@ $@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.Member
 
 <small>[Back to top](#top)</small>
 "},
+
                     // Method
                     {"method", (model) =>
 $@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.MemberType}: {model.IdParts.Name}
@@ -128,6 +141,7 @@ $@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.Member
 
 <small>[Back to top](#top)</small>
 "},
+                    // other node types:
                     {"event", (model) => $"### {model.Name}\n{model.Text}\n---\n"},
                     {"summary", (model) => $"{model.Text}\n"},
                     {"remarks", (model) => $"\n>{model.Name}\n"},
@@ -139,6 +153,10 @@ $@">### <a id='{model.IdParts.FullyQualifiedNameLink}'></a>{model.IdParts.Member
                     {"returns", (model) => $"Returns: {model.Text}\n"},
                     {"none", (model) => ""}  };
 
+/// <summary>
+/// Returns a view state, as a dictionary, for each node type. This view state gets
+/// merged with a template to produce the final markdown.
+/// </summary>
 static var methods = new Dictionary<string, Func<XElement, IDictionary<string, object>>>
                 {
                     {"doc", x=> new Dictionary<string, object> {
@@ -153,7 +171,7 @@ static var methods = new Dictionary<string, Func<XElement, IDictionary<string, o
 
                     //{"type", x=> fxIdAndText("name", x)},
                     {"type", x=> {
-                        CurrentTypeParameters = x.Elements("typeparam");
+                        CurrentGenericTypeParameters = x.Elements("typeparam");
                         return new Dictionary<string, object> {
                         {"IdParts", new IdParts(x.Attribute("name").Value)},
                         {"summary", x.Elements("summary").ToMarkDown()},
@@ -217,9 +235,8 @@ internal enum MemberType : byte
     errorString
 }
 
-
 /// <summary>
-/// Represents the parts making up a comment document id.
+/// Represents the parts making up a comment document id, known as the 'ID string'.
 /// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
 /// </summary>
 internal class IdParts
@@ -274,6 +291,10 @@ internal class IdParts
     /// </summary>
     public string Name { get; set; } = default!;
 
+    /// <summary>
+    /// constructor for IdParts class.
+    /// </summary>
+    /// <param name="id">The ID string.</param>
     public IdParts(string id)
     {
         Console.WriteLine($"Processing: {id}...");
@@ -410,7 +431,6 @@ internal static string ToMarkDown(this XNode e)
     return "";
 }
 
-
 internal static string ToMarkDown(this IEnumerable<XNode> es)
 {
     if (es != null && es.Any())
@@ -423,7 +443,7 @@ internal static string ToMarkDown(this IEnumerable<XNode> es)
     }
 }
 
-static string ToCodeBlock(this XElement el)
+internal static string ToCodeBlock(this XElement el)
 {
     string s = "";
     foreach (var childNode in el.Nodes())
@@ -452,17 +472,20 @@ static string ToCodeBlock(this XElement el)
 /// return types are not stored in the documentation - they have to be read from assembly's meta
 /// data. Additionally, the scope of members is not defined).
 /// </summary>
-/// <param name="id"></param>
-/// <param name="typeParameters"></param>
-/// <param name="typeParameters"></param>
+/// <param name="id">The ID string.</param>
+/// <param name="typeParameters">The generic type parameters for the member (if any).</param>
+/// <param name="parameters">The parameters defined in the Xml documentation.</param>
 internal static string CreateSignature(string id, IList<XElement> typeParameters, IList<XElement> parameters)
 {
     var idParts = new IdParts(id);
-    List<string> typeParameterNames = typeParameters.Select(p => p.Attribute("name").Value).ToList();
+    // Generic type parameters on parent type (if applicable)
+    List<string> currentTypeParameterNames = CurrentGenericTypeParameters.Select(p => p.Attribute("name").Value).ToList();
+    // Generic type parameters on the method (if applicable)
+    List<string> methodTypeParameterNames = typeParameters.Select(p => p.Attribute("name").Value).ToList();
+    // Parameter names
     List<string> parameterNames = parameters.Select(p => p.Attribute("name").Value).ToList();
-    List<string> currentTypeParameterNames = CurrentTypeParameters.Select(p => p.Attribute("name").Value).ToList();
 
-    if (idParts.TypeArguments != typeParameterNames.Count())
+    if (idParts.TypeArguments != methodTypeParameterNames.Count())
     {
         throw new Exception("Supplied type parameter names do not match the type parameter count");
     }
@@ -470,7 +493,7 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     var memberTypeArguments = "";
     if (idParts.TypeArguments > 0)
     {
-        memberTypeArguments = $"<{string.Join(", ", typeParameterNames)}>";
+        memberTypeArguments = $"<{string.Join(", ", methodTypeParameterNames)}>";
     }
 
     // Type<T>.Method<U>(parm1type parm1name, ...)
@@ -478,8 +501,6 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
     List<string> argumentTypes = new List<string>();
     if (arguments.Length > 0)
     {
-        Console.WriteLine(arguments);
-        Console.WriteLine("---------------------------");
         bool inField = false;
         string current = "";
         foreach (var c in arguments)
@@ -523,14 +544,13 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
         signatureArgs = signatureArgs.Substring(0, signatureArgs.Length - 2);
     }
     signatureArgs = signatureArgs.Replace("{", "<").Replace("}", ">");
-    for (var i = 0; i < typeParameterNames.Count(); i++)
+    for (var i = 0; i < methodTypeParameterNames.Count(); i++)
     {
-        signatureArgs = signatureArgs.Replace($"``{i}", typeParameterNames[i]);
+        signatureArgs = signatureArgs.Replace($"``{i}", methodTypeParameterNames[i]);
     }
     for (var i = 0; i < currentTypeParameterNames.Count(); i++)
     {
         signatureArgs = signatureArgs.Replace($"`{i}", currentTypeParameterNames[i]);
     }
     return $"``` c#\n{idParts.Parent}.{idParts.Name}{memberTypeArguments}({signatureArgs})\n```";
-
 }

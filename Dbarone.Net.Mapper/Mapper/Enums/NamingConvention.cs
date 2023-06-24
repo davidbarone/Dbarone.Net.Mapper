@@ -1,3 +1,5 @@
+namespace Dbarone.Net.Mapper;
+
 /// <summary>
 /// Defines the default member naming convention for the type.
 /// </summary>

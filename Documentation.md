@@ -11,6 +11,7 @@
   - [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions))
   - [RegisterCalculation](#dbaronenetmappermapperconfigurationregistercalculation``2(systemstring,systemfunc{``0,``1}))
   - [RegisterMap](#dbaronenetmappermapperconfigurationregistermap``2(dbaronenetmappermapperoptions,dbaronenetmappermapperoptions))
+  - [RegisterMap](#dbaronenetmappermapperconfigurationregistermap(systemtype,dbaronenetmappermapperoptions,systemtype,dbaronenetmappermapperoptions))
   - [Ignore](#dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}}))
   - [Ignore](#dbaronenetmappermapperconfigurationignore(systemtype,systemstring[]))
   - [RegisterConverter](#dbaronenetmappermapperconfigurationregisterconverter``2(systemfunc{``0,``1}))
@@ -44,6 +45,14 @@
   - [None](#dbaronenetmappermapperendpointnone)
   - [Source](#dbaronenetmappermapperendpointsource)
   - [Destination](#dbaronenetmappermapperendpointdestination)
+- [NamingConvention](#dbaronenetmappernamingconvention)
+  - [None](#dbaronenetmappernamingconventionnone)
+  - [CamelCaseNamingConvention](#dbaronenetmappernamingconventioncamelcasenamingconvention)
+  - [PascalCaseNamingConvention](#dbaronenetmappernamingconventionpascalcasenamingconvention)
+  - [SnakeCasingConvention](#dbaronenetmappernamingconventionsnakecasingconvention)
+- [MapperException](#dbaronenetmappermapperexception)
+  - [#ctor](#dbaronenetmappermapperexception#ctor)
+  - [#ctor](#dbaronenetmappermapperexception#ctor(systemstring))
 - [CaseChangeMemberRenameStrategy](#dbaronenetmappercasechangememberrenamestrategy)
   - [#ctor](#dbaronenetmappercasechangememberrenamestrategy#ctor(dbaronenetextensionscasetype,dbaronenetextensionscasetype))
   - [RenameMember](#dbaronenetmappercasechangememberrenamestrategyrenamemember(systemstring))
@@ -72,14 +81,6 @@
 - [TypeConverter](#dbaronenetmappertypeconverter`2)
   - [#ctor](#dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1}))
   - [Convert](#dbaronenetmappertypeconverter`2convert(systemobject))
-- [NamingConvention](#namingconvention)
-  - [None](#namingconventionnone)
-  - [CamelCaseNamingConvention](#namingconventioncamelcasenamingconvention)
-  - [PascalCaseNamingConvention](#namingconventionpascalcasenamingconvention)
-  - [SnakeCasingConvention](#namingconventionsnakecasingconvention)
-- [MapperException](#mapperexception)
-  - [#ctor](#mapperexception#ctor)
-  - [#ctor](#mapperexception#ctor(systemstring))
 
 
 
@@ -306,6 +307,31 @@ None
 None
 
 <small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperconfigurationregistermap(systemtype,dbaronenetmappermapperoptions,systemtype,dbaronenetmappermapperoptions)'></a>method: RegisterMap
+#### Signature
+``` c#
+MapperConfiguration.RegisterMap(System.Type sourceType, Dbarone.Net.Mapper.MapperOptions sourceOptions, System.Type destinationType, Dbarone.Net.Mapper.MapperOptions destinationOptions)
+```
+#### Summary
+ Registers a specific type-to-type configuration. When registering via [RegisterType](#dbaronenetmappermapperconfigurationregistertype(systemtype,dbaronenetmappermapperoptions)) only 1 endpoint is specified, and the [ObjectMapper](#dbaronenetmapperobjectmapper) automatically joins members based on member name. In cases where a specific mapping between 2 types is required, this method can be used to provide custom behaviour. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|sourceType: |The source type participating in the map.|
+|sourceOptions: |The source options.|
+|destinationType: |The destination type participating in the map.|
+|destinationOptions: |The destination options.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
 >### <a id='dbaronenetmappermapperconfigurationignore``1(systemlinqexpressionsexpression{systemfunc{``0,systemobject}})'></a>method: Ignore
 #### Signature
 ``` c#
@@ -516,7 +542,7 @@ None
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmappermappermemberconfigurationdatatype'></a>property: DataType
 #### Summary
- Member data type. 
+ Member data type of the member. 
 
 
 <small>[Back to top](#top)</small>
@@ -534,13 +560,13 @@ None
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmappermappermemberconfigurationgetter'></a>property: Getter
 #### Summary
- Delegate method to get the value from the instance. 
+ Delegate method to get the value from the instance. Returns a [Getter](#dbaronenetmappermappermemberconfigurationgetter) object. 
 
 
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmappermappermemberconfigurationsetter'></a>property: Setter
 #### Summary
- Delegate method to set the value to the instance. 
+ Delegate method to set the value to the instance. Returns a [Setter](#dbaronenetmappermappermemberconfigurationsetter) object. 
 
 
 <small>[Back to top](#top)</small>
@@ -552,7 +578,7 @@ None
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmappermappermemberconfigurationcalculation'></a>property: Calculation
 #### Summary
- Used if the member is a custom calculation. 
+ Used to create a custom calculation. Must be a [ITypeConverter](#dbaronenetmapperitypeconverter) type. 
 
 
 <small>[Back to top](#top)</small>
@@ -581,7 +607,7 @@ None
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmappermapperoptionsmemberrenamestrategy'></a>property: MemberRenameStrategy
 #### Summary
- Optional member renaming strategy. 
+ Optional member renaming strategy. Must implement [IMemberRenameStrategy](#dbaronenetmapperimemberrenamestrategy). 
 
 
 <small>[Back to top](#top)</small>
@@ -681,6 +707,94 @@ None
 #### Summary
  Destination mapper endpoint. 
 
+
+<small>[Back to top](#top)</small>
+
+---
+>## <a id='dbaronenetmappernamingconvention'></a>type: NamingConvention
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Defines the default member naming convention for the type. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmappernamingconventionnone'></a>field: None
+#### Summary
+ No defined naming convention used. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappernamingconventioncamelcasenamingconvention'></a>field: CamelCaseNamingConvention
+#### Summary
+ Members are named in CamelCase, for example 'memberName'. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappernamingconventionpascalcasenamingconvention'></a>field: PascalCaseNamingConvention
+#### Summary
+ Members are named in PascalCase, for example: 'MemberName'. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappernamingconventionsnakecasingconvention'></a>field: SnakeCasingConvention
+#### Summary
+ Members are named in SnakeCase, for example 'member_name'. 
+
+
+<small>[Back to top](#top)</small>
+
+---
+>## <a id='dbaronenetmappermapperexception'></a>type: MapperException
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Mapper exception class. Used for all exceptions thrown by Dbarone.Net.Mapper. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmappermapperexception#ctor'></a>method: #ctor
+#### Signature
+``` c#
+MapperException.#ctor()
+```
+#### Summary
+ Parameterless constructor. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+None
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperexception#ctor(systemstring)'></a>method: #ctor
+#### Signature
+``` c#
+MapperException.#ctor(System.String message)
+```
+#### Summary
+ Create a mapper exception with message. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|message: ||
+
+#### Exceptions:
+None
+#### Examples:
+None
 
 <small>[Back to top](#top)</small>
 
@@ -1122,94 +1236,6 @@ None
 |Name | Description |
 |-----|------|
 |obj: |The object to be converted.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
-
----
->## <a id='namingconvention'></a>type: NamingConvention
-### Namespace:
-``
-### Summary
- Defines the default member naming convention for the type. 
-
-### Type Parameters:
-None
-
->### <a id='namingconventionnone'></a>field: None
-#### Summary
- No defined naming convention used. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='namingconventioncamelcasenamingconvention'></a>field: CamelCaseNamingConvention
-#### Summary
- Members are named in CamelCase, for example 'memberName'. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='namingconventionpascalcasenamingconvention'></a>field: PascalCaseNamingConvention
-#### Summary
- Members are named in PascalCase, for example: 'MemberName'. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='namingconventionsnakecasingconvention'></a>field: SnakeCasingConvention
-#### Summary
- Members are named in SnakeCase, for example 'member_name'. 
-
-
-<small>[Back to top](#top)</small>
-
----
->## <a id='mapperexception'></a>type: MapperException
-### Namespace:
-``
-### Summary
- Mapper exception class. 
-
-### Type Parameters:
-None
-
->### <a id='mapperexception#ctor'></a>method: #ctor
-#### Signature
-``` c#
-MapperException.#ctor()
-```
-#### Summary
- Parameterless constructor. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-None
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
->### <a id='mapperexception#ctor(systemstring)'></a>method: #ctor
-#### Signature
-``` c#
-MapperException.#ctor(System.String message)
-```
-#### Summary
- Create a mapper exception with message. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|message: ||
 
 #### Exceptions:
 None

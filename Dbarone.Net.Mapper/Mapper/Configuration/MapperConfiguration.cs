@@ -58,6 +58,7 @@ public class MapperConfiguration
     /// </summary>
     /// <param name="types">An array of Types.</param>
     /// <param name="options">An optional <see cref="MapperOptions" /> object containing configuration details for all the types to be registered.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterTypes(Type[] types, MapperOptions? options = null)
     {
         foreach (var type in types)
@@ -86,7 +87,7 @@ public class MapperConfiguration
     /// var obj2 = mapper.MapOne&lt;CustomerEntity, CustomerModel&gt;(obj1); 
     /// </code>
     /// </example>
-    /// <returns></returns>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterType<T>(MapperOptions? options = null)
     {
         return RegisterType(typeof(T), options);
@@ -97,6 +98,7 @@ public class MapperConfiguration
     /// </summary>
     /// <param name="type">The type to be registered.</param>
     /// <param name="options">An optional <see cref="MapperOptions" /> object containing configuration details for the type being registered.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterType(Type type, MapperOptions? options = null)
     {
         if (options == null)
@@ -145,7 +147,7 @@ public class MapperConfiguration
     /// <typeparam name="TReturn">The type of the return value for the calculated member.</typeparam>
     /// <param name="memberName">The calculated member name.</param>
     /// <param name="calculation">The calculation.</param>
-    /// <returns>Returns the current <see cref="MapperConfiguration" /> object.</returns>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterCalculation<TSource, TReturn>(string memberName, Func<TSource?, TReturn?> calculation)
     {
         var type = typeof(TSource);
@@ -177,13 +179,23 @@ public class MapperConfiguration
     /// <typeparam name="TDestination">The destination type to map.</typeparam>
     /// <param name="sourceOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the source type being registered.</param>
     /// <param name="destinationOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the destination type being registered.</param>
-    /// <returns></returns>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterMap<TSource, TDestination>(MapperOptions sourceOptions, MapperOptions destinationOptions)
     {
         RegisterMap(typeof(TSource), sourceOptions, typeof(TDestination), destinationOptions);
         return this;
     }
 
+    /// <summary>
+    /// Registers a specific type-to-type configuration. When registering via <see cref="RegisterType" /> only 1 endpoint
+    /// is specified, and the <see cref="ObjectMapper" /> automatically joins members based on member name. In cases
+    /// where a specific mapping between 2 types is required, this method can be used to provide custom behaviour.
+    /// </summary>
+    /// <param name="sourceType">The source type participating in the map.</param>
+    /// <param name="sourceOptions">The source options.</param>
+    /// <param name="destinationType">The destination type participating in the map.</param>
+    /// <param name="destinationOptions">The destination options.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterMap(Type sourceType, MapperOptions sourceOptions, Type destinationType, MapperOptions destinationOptions)
     {
         var key = new Tuple<Type, Type>(
@@ -214,7 +226,7 @@ public class MapperConfiguration
     /// </summary>
     /// <typeparam name="T">The source object type.</typeparam>
     /// <param name="member">A unary member expression to select a member on the source object type.</param>
-    /// <returns>Returns a <see cref="MapperConfiguration" /> object.</returns>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration Ignore<T>(Expression<Func<T, object>> member)
     {
         var type = typeof(T);
@@ -229,7 +241,7 @@ public class MapperConfiguration
     /// </summary>
     /// <param name="type">The type.</param>
     /// <param name="members">The list of members to ignore</param>
-    /// <returns>Returns the current <see cref="MapperConfiguration" /> object.</returns>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration Ignore(Type type, params string[] members)
     {
         var typeConfig = this.TypeConfiguration.First(c => c.Key == type).Value;
@@ -271,7 +283,7 @@ public class MapperConfiguration
     /// <typeparam name="T">The source object type.</typeparam>
     /// <param name="member">A unary member expression to select a member on the source object type.</param>
     /// <param name="newName">The new name for the member.</param>
-    /// <returns>Returns a <see cref="MapperConfiguration" /> object.</returns>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     /// <exception cref="ArgumentNullException"></exception>
     public MapperConfiguration Rename<T>(Expression<Func<T, object>> member, string newName)
     {
@@ -321,7 +333,7 @@ public class MapperConfiguration
     /// <typeparam name="U"></typeparam>
     /// <param name="fromMember"></param>
     /// <param name="toMember"></param>
-    /// <returns></returns>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration MapMember<T, U>(Expression<Func<T, object>> fromMember, Expression<Func<U, object>> toMember)
     {
         throw new NotSupportedException();
