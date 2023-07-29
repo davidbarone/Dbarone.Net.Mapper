@@ -113,21 +113,26 @@ public class MapperConfiguration
         }
         else if (type.IsDictionaryType())
         {
-            memberResolver = new DictionaryMemberResolver();
+            memberResolver = new DictionaryMemberResolver(type);
         }
         else
         {
             memberResolver = new ClassMemberResolver(type, options);
         }
 
-        var members = memberResolver.GetMembers();
-        var memberConfig = members.Select(m => new MapperMemberConfiguration
+        string[] members = new string[] { };
+        List<MapperMemberConfiguration> memberConfig = new List<MapperMemberConfiguration>();
+        if (!memberResolver.DeferMemberResolution)
         {
-            MemberName = m,
-            DataType = memberResolver.GetMemberType(m),
-            Getter = memberResolver.GetGetter(m),
-            Setter = memberResolver.GetSetter(m)
-        }).ToList();
+            members = memberResolver.GetMembers();
+            memberConfig = members.Select(m => new MapperMemberConfiguration
+            {
+                MemberName = m,
+                DataType = memberResolver.GetMemberType(m),
+                Getter = memberResolver.GetGetter(m),
+                Setter = memberResolver.GetSetter(m)
+            }).ToList();
+        }
 
         TypeConfiguration[type] = new MapperTypeConfiguration
         {

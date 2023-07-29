@@ -116,4 +116,9 @@ public class ClassMemberResolver : IMemberResolver
             throw new Exception("whoops");
         }
     }
+
+    public string[] GetInstanceMembers(object obj)
+    {
+        throw new NotImplementedException();
+    }
 }

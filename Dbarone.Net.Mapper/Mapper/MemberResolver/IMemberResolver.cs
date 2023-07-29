@@ -16,6 +16,13 @@ public interface IMemberResolver
     string[] GetMembers();
 
     /// <summary>
+    /// Gets members on an instance.
+    /// </summary>
+    /// <param name="obj">The object instance.</param>
+    /// <returns>A string array of member names.</returns>
+    string[] GetInstanceMembers(object obj);
+
+    /// <summary>
     /// Gets a member type.
     /// </summary>
     /// <param name="memberName">The member name</param>
