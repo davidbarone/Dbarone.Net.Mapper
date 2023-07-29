@@ -7,7 +7,9 @@ using System.Linq.Expressions;
 /// </summary>
 public class StructMemberResolver : ClassMemberResolver
 {
-    public override CreateInstance CreateInstance(Type type, params object[] args)
+    public StructMemberResolver(Type type, MapperOptions options) : base(type, options) { }
+    
+    public override CreateInstance CreateInstance(params object[] args)
     {
         List<ParameterExpression> parameters = new List<ParameterExpression>();
 

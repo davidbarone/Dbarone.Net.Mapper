@@ -6,17 +6,26 @@ using System.Reflection;
 /// </summary>
 public class DictionaryMemberResolver : IMemberResolver
 {
-    public Getter GetGetter(Type type, MemberInfo memberInfo)
+    public bool DeferMemberResolution => true;
+
+    public string[] GetMembers() { throw new NotImplementedException(); }
+
+    public Getter GetGetter(string memberName)
     {
         throw new NotImplementedException();
     }
 
-    public Setter GetSetter(Type type, MemberInfo memberInfo)
+    public Setter GetSetter(string memberName)
     {
         throw new NotImplementedException();
     }
 
-    public CreateInstance CreateInstance(Type type, params object[] args)
+    public CreateInstance CreateInstance(params object[] args)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Type GetMemberType(string memberName)
     {
         throw new NotImplementedException();
     }

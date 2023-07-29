@@ -7,19 +7,50 @@ using System.Linq.Expressions;
 /// </summary>
 public class ClassMemberResolver : IMemberResolver
 {
-    public virtual CreateInstance CreateInstance(Type type, params object[] args)
+    protected Type type;
+    protected IDictionary<string, MemberInfo> members;
+
+    public ClassMemberResolver(Type type, MapperOptions options)
+    {
+        this.type = type;
+        this.members = GetTypeMembers(options);
+    }
+
+    private IDictionary<string, MemberInfo> GetTypeMembers(MapperOptions options)
+    {
+        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
+        if (options.IncludePrivateMembers)
+        {
+            bindingFlags |= BindingFlags.NonPublic;
+        }
+        var members = this.type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
+        return members.ToDictionary(m => m.Name, m => m);
+    }
+
+    public bool DeferMemberResolution => false;
+
+    public string[] GetMembers() { return this.members.Keys.ToArray(); }
+
+    public virtual CreateInstance CreateInstance(params object[] args)
     {
         List<ParameterExpression> parameters = new List<ParameterExpression>();
 
         // args array (optional)
         parameters.Add(Expression.Parameter(typeof(object[]), "args"));
 
-        return Expression.Lambda<CreateInstance>(Expression.New(type), parameters).Compile();
+        return Expression.Lambda<CreateInstance>(Expression.New(this.type), parameters).Compile();
     }
 
-    public Getter GetGetter(Type type, MemberInfo memberInfo)
+    public Getter GetGetter(string memberName)
     {
-        if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));
+        if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException(nameof(memberName));
+
+        var memberInfo = this.members[memberName];
+
+        if (memberInfo == null)
+        {
+            throw new ArgumentException(nameof(memberName));
+        }
 
         // if has no read
         if (memberInfo is PropertyInfo && (memberInfo as PropertyInfo).CanRead == false) return null;
@@ -30,9 +61,16 @@ public class ClassMemberResolver : IMemberResolver
         return Expression.Lambda<Getter>(Expression.Convert(accessor, typeof(object)), obj).Compile();
     }
 
-    public Setter GetSetter(Type type, MemberInfo memberInfo)
+    public Setter GetSetter(string memberName)
     {
-        if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));
+        if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException(nameof(memberName));
+
+        var memberInfo = this.members[memberName];
+
+        if (memberInfo == null)
+        {
+            throw new ArgumentException(nameof(memberName));
+        }
 
         var fieldInfo = memberInfo as FieldInfo;
         var propertyInfo = memberInfo as PropertyInfo;
@@ -41,7 +79,7 @@ public class ClassMemberResolver : IMemberResolver
         if (memberInfo is PropertyInfo && propertyInfo.CanWrite == false) return null;
 
         // if *Structs*, use direct reflection - net35 has no Expression.Unbox to cast target
-        if (type.GetTypeInfo().IsValueType)
+        if (this.type.GetTypeInfo().IsValueType)
         {
             return memberInfo is FieldInfo ?
                 (Setter)fieldInfo.SetValue :
@@ -66,5 +104,16 @@ public class ClassMemberResolver : IMemberResolver
         var conv = Expression.Convert(assign, typeof(object));
 
         return Expression.Lambda<Setter>(conv, target, value).Compile();
+    }
+
+    public Type GetMemberType(string memberName)
+    {
+        var member = this.members[memberName];
+        if (member is PropertyInfo) return (member as PropertyInfo).PropertyType;
+        else if (member is FieldInfo) return (member as FieldInfo).FieldType;
+        else
+        {
+            throw new Exception("whoops");
+        }
     }
 }

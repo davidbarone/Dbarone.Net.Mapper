@@ -107,31 +107,35 @@ public class MapperConfiguration
         }
 
         IMemberResolver memberResolver;
-        if (type.IsValueType) {
-            memberResolver = new StructMemberResolver();
+        if (type.IsValueType)
+        {
+            memberResolver = new StructMemberResolver(type, options);
         }
         else if (type.IsDictionaryType())
         {
             memberResolver = new DictionaryMemberResolver();
         }
-        else {
-            memberResolver = new ClassMemberResolver();
+        else
+        {
+            memberResolver = new ClassMemberResolver(type, options);
         }
 
-        var members = GetTypeMembers(type, options);
+        var members = memberResolver.GetMembers();
+        var memberConfig = members.Select(m => new MapperMemberConfiguration
+        {
+            MemberName = m,
+            DataType = memberResolver.GetMemberType(m),
+            Getter = memberResolver.GetGetter(m),
+            Setter = memberResolver.GetSetter(m)
+        }).ToList();
 
         TypeConfiguration[type] = new MapperTypeConfiguration
         {
             Type = type,
             Options = options,
-            CreateInstance = memberResolver.CreateInstance(type, null),
-            MemberConfiguration = members.Select(m => new MapperMemberConfiguration
-            {
-                MemberName = m.Name,
-                DataType = m.MemberType == MemberTypes.Property ? (m as PropertyInfo)!.PropertyType : (m as FieldInfo)!.FieldType,
-                Getter = memberResolver.GetGetter(type, m),
-                Setter = memberResolver.GetSetter(type, m)
-            }).ToList()
+            MemberResolver = memberResolver,
+            CreateInstance = memberResolver.CreateInstance(null),
+            MemberConfiguration = memberConfig
         };
         return this;
     }
@@ -313,18 +317,7 @@ public class MapperConfiguration
 
     #endregion
 
-    #region Private Members`
-
-    private IEnumerable<MemberInfo> GetTypeMembers(Type type, MapperOptions options)
-    {
-        BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
-        if (options.IncludePrivateMembers)
-        {
-            bindingFlags |= BindingFlags.NonPublic;
-        }
-        var members = type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
-        return members;
-    }
+    #region Private Members
 
     /// <summary>
     /// Maps a member from source to destination using lambda expressions.
@@ -375,20 +368,23 @@ public class MapperConfiguration
         foreach (var k in this.TypeConfiguration.Keys)
         {
             var v = this.TypeConfiguration[k];
-            foreach (var item in v.MemberConfiguration)
+            if (!v.MemberResolver.DeferMemberResolution)
             {
-                // only modify internal name if not already pre-set.
-                if (item.InternalMemberName.IsNullOrWhiteSpace())
+                foreach (var item in v.MemberConfiguration)
                 {
-                    if (v.Options.MemberRenameStrategy != null)
+                    // only modify internal name if not already pre-set.
+                    if (item.InternalMemberName.IsNullOrWhiteSpace())
                     {
-                        var newName = v.Options.MemberRenameStrategy.RenameMember(item.MemberName);
-                        item.InternalMemberName = newName;
-                    }
-                    else
-                    {
-                        // default - make internal name = member name
-                        item.InternalMemberName = item.MemberName;
+                        if (v.Options.MemberRenameStrategy != null)
+                        {
+                            var newName = v.Options.MemberRenameStrategy.RenameMember(item.MemberName);
+                            item.InternalMemberName = newName;
+                        }
+                        else
+                        {
+                            // default - make internal name = member name
+                            item.InternalMemberName = item.MemberName;
+                        }
                     }
                 }
             }

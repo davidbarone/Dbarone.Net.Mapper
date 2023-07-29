@@ -32,6 +32,12 @@ public class ObjectMapper
 
         var newInstance = toTypeConfiguration.CreateInstance();
 
+        // for dictionary + dynamic types, we need to get the source members now
+        if (fromTypeConfiguration.MemberResolver.DeferMemberResolution) {
+            
+
+        }
+
         foreach (var toRule in toTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false))
         {
             // Get from rule
