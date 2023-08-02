@@ -17,14 +17,17 @@ public class DictionaryMemberResolver : IMemberResolver
 
     public string[] GetMembers() { throw new NotImplementedException(); }
 
+
     public Getter GetGetter(string memberName)
     {
-        throw new NotImplementedException();
+        Getter func = (object obj) => (object)(obj as IDictionary<string, object>)[memberName];
+        return func;
     }
 
     public Setter GetSetter(string memberName)
     {
-        throw new NotImplementedException();
+        Setter action = delegate (object target, object value) { (target as IDictionary<string, object>)[memberName] = value; };
+        return action;
     }
 
     public CreateInstance CreateInstance(params object[] args)
@@ -39,7 +42,7 @@ public class DictionaryMemberResolver : IMemberResolver
 
     public Type GetMemberType(string memberName)
     {
-        throw new NotImplementedException();
+        return typeof(object);
     }
 
     public string[] GetInstanceMembers(object obj)

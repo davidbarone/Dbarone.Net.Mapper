@@ -1,4 +1,5 @@
 namespace Dbarone.Net.Mapper;
+using Dbarone.Net.Extensions;
 
 using System;
 using System.Reflection;
@@ -22,6 +23,24 @@ public class MapperMemberConfiguration
     /// The internal member name. Mapping from source to destination is done via matching internal names.
     /// </summary>
     public string InternalMemberName { get; set; } = default!;
+
+    public void SetInternalMemberName(IMemberRenameStrategy? memberRenameStrategy = null, bool force = false)
+    {
+        // only modify internal name if not already pre-set.
+        if (this.InternalMemberName.IsNullOrWhiteSpace() || force)
+        {
+            if (memberRenameStrategy != null)
+            {
+                var newName = memberRenameStrategy.RenameMember(this.MemberName);
+                this.InternalMemberName = newName;
+            }
+            else
+            {
+                // default - make internal name = member name
+                this.InternalMemberName = this.MemberName;
+            }
+        }
+    }
 
     /// <summary>
     /// Set to true to ignore this member in the mapping configuration.

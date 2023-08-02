@@ -377,34 +377,10 @@ public class MapperConfiguration
             {
                 foreach (var item in v.MemberConfiguration)
                 {
-                    // only modify internal name if not already pre-set.
-                    if (item.InternalMemberName.IsNullOrWhiteSpace())
-                    {
-                        if (v.Options.MemberRenameStrategy != null)
-                        {
-                            var newName = v.Options.MemberRenameStrategy.RenameMember(item.MemberName);
-                            item.InternalMemberName = newName;
-                        }
-                        else
-                        {
-                            // default - make internal name = member name
-                            item.InternalMemberName = item.MemberName;
-                        }
-                    }
+                    item.SetInternalMemberName(v.Options.MemberRenameStrategy);
                 }
             }
-
-            // Check no duplicate internal names
-            var duplicates = v.MemberConfiguration
-                .GroupBy(g => g.InternalMemberName)
-                .Where(g => g.Count() > 1)
-                .Select(g => g.Key).ToList();
-
-            if (duplicates.Any())
-            {
-                var duplicateValues = duplicates.Aggregate("", (current, next) => current + " " + $"[{next}]");
-                throw new MapperException($"The following internal member names have been used for multiple members on type: {v.Type}:{duplicateValues}.");
-            }
+            v.Validate();
         }
 
         return new ObjectMapper(this.TypeConfiguration, this.Converters);

@@ -7,7 +7,7 @@ using System.Collections;
 public class MapDictionaryTests
 {
     [Fact]
-    public void MapHashtableToHashtable()
+    public void DictToDict()
     {
         Dictionary<string, object> dict1 = new Dictionary<string, object>();
         dict1["MemberA"] = DateTime.Now;

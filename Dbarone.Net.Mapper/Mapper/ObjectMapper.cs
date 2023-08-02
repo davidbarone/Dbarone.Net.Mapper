@@ -34,15 +34,37 @@ public class ObjectMapper
 
         // for dictionary + dynamic types, we need to get the source members now
         if (fromTypeConfiguration.MemberResolver.DeferMemberResolution) {
-            
-
+            var members = fromTypeConfiguration.MemberResolver.GetInstanceMembers(obj);
+            var memberConfig = members.Select(m => new MapperMemberConfiguration
+            {
+                MemberName = m,
+                DataType = fromTypeConfiguration.MemberResolver.GetMemberType(m),
+                Getter = fromTypeConfiguration.MemberResolver.GetGetter(m),
+                Setter = fromTypeConfiguration.MemberResolver.GetSetter(m)
+            }).ToList();
+            fromTypeConfiguration.MemberConfiguration = memberConfig;
+            foreach (var item in fromTypeConfiguration.MemberConfiguration) {
+                item.SetInternalMemberName(fromTypeConfiguration.Options.MemberRenameStrategy);
+            }
+            fromTypeConfiguration.Validate();
         }
 
-        foreach (var toRule in toTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false))
+        // Get members to map. By default, the members come from the 'to' side.
+        // However, if the to type is deferred resolution, then the members come from the 'from' side.
+        List<string> internalMemberNames = null;
+        if (!toTypeConfiguration.MemberResolver.DeferMemberResolution)
+        {
+            internalMemberNames = toTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false).Select(m => m.InternalMemberName).ToList();
+        } else {
+            internalMemberNames = fromTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false).Select(m => m.InternalMemberName).ToList();
+        }
+
+        // If to type is dictionary / dynamic (DeferMemberResolution = true)
+        foreach (var internalMemberName in internalMemberNames)
         {
             // Get from rule
-            var ruleName = toRule.InternalMemberName;
-            var fromRule = fromTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(ruleName, StringComparison.CurrentCultureIgnoreCase));
+            var toRule = toTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(internalMemberName, StringComparison.CurrentCultureIgnoreCase));
+            var fromRule = fromTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(internalMemberName, StringComparison.CurrentCultureIgnoreCase));
             
             if (fromRule == null && (toTypeConfiguration.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
             {
