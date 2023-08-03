@@ -177,3 +177,84 @@ Sometimes, you will want to ignore members from the mapping process. The `Ignore
 
 ```
 
+## Binding Algorithm
+The mapper algorithm works by joining 'members' from source type to destination type. The way members are defined depends on the type being mapped. The mapper library supports 2 broad kinds of types:
+- Types with fixed schemas
+- Types with flexible schemas
+
+### Types with Fixed Schemas
+This includes all classes and structs that are strong-typed, and have known properties and fields at compile time. Members correlate to the type's properties and fields.
+
+### Types with Variable Schemas
+This includes dictionaries and dynamic objects (which are implemented internally as dictionaries). These objects must be inspected at map-time to determine the members. The members correlate to the index key values.
+
+### Mapping Process
+The MapOne() method works as follows:
+- A SourceType and DestinationType are provided to the MapOne method.
+- A source object is also provided to the MapOne method. This must be an object that can be assigned to SourceType, but can be a subtype. Note that if a sub type instance is provided, the mapper will still only map members based on SourceType.
+- A check is made that the SourceType has been registered. The source type can be any registered type, including interface types.
+- A check is made that the DestinationType has been registered. The destination type must be a concrete (non abstract) class, cannot be an interface, and the type must have a parameterless constructor.
+- If SourceType and DestinationType are registered, then a full memberwise map will be carried out (see below).
+- If the SourceType or DestinationType have not been registered, a second check is made in the TypeConverters registry. If a source + destination TypeConverter match is found, then a simple type conversion mapping is performed (see below)
+
+### TypeConversion Mapping Process
+In a typeconversion mapping process, a converter method is called, passing in the source object. The converter method is then resposible for returning an object of type DestinationType. No memberwise mapping takes place, and no recursive mapping of child objects takes place. This type of mapping should only be reserved in cases where you want to apply very simple mapping or type conversions on simple (e.g. native) types.
+
+### Memberwise Mapping Process
+The memberwise mapping process is the full mapping process, and involves recusively mapping each connected member between source and destination types.
+
+### Validation Process
+Validation takes place in multiple places:
+- Mapper configuration 'build' phase
+- Before mapping of the first object in the map phase
+
+#### Validation in the Mapper Configuration 'Build' Phase
+Individual types are validated as follows:
+- Check that the internal member names are unique within each type.
+
+#### Before mapping of the first object
+- The type validation is repeated
+- If the Options.EndPointValidation is set to `MapperEndPoint.Destination` (which is the default setting), then the system checks that every destination member that is included in the mapping process has a matching member in the source object type.
+- If the Options.EndPointValidation is set to `MapperEndPoint.Source`, then the system checks that every source member that is included in the mapping process has a matching member in the destination object type.
+- The source and destination declared data types must also match for the mapping to occur (or there needs to be a type converter or a )
+- Once validation takes place, the members for mapping are selected as follows:
+  - If the DestinationType is a fixed schema, the member list comes from the destination type
+  - Otherwise, the member list is obtained from the source type.
+  - Any members that do not exist on both sides are unmapped. Note that if EndPointValidation is set, orphaned members will cause exceptions to be thrown.
+
+#### Mapping
+- When mapping a member, the data types on the source and destination types must match.
+- If the member types on source and destination don't match, but a TypeConverter exists for the source / destination type, a simple type conversion will be carried out (note this will not include any recursive mapping of child members though).
+- Otherwise, a type exception will be thrown.
+- When assigning the source value to the destination object, if the type has been registered, then the child value will be mapped recursively.
+
+### Member Selection Process
+- By default, the members defined as the public properties.
+- When registering a type, options can be provided to allow
+  - Fields to be included as members
+  - Private properties and fields to be included as members
+- For flexible schema types, the members align to the dictionary keys
+- Member names default to the property/field names or dictionary keys, but these names can be overridden using an `IMemberRenameStrategy`.
+- The 'renamed' member is known as the 'InternalMemberName'. This is the actual member name used to connect / map to other types.
+- Members can be excluded from the mapping process by calling the `Ignore` method.
+- 
+
+
+
+- If the SourceType or DestinationType have not been registered, a second check is made in the TypeConverters registry. If a source + destination TypeConverter match is found, then
+-  both SourceType and DestinationType have been registered in the configuration.
+- If the SourceType is not registered, then the system checks for a registration in the Type Converters. If a registration is found, then objects will be 'converted' to the destination type.
+The following types can be mapped:
+- Value Types
+  - Built-in value types (e.g. int, float)
+  - Structs
+- Reference Types
+  - Classes
+
+To do:
+- internal member names case sensitive?
+- type converters can be global / assigned to type / member
+- type.filtermembers()
+- mapmany - all array types / list / ienumerable etc
+- open generics?
+- 

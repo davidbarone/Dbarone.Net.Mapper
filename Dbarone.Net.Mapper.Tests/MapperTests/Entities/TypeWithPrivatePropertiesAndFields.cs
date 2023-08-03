@@ -8,7 +8,7 @@ namespace Dbarone.Net.Mapper.Tests;
 /// - 1 * private field
 /// - 3 * private backing fields for properties 
 /// </summary>
-public class SimpleCustomerWithPrivatePropertiesAndFields
+public class TypeWithPrivatePropertiesAndFields
 {
     private int _customerId;
     private string _customerPrivateProperty = default!;

@@ -5,6 +5,37 @@ using Dbarone.Net.Extensions;
 public class MapperConfigurationTests
 {
     [Fact]
+    public void ShouldBuild_When_RegisterType()
+    {
+        var config = MapperConfiguration.Create()
+        .RegisterType<SimpleEntity>()
+        .Build();
+        Assert.NotNull(config);
+    }
+
+    [Theory]
+    [InlineData(false, false, 2)]
+    [InlineData(false, true, 3)]
+    [InlineData(true, false, 3)]
+    [InlineData(true, true, 8)]
+    public void MapperBuilder_IncludePrivateFieldsProperties_ShouldReturnCorrectMemberRules(bool includePrivateMembers, bool includeFields, int expectedMemberCount)
+    {
+        var config = MapperConfiguration.Create().RegisterType<TypeWithPrivatePropertiesAndFields>(new MapperOptions
+        {
+            IncludeFields = includeFields,
+            IncludePrivateMembers = includePrivateMembers
+        });
+        Assert.Equal(1, config.GetTypeConfigurationCount());
+
+        MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(TypeWithPrivatePropertiesAndFields));
+        Assert.Equal(expectedMemberCount, typeConfig.MemberConfiguration.Count());
+    }
+
+
+
+
+
+    [Fact]
     public void MapperBuilder_RegisterTypes_ShouldBuild()
     {
         var config = MapperConfiguration.Create()
@@ -27,31 +58,14 @@ public class MapperConfigurationTests
     [Fact]
     public void MapperBuilder_RegisterSingle_Returns2MemberRules()
     {
-        var config = MapperConfiguration.Create().RegisterType<SimpleCustomer>();
+        var config = MapperConfiguration.Create().RegisterType<SimpleEntity>();
         Assert.Equal(1, config.GetTypeConfigurationCount());
 
         // should be 2 member rules
-        MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(SimpleCustomer));
+        MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(SimpleEntity));
         Assert.Equal(2, typeConfig.MemberConfiguration.Count());
     }
 
-    [Theory]
-    [InlineData(false, false, 2)]
-    [InlineData(false, true, 3)]
-    [InlineData(true, false, 3)]
-    [InlineData(true, true, 8)]
-    public void MapperBuilder_IncludePrivateFieldsProperties_ShouldReturnCorrectMemberRules(bool includePrivateMembers, bool includeFields, int expectedMemberCount)
-    {
-        var config = MapperConfiguration.Create().RegisterType<SimpleCustomerWithPrivatePropertiesAndFields>(new MapperOptions
-        {
-            IncludeFields = includeFields,
-            IncludePrivateMembers = includePrivateMembers
-        });
-        Assert.Equal(1, config.GetTypeConfigurationCount());
-
-        MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(SimpleCustomerWithPrivatePropertiesAndFields));
-        Assert.Equal(expectedMemberCount, typeConfig.MemberConfiguration.Count());
-    }
 
     [Fact]
     public void MapperBuilder_DuplicateInternalNames_ShouldThrowException()
