@@ -6,6 +6,7 @@ using System.Collections;
 
 public class MapDictionaryTests
 {
+    
     [Fact]
     public void DictToDict()
     {
@@ -22,5 +23,20 @@ public class MapDictionaryTests
         var dict2 = mapper.MapOne<Dictionary<string, object>, Dictionary<string, object>>(dict1);
 
         Assert.True(dict2.ValueEquals(dict1));
+    }
+
+    [Fact]
+    public void TestClassToDict() {
+        ClassA a = new ClassA();
+
+        var mapper = MapperConfiguration
+        .Create()
+        .RegisterType<Dictionary<string, object>>()
+        .RegisterType<ClassA>()
+        .Build();
+
+        var dict = mapper.MapOne<ClassA, Dictionary<string, object>>(a);
+
+        Assert.Equal(a.IntValue, dict["IntValue"]);
     }
 }

@@ -1,7 +1,30 @@
 namespace Dbarone.Net.Mapper.Tests;
-public enum EnumValue
+public enum AlphaEnum
 {
     A,
     B,
-    C
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
+    I,
+    J,
+    K,
+    L,
+    M,
+    N,
+    O,
+    P,
+    Q,
+    R,
+    S,
+    T,
+    U,
+    V,
+    W,
+    X,
+    Y,
+    Z
 }
