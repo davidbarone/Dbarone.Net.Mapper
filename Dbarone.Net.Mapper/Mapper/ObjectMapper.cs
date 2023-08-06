@@ -10,6 +10,34 @@ public class ObjectMapper
     private IDictionary<Type, MapperTypeConfiguration> configuration;
     private IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters;
 
+    #region Configuration
+
+    /// <summary>
+    /// Returns the number of types configured.
+    /// </summary>
+    /// <returns>Returns the number of types configured.</returns>
+    public Type[] GetTypeConfigurationKeys()
+    {
+        return configuration.Keys.ToArray();
+    }
+
+    /// <summary>
+    /// Gets the <see cref="MapperTypeConfiguration" /> configuration for a specific type.
+    /// </summary>
+    /// <param name="type">The type to get the configuration for.</param>
+    /// <returns>Returns a <see cref="MapperTypeConfiguration" /> object representing the specified configuration.</returns>
+    public MapperTypeConfiguration GetTypeConfiguration(Type type)
+    {
+        return configuration[type];
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Returns the mapper configuration.
+    /// </summary>
+    /// 
+    public IDictionary<Type, MapperTypeConfiguration> Configuration { get; }
     internal ObjectMapper(IDictionary<Type, MapperTypeConfiguration> configuration, IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters)
     {
         this.configuration = configuration;
@@ -33,7 +61,8 @@ public class ObjectMapper
         var newInstance = toTypeConfiguration.CreateInstance();
 
         // for dictionary + dynamic types, we need to get the source members now
-        if (fromTypeConfiguration.MemberResolver.DeferMemberResolution) {
+        if (fromTypeConfiguration.MemberResolver.DeferMemberResolution)
+        {
             var members = fromTypeConfiguration.MemberResolver.GetInstanceMembers(obj);
             var memberConfig = members.Select(m => new MapperMemberConfiguration
             {
@@ -43,7 +72,8 @@ public class ObjectMapper
                 Setter = fromTypeConfiguration.MemberResolver.GetSetter(m)
             }).ToList();
             fromTypeConfiguration.MemberConfiguration = memberConfig;
-            foreach (var item in fromTypeConfiguration.MemberConfiguration) {
+            foreach (var item in fromTypeConfiguration.MemberConfiguration)
+            {
                 item.SetInternalMemberName(fromTypeConfiguration.Options.MemberRenameStrategy);
             }
             fromTypeConfiguration.Validate();
@@ -55,7 +85,9 @@ public class ObjectMapper
         if (!toTypeConfiguration.MemberResolver.DeferMemberResolution)
         {
             internalMemberNames = toTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false).Select(m => m.InternalMemberName).ToList();
-        } else {
+        }
+        else
+        {
             internalMemberNames = fromTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false).Select(m => m.InternalMemberName).ToList();
         }
 
@@ -65,7 +97,7 @@ public class ObjectMapper
             // Get from rule
             var toRule = toTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(internalMemberName, StringComparison.CurrentCultureIgnoreCase));
             var fromRule = fromTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(internalMemberName, StringComparison.CurrentCultureIgnoreCase));
-            
+
             if (fromRule == null && (toTypeConfiguration.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
             {
                 throw new Exception($"Cannot find member: {toRule.InternalMemberName} in source mapping configuration.");

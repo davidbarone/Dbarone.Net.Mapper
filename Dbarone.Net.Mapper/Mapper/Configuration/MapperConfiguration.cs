@@ -15,29 +15,6 @@ public class MapperConfiguration
 
     internal MapperConfiguration() { }
 
-    #region Configuration
-
-    /// <summary>
-    /// Returns the number of types configured.
-    /// </summary>
-    /// <returns>Returns the number of types configured.</returns>
-    public int GetTypeConfigurationCount()
-    {
-        return TypeConfiguration.Keys.Count();
-    }
-
-    /// <summary>
-    /// Gets the <see cref="MapperTypeConfiguration" /> configuration for a specific type.
-    /// </summary>
-    /// <param name="type">The type to get the configuration for.</param>
-    /// <returns>Returns a <see cref="MapperTypeConfiguration" /> object representing the specified configuration.</returns>
-    public MapperTypeConfiguration GetTypeConfiguration(Type type)
-    {
-        return TypeConfiguration[type];
-    }
-
-    #endregion
-
     #region ctor
 
     /// <summary>

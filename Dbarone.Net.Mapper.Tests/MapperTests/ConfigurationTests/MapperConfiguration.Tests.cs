@@ -7,10 +7,11 @@ public class MapperConfigurationTests
     [Fact]
     public void ShouldBuild_When_RegisterType()
     {
-        var config = MapperConfiguration.Create()
+        var mapper = MapperConfiguration.Create()
         .RegisterType<SimpleEntity>()
         .Build();
-        Assert.NotNull(config);
+        Assert.NotNull(mapper);
+        Assert.Equal(1, mapper.GetTypeConfigurationKeys().Count());
     }
 
     [Theory]
@@ -18,51 +19,53 @@ public class MapperConfigurationTests
     [InlineData(false, true, 3)]
     [InlineData(true, false, 3)]
     [InlineData(true, true, 8)]
-    public void MapperBuilder_IncludePrivateFieldsProperties_ShouldReturnCorrectMemberRules(bool includePrivateMembers, bool includeFields, int expectedMemberCount)
+    public void Should_Include_Private_Properties_And_Fields(bool includePrivateMembers, bool includeFields, int expectedMemberCount)
     {
-        var config = MapperConfiguration.Create().RegisterType<TypeWithPrivatePropertiesAndFields>(new MapperOptions
+        var mapper = MapperConfiguration.Create().RegisterType<TypeWithPrivatePropertiesAndFields>(new MapperOptions
         {
             IncludeFields = includeFields,
             IncludePrivateMembers = includePrivateMembers
-        });
-        Assert.Equal(1, config.GetTypeConfigurationCount());
+        }).Build();
+        Assert.Equal(1, mapper.GetTypeConfigurationKeys().Count());
 
-        MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(TypeWithPrivatePropertiesAndFields));
+        MapperTypeConfiguration typeConfig = mapper.GetTypeConfiguration(typeof(TypeWithPrivatePropertiesAndFields));
         Assert.Equal(expectedMemberCount, typeConfig.MemberConfiguration.Count());
     }
 
-
-
-
-
     [Fact]
-    public void MapperBuilder_RegisterTypes_ShouldBuild()
+    public void Should_Allow_Multiple_Type_Registration()
     {
-        var config = MapperConfiguration.Create()
-        .RegisterType<CustomerA>()
-        .RegisterType<CustomerB>()
-        .Ignore<CustomerB>(c => c.CustomerId)
+        Type[] types = new Type[]{
+            typeof(ClassA),
+            typeof(ClassB)
+        };
+
+        var mapper = MapperConfiguration.Create()
+        .RegisterTypes(types)
         .Build();
+
+        Assert.Equal(2, mapper.GetTypeConfigurationKeys().Count());
     }
 
-    public void MapperConfiguration_AddMultipleTypes_ShouldBuild()
+    [Fact]
+    public void Should_Allow_Multiple_Type_Registration_2()
     {
         var dtoTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Name.EndsWith("dto")).ToArray();
 
         var mapper = MapperConfiguration.Create()
             .RegisterTypes(dtoTypes).Build();
 
-        // do some mapping now...
+        Assert.Equal(1, mapper.GetTypeConfigurationKeys().Count());
     }
 
     [Fact]
     public void MapperBuilder_RegisterSingle_Returns2MemberRules()
     {
-        var config = MapperConfiguration.Create().RegisterType<SimpleEntity>();
-        Assert.Equal(1, config.GetTypeConfigurationCount());
+        var mapper = MapperConfiguration.Create().RegisterType<SimpleEntity>().Build();
+        Assert.Equal(1, mapper.GetTypeConfigurationKeys().Count());
 
         // should be 2 member rules
-        MapperTypeConfiguration typeConfig = config.GetTypeConfiguration(typeof(SimpleEntity));
+        MapperTypeConfiguration typeConfig = mapper.GetTypeConfiguration(typeof(SimpleEntity));
         Assert.Equal(2, typeConfig.MemberConfiguration.Count());
     }
 

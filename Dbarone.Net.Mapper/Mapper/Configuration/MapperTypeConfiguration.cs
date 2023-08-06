@@ -59,4 +59,8 @@ public class MapperTypeConfiguration
             throw new MapperException($"The following internal member names have been used for multiple members on type: {this.Type}:{duplicateValues}.");
         }
     }
+
+    public void ValidateMap() {
+        
+    }
 }
