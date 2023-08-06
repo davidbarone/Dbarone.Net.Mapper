@@ -60,7 +60,15 @@ public class MapperTypeConfiguration
         }
     }
 
+    /// <summary>
+    /// Returns the active member internal names used by this type.
+    /// </summary>
+    /// <returns></returns>
+    public string[] GetActiveInternalMemberNames() {
+        return this.MemberConfiguration.Where(m => m.Ignore == false).Select(m => m.InternalMemberName).ToArray();
+    }
+    
     public void ValidateMap() {
-        
+
     }
 }

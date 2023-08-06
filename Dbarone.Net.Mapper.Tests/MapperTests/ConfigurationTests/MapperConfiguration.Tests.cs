@@ -59,7 +59,7 @@ public class MapperConfigurationTests
     }
 
     [Fact]
-    public void MapperBuilder_RegisterSingle_Returns2MemberRules()
+    public void When_Register_Type_Should_Return_Correct_Member_Rules()
     {
         var mapper = MapperConfiguration.Create().RegisterType<SimpleEntity>().Build();
         Assert.Equal(1, mapper.GetTypeConfigurationKeys().Count());
@@ -69,9 +69,20 @@ public class MapperConfigurationTests
         Assert.Equal(2, typeConfig.MemberConfiguration.Count());
     }
 
+    [Fact]
+    public void Should_Allow_Rename_Of_Member()
+    {
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<SimpleEntity>()
+            .Rename<SimpleEntity>(e => e.EntityId, "Entity_Id")
+            .Build();  // rename EntityId -> Entity_Id.
+
+        Assert.Equal(2, mapper.GetTypeConfiguration(typeof(SimpleEntity)).MemberConfiguration.Count());
+        Assert.Contains("Entity_Id", mapper.GetTypeConfiguration(typeof(SimpleEntity)).GetActiveInternalMemberNames());
+    }
 
     [Fact]
-    public void MapperBuilder_DuplicateInternalNames_ShouldThrowException()
+    public void Should_Throw_Exception_When_Duplicate_Internal_Names()
     {
         var config = MapperConfiguration.Create()
             .RegisterType<CustomerEntity>()
