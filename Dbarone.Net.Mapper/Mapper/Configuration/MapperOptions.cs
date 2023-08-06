@@ -25,4 +25,9 @@ public class MapperOptions
     /// Defines implicit assertion of mapping rules prior to any map function call. Defaults to 'None'.
     /// </summary>
     public MapperEndPoint EndPointValidation { get; set; } = MapperEndPoint.None;
+
+    /// <summary>
+    /// Provides a member filtering rule.
+    /// </summary>
+    public MemberFilterDelegate MemberFilterRule { get; set; } = (m) => true;
 }
