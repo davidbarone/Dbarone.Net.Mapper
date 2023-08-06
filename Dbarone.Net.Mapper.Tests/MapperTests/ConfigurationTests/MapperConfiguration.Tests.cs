@@ -50,12 +50,12 @@ public class MapperConfigurationTests
     [Fact]
     public void Should_Allow_Multiple_Type_Registration_2()
     {
-        var dtoTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Name.EndsWith("dto")).ToArray();
+        var dtoTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Name.StartsWith("VectorStruct")).ToArray();
 
         var mapper = MapperConfiguration.Create()
             .RegisterTypes(dtoTypes).Build();
 
-        Assert.Equal(1, mapper.GetTypeConfigurationKeys().Count());
+        Assert.Equal(2, mapper.GetTypeConfigurationKeys().Count());
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class MapperConfigurationTests
     }
 
     [Fact]
-    public void MapperConfiguration_UseCaseChangeMemberRenameStrategy_ShouldMatchMembers()
+    public void When_Apply_CaseChangeMemberRenameStrategy_ShouldMatchMembers()
     {
         var snakeObj = new EntityWithSnakeCaseMembers()
         {
@@ -116,7 +116,7 @@ public class MapperConfigurationTests
     }
 
     [Fact]
-    public void MapperConfiguration_AddCalculation_ShouldMapCalculation()
+    public void When_Add_Calculation_Should_Map_Calculation()
     {
         Person person = new Person()
         {
