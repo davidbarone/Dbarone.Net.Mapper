@@ -45,7 +45,7 @@ public class MapperMemberConfiguration
     /// <summary>
     /// Set to true to ignore this member in the mapping configuration.
     /// </summary>
-    internal bool Ignore { get; set; }
+    internal bool? Ignore { get; set; } = null;
 
     /// <summary>
     /// Delegate method to get the value from the instance. Returns a <see cref="Getter" /> object.

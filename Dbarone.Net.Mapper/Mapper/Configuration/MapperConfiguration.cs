@@ -241,6 +241,69 @@ public class MapperConfiguration
 
     #endregion
 
+    #region Include Members
+
+    /// <summary>
+    /// Defines a member that will be mapped.
+    /// </summary>
+    /// <typeparam name="T">The source object type.</typeparam>
+    /// <param name="member">A unary member expression to select a member on the source object type.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration Include<T>(Expression<Func<T, object>> member)
+    {
+        var type = typeof(T);
+        return this.ApplyMemberAction(member, (p) =>
+        {
+            p.Ignore = false;
+        });
+    }
+
+    /// <summary>
+    /// Sets one or more members on a type to be included for mapping purposes.
+    /// </summary>
+    /// <param name="type">The type.</param>
+    /// <param name="members">The list of members to include.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration Include(Type type, params string[] members)
+    {
+        var typeConfig = this.TypeConfiguration.First(c => c.Key == type).Value;
+        foreach (var member in members)
+        {
+            var memberConfig = typeConfig.MemberConfiguration.First(m => m.MemberName.Equals(member, StringComparison.Ordinal));
+            memberConfig.Ignore = false;
+        }
+        return this;
+    }
+
+    #endregion
+
+    # region Member Filter Rule
+
+    /// <summary>
+    /// Sets a member filter rule for a single type.
+    /// </summary>
+    /// <typeparam name="T">The type to set the member filter rule for.</typeparam>
+    /// <param name="memberFilterRule">The filter rule.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration SetMemberFilterRule<T>(MemberFilterDelegate memberFilterRule) {
+        var type = typeof(T);
+        return SetMemberFilterRule(type, memberFilterRule);
+    }
+
+    /// <summary>
+    /// Sets a member filter rule for a single type.
+    /// </summary>
+    /// <param name="type">The type to set the member filter rule on.</param>
+    /// <param name="memberFilterRule">The filter rule.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration SetMemberFilterRule(Type type, MemberFilterDelegate memberFilterRule) {
+        var typeConfiguration = this.TypeConfiguration[type];
+        typeConfiguration.MemberFilterRule = memberFilterRule;
+        return this;
+    }
+
+    #endregion
+
     #region Converters
 
     /// <summary>
@@ -355,6 +418,13 @@ public class MapperConfiguration
                 foreach (var item in v.MemberConfiguration)
                 {
                     item.SetInternalMemberName(v.Options.MemberRenameStrategy);
+                    if (item.Ignore==null) {
+                        if (v.Options.MemberFilterRule!=null) {
+                            item.Ignore = !v.Options.MemberFilterRule(item.MemberName);
+                        } else {
+                            item.Ignore = false;
+                        }
+                    }
                 }
             }
             v.Validate();

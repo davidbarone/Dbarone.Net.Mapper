@@ -67,7 +67,12 @@ public class MapperTypeConfiguration
     public string[] GetActiveInternalMemberNames() {
         return this.MemberConfiguration.Where(m => m.Ignore == false).Select(m => m.InternalMemberName).ToArray();
     }
-    
+
+     /// <summary>
+    /// Provides a member filtering rule.
+    /// </summary>
+    public MemberFilterDelegate MemberFilterRule { get; set; } = (m) => true;
+   
     public void ValidateMap() {
 
     }
