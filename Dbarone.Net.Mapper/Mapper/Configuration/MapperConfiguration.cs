@@ -285,7 +285,8 @@ public class MapperConfiguration
     /// <typeparam name="T">The type to set the member filter rule for.</typeparam>
     /// <param name="memberFilterRule">The filter rule.</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration SetMemberFilterRule<T>(MemberFilterDelegate memberFilterRule) {
+    public MapperConfiguration SetMemberFilterRule<T>(MemberFilterDelegate memberFilterRule)
+    {
         var type = typeof(T);
         return SetMemberFilterRule(type, memberFilterRule);
     }
@@ -296,7 +297,8 @@ public class MapperConfiguration
     /// <param name="type">The type to set the member filter rule on.</param>
     /// <param name="memberFilterRule">The filter rule.</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration SetMemberFilterRule(Type type, MemberFilterDelegate memberFilterRule) {
+    public MapperConfiguration SetMemberFilterRule(Type type, MemberFilterDelegate memberFilterRule)
+    {
         var typeConfiguration = this.TypeConfiguration[type];
         typeConfiguration.MemberFilterRule = memberFilterRule;
         return this;
@@ -418,10 +420,18 @@ public class MapperConfiguration
                 foreach (var item in v.MemberConfiguration)
                 {
                     item.SetInternalMemberName(v.Options.MemberRenameStrategy);
-                    if (item.Ignore==null) {
-                        if (v.Options.MemberFilterRule!=null) {
+                    if (item.Ignore == null)
+                    {
+                        if (v.MemberFilterRule != null)
+                        {
+                            item.Ignore = !v.MemberFilterRule(item.MemberName);
+                        }
+                        else if (v.Options.MemberFilterRule != null)
+                        {
                             item.Ignore = !v.Options.MemberFilterRule(item.MemberName);
-                        } else {
+                        }
+                        else
+                        {
                             item.Ignore = false;
                         }
                     }

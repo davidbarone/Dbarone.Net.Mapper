@@ -147,4 +147,18 @@ public class MapperConfigurationTests
         Assert.Equal(1, mapper.GetTypeConfiguration(typeof(SimpleEntity)).GetActiveInternalMemberNames().Count());
         Assert.Contains("EntityName", mapper.GetTypeConfiguration(typeof(SimpleEntity)).GetActiveInternalMemberNames());
     }
+
+    [Fact]
+    public void When_Add_Filter_Rule_To_Type_Should_Ignore_Member()
+    {
+        var mapper = MapperConfiguration.Create()
+        .RegisterType<SimpleEntity>()
+        .SetMemberFilterRule<SimpleEntity>((m) => { if (m == "EntityId") return false; else return true; })
+        .Build();
+
+        Assert.Equal(2, mapper.GetTypeConfiguration(typeof(SimpleEntity)).MemberConfiguration.Count());
+        Assert.Equal(1, mapper.GetTypeConfiguration(typeof(SimpleEntity)).GetActiveInternalMemberNames().Count());
+        Assert.Contains("EntityName", mapper.GetTypeConfiguration(typeof(SimpleEntity)).GetActiveInternalMemberNames());
+    }
+
 }

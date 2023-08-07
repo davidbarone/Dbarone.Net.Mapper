@@ -71,7 +71,7 @@ public class MapperTypeConfiguration
      /// <summary>
     /// Provides a member filtering rule.
     /// </summary>
-    public MemberFilterDelegate MemberFilterRule { get; set; } = (m) => true;
+    public MemberFilterDelegate? MemberFilterRule { get; set; } = null;
    
     public void ValidateMap() {
 
