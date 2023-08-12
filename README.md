@@ -168,7 +168,6 @@ Sometimes, a map between two types is not straight forward, and a transformation
 ```
 
 ### Ignoring Members
-
 Sometimes, you will want to ignore members from the mapping process. The `Ignore` method can be used:
 
 ``` C#
@@ -176,6 +175,12 @@ Sometimes, you will want to ignore members from the mapping process. The `Ignore
     // Ignore example here...
 
 ```
+
+### MemberFilterRule
+A MemberFilterRule allows you to set which members should be ignored based on a function. MemberFilterRules can
+be set in two places:
+- As part of the MemberOptions, when registering one or more types
+- Using the SetMemberFilterRule method on the MapperConfiguration class, to set a member filter rule for a single type.
 
 ## Binding Algorithm
 The mapper algorithm works by joining 'members' from source type to destination type. The way members are defined depends on the type being mapped. The mapper library supports 2 broad kinds of types:
@@ -195,7 +200,7 @@ The MapOne() method works as follows:
 - A check is made that the SourceType has been registered. The source type can be any registered type, including interface types.
 - A check is made that the DestinationType has been registered. The destination type must be a concrete (non abstract) class, cannot be an interface, and the type must have a parameterless constructor.
 - If SourceType and DestinationType are registered, then a full memberwise map will be carried out (see below).
-- If the SourceType or DestinationType have not been registered, a second check is made in the TypeConverters registry. If a source + destination TypeConverter match is found, then a simple type conversion mapping is performed (see below)
+- If the SourceType or DestinationType have not been registered, a second check is made in the TypeConverters registry. If a source and destination TypeConverter match is found, then a simple type conversion mapping is performed (see below)
 
 ### TypeConversion Mapping Process
 In a typeconversion mapping process, a converter method is called, passing in the source object. The converter method is then resposible for returning an object of type DestinationType. No memberwise mapping takes place, and no recursive mapping of child objects takes place. This type of mapping should only be reserved in cases where you want to apply very simple mapping or type conversions on simple (e.g. native) types.

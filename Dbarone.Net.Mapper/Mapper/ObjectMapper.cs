@@ -55,6 +55,19 @@ public class ObjectMapper
     /// <exception cref="MapperException"></exception>
     public object MapOne(Type fromType, Type toType, object? obj)
     {
+        // validation
+        if (!configuration.ContainsKey(fromType)) {
+            throw new MapperException($"From type: [{fromType.Name}] not registered.");
+        }
+
+        if (!configuration.ContainsKey(toType)) {
+            throw new MapperException($"To type: [{fromType.Name}] not registered.");
+        }
+
+        if (toType.IsInterface) {
+            throw new MapperException($"To type cannot be interface type.");
+        }
+
         MapperTypeConfiguration fromTypeConfiguration = configuration[fromType];
         MapperTypeConfiguration toTypeConfiguration = configuration[toType];
 
