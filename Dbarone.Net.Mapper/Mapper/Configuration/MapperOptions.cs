@@ -2,7 +2,7 @@ namespace Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions;
 
 /// <summary>
-/// Defines a set of mapping options.
+/// Defines a set of mapping options. These options can be applied to a number of type registrations via the `Register` methods.
 /// </summary>
 public class MapperOptions
 {
