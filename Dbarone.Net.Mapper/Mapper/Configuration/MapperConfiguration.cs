@@ -443,6 +443,10 @@ public class MapperConfiguration
     /// <returns>Returns a configured <see cref="ObjectMapper" /> object.</returns>
     public ObjectMapper Build()
     {
+        // Add core resolvers
+        this.Resolvers.Add(new StructMemberResolver());
+        this.Resolvers.Add(new DictionaryMemberResolver());
+ 
         // Set InternalMemberName
         foreach (var k in this.TypeConfiguration.Keys)
         {
