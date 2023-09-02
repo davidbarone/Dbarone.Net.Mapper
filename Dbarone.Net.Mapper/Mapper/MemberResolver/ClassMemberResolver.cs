@@ -7,45 +7,55 @@ using System.Linq.Expressions;
 /// </summary>
 public class ClassMemberResolver : IMemberResolver
 {
-    protected Type type;
-    protected IDictionary<string, MemberInfo> members;
-
-    public ClassMemberResolver(Type type, MapperOptions options)
+    /// <summary>
+    /// Gets the type members for reference types.
+    /// </summary>
+    /// <param name="type">The type to get the members for.</param>
+    /// <param name="options">The options.</param>
+    /// <returns>An array of member names.</returns>
+    public string[] GetTypeMembers(Type type, MapperOptions options)
     {
-        this.type = type;
-        this.members = GetTypeMembers(options);
+        return GetMembers(type, options).Select(m => m.Key).ToArray();
     }
 
-    private IDictionary<string, MemberInfo> GetTypeMembers(MapperOptions options)
+    private IDictionary<string, MemberInfo> GetMembers(Type type, MapperOptions options)
     {
         BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
         if (options.IncludePrivateMembers)
         {
             bindingFlags |= BindingFlags.NonPublic;
         }
-        var members = this.type.GetMembers(bindingFlags).Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field));
-        return members.ToDictionary(m => m.Name, m => m);
+        return type.GetMembers(bindingFlags)
+            .Where(m => m.MemberType == MemberTypes.Property || (options.IncludeFields && m.MemberType == MemberTypes.Field))
+            .ToDictionary(m => m.Name, m => m);
     }
 
+    /// <summary>
+    /// Sets to false for reference types.
+    /// </summary>
     public bool DeferMemberResolution => false;
 
-    public string[] GetMembers() { return this.members.Keys.ToArray(); }
-
-    public virtual CreateInstance CreateInstance(params object[] args)
+    /// <summary>
+    /// Returns a delete that creates instances for reference types.
+    /// </summary>
+    /// <param name="type">The type to create the delegate for.</param>
+    /// <param name="args">The arguments provides to the constructor.</param>
+    /// <returns>Returns a delegate that can create an instance.</returns>
+    public virtual CreateInstance CreateInstance(Type type, params object[] args)
     {
         List<ParameterExpression> parameters = new List<ParameterExpression>();
 
         // args array (optional)
         parameters.Add(Expression.Parameter(typeof(object[]), "args"));
 
-        return Expression.Lambda<CreateInstance>(Expression.New(this.type), parameters).Compile();
+        return Expression.Lambda<CreateInstance>(Expression.New(type), parameters).Compile();
     }
 
-    public Getter GetGetter(string memberName)
+    public Getter GetGetter(Type type, string memberName, MapperOptions options)
     {
         if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException(nameof(memberName));
 
-        var memberInfo = this.members[memberName];
+        var memberInfo = this.GetMembers(type, options)[memberName];
 
         if (memberInfo == null)
         {
@@ -61,11 +71,11 @@ public class ClassMemberResolver : IMemberResolver
         return Expression.Lambda<Getter>(Expression.Convert(accessor, typeof(object)), obj).Compile();
     }
 
-    public Setter GetSetter(string memberName)
+    public Setter GetSetter(Type type, string memberName, MapperOptions options)
     {
         if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException(nameof(memberName));
 
-        var memberInfo = this.members[memberName];
+        var memberInfo = this.GetMembers(type, options)[memberName];
 
         if (memberInfo == null)
         {
@@ -79,7 +89,7 @@ public class ClassMemberResolver : IMemberResolver
         if (memberInfo is PropertyInfo && propertyInfo.CanWrite == false) return null;
 
         // if *Structs*, use direct reflection - net35 has no Expression.Unbox to cast target
-        if (this.type.GetTypeInfo().IsValueType)
+        if (type.GetTypeInfo().IsValueType)
         {
             return memberInfo is FieldInfo ?
                 (Setter)fieldInfo.SetValue :
@@ -106,11 +116,12 @@ public class ClassMemberResolver : IMemberResolver
         return Expression.Lambda<Setter>(conv, target, value).Compile();
     }
 
-    public Type GetMemberType(string memberName)
+    public Type GetMemberType(Type type, string memberName, MapperOptions options)
     {
-        var member = this.members[memberName];
-        if (member is PropertyInfo) return (member as PropertyInfo).PropertyType;
-        else if (member is FieldInfo) return (member as FieldInfo).FieldType;
+        var memberInfo = this.GetMembers(type, options)[memberName];
+
+        if (memberInfo is PropertyInfo) return (memberInfo as PropertyInfo).PropertyType;
+        else if (memberInfo is FieldInfo) return (memberInfo as FieldInfo).FieldType;
         else
         {
             throw new Exception("whoops");
@@ -121,4 +132,9 @@ public class ClassMemberResolver : IMemberResolver
     {
         throw new NotImplementedException();
     }
+
+    public bool CanResolveMembersForType(Type type){
+        return !type.IsClass;
+    }
+
 }

@@ -12,7 +12,7 @@ public interface IMemberResolver
     /// <param name="type">The type to get the getter for.</param>
     /// <param name="memberName">The member name.</param>
     /// <returns>Returns a getter object which, when invoked, will get a member value from an object.</returns>
-    Getter GetGetter(Type type, string memberName);
+    Getter GetGetter(Type type, string memberName, MapperOptions options);
 
     /// <summary>
     /// Returns a setter delegate that sets a member value for an object. 
@@ -20,7 +20,7 @@ public interface IMemberResolver
     /// <param name="type">The type to get the setter for.</param>
     /// <param name="memberName">The member name</param>
     /// <returns>Returns a setter object which, when invoked, will set a member value for an object.</returns>
-    Setter GetSetter(Type type, string memberName);
+    Setter GetSetter(Type type, string memberName, MapperOptions options);
 
     /// <summary>
     /// Returns a CreateInstance delegate that can create a new instance of a particular type.
@@ -48,7 +48,7 @@ public interface IMemberResolver
     /// <param name="type">The type containing the member.</param>
     /// <param name="memberName">The member name.</param>
     /// <returns>Returns the member type.</returns>
-    Type GetMemberType(Type type, string memberName);
+    Type GetMemberType(Type type, string memberName, MapperOptions options);
 
     /// <summary>
     /// Set to true for dictionary and dynamic types, where the member information
