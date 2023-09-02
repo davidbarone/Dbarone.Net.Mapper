@@ -2,18 +2,38 @@ namespace Dbarone.Net.Mapper;
 using System.Reflection;
 
 /// <summary>
-/// Interface for describing methods to 
+/// Interface for classes that can perform member resolver services. 
 /// </summary>
 public interface IMemberResolver
 {
-    Getter GetGetter(string memberName);
-    Setter GetSetter(string memberName);
-    CreateInstance CreateInstance(params object[] args);
+    /// <summary>
+    /// Returns a getter delegate that gets a member value for an object.
+    /// </summary>
+    /// <param name="type">The type to get the getter for.</param>
+    /// <param name="memberName">The member name.</param>
+    /// <returns>Returns a getter object which, when invoked, will get a member value from an object.</returns>
+    Getter GetGetter(Type type, string memberName);
 
     /// <summary>
-    /// Returns an array of member names
+    /// Returns a setter delegate that sets a member value for an object. 
     /// </summary>
-    string[] GetMembers();
+    /// <param name="type">The type to get the setter for.</param>
+    /// <param name="memberName">The member name</param>
+    /// <returns>Returns a setter object which, when invoked, will set a member value for an object.</returns>
+    Setter GetSetter(Type type, string memberName);
+
+    /// <summary>
+    /// Returns a CreateInstance delegate that can create a new instance of a particular type.
+    /// </summary>
+    /// <param name="type">The type to create the CreateInstance delegate for.</param>
+    /// <param name="args">The arguments to provide to the constructor function to create the new instance.</param>
+    /// <returns></returns>
+    CreateInstance CreateInstance(Type type, params object[] args);
+
+    /// <summary>
+    /// Returns the member names for a type.
+    /// </summary>
+    string[] GetTypeMembers(Type type, MapperOptions options);
 
     /// <summary>
     /// Gets members on an instance. This method is normally implemented only if DeferMemberResolution is set to true.
@@ -25,13 +45,15 @@ public interface IMemberResolver
     /// <summary>
     /// Gets a member type.
     /// </summary>
-    /// <param name="memberName">The member name</param>
+    /// <param name="type">The type containing the member.</param>
+    /// <param name="memberName">The member name.</param>
     /// <returns>Returns the member type.</returns>
-    Type GetMemberType(string memberName);
+    Type GetMemberType(Type type, string memberName);
 
     /// <summary>
     /// Set to true for dictionary and dynamic types, where the member information
-    /// must be deferred until mapping time.
+    /// must be deferred until mapping time. If set to false, the member information
+    /// is obtained at build time.
     /// </summary>
     bool DeferMemberResolution { get; }
 
@@ -40,5 +62,5 @@ public interface IMemberResolver
     /// </summary>
     /// <param name="type">The type to resolve members for.</param>
     /// <returns>Returns true if the current IMemberResolver can resolve members of the specified type.</returns>
-    bool CanResolveMembersOfType(Type type);
+    bool CanResolveMembersForType(Type type);
 }
