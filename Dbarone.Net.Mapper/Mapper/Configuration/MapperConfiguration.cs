@@ -2,6 +2,7 @@ namespace Dbarone.Net.Mapper;
 using System.Linq.Expressions;
 using Dbarone.Net.Extensions;
 using System.Reflection;
+using System.Linq;
 
 /// <summary>
 /// Creates configuration for a <see cref="ObjectMapper" /> mapper object. Before being able to map any objects and types, you must create
@@ -12,6 +13,7 @@ public class MapperConfiguration
     private IDictionary<Type, MapperTypeConfiguration> TypeConfiguration { get; set; } = new Dictionary<Type, MapperTypeConfiguration>();
     private IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> MapConfiguration { get; set; } = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
     private IDictionary<Tuple<Type, Type>, ITypeConverter> Converters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
+    private IList<IMemberResolver> Resolvers { get; set; } = new List<IMemberResolver>();
 
     internal MapperConfiguration() { }
 
@@ -24,6 +26,36 @@ public class MapperConfiguration
     public static MapperConfiguration Create()
     {
         return new MapperConfiguration();
+    }
+
+    #endregion
+
+    #region Register IMemberResolvers
+
+    /// <summary>
+    /// Registers an IMemberResolver.
+    /// </summary>
+    /// <param name="resolver">An instance of an IMemberResolver.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    /// <exception cref="Exception">Throws an exception if the type of resolver has already been registered.</exception>
+    public MapperConfiguration RegisterResolver(IMemberResolver resolver) {
+        if (this.Resolvers.Select(r=>r.GetType()).Contains(resolver.GetType())){
+            throw new Exception($"Resolver {resolver.GetType()} already registered.");
+        }
+        this.Resolvers.Add(resolver);
+        return this;
+    }
+
+    /// <summary>
+    /// Returns an array of IMemberResolvers.
+    /// </summary>
+    /// <param name="resolvers">An array of IMemberResolver objects.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration RegisterResolvers(IMemberResolver[] resolvers) {
+        foreach (var resolver in resolvers){
+            this.Resolvers.Add(resolver);
+        }
+        return this;
     }
 
     #endregion

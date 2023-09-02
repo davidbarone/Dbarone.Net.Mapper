@@ -16,7 +16,7 @@ public interface IMemberResolver
     string[] GetMembers();
 
     /// <summary>
-    /// Gets members on an instance.
+    /// Gets members on an instance. This method is normally implemented only if DeferMemberResolution is set to true.
     /// </summary>
     /// <param name="obj">The object instance.</param>
     /// <returns>A string array of member names.</returns>
@@ -34,4 +34,11 @@ public interface IMemberResolver
     /// must be deferred until mapping time.
     /// </summary>
     bool DeferMemberResolution { get; }
+
+    /// <summary>
+    /// Set to true if the current IMemberResolver can resolve members of the specified type.
+    /// </summary>
+    /// <param name="type">The type to resolve members for.</param>
+    /// <returns>Returns true if the current IMemberResolver can resolve members of the specified type.</returns>
+    bool CanResolveMembersOfType(Type type);
 }
