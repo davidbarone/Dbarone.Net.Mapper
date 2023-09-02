@@ -7,9 +7,7 @@ using System.Linq.Expressions;
 /// </summary>
 public class StructMemberResolver : ClassMemberResolver
 {
-    public StructMemberResolver(Type type, MapperOptions options) : base(type, options) { }
-    
-    public override CreateInstance CreateInstance(params object[] args)
+    public override CreateInstance CreateInstance(Type type, params object[] args)
     {
         List<ParameterExpression> parameters = new List<ParameterExpression>();
 
@@ -20,5 +18,10 @@ public class StructMemberResolver : ClassMemberResolver
         var newExp = Expression.Convert(Expression.New(type), typeof(object));
 
         return Expression.Lambda<CreateInstance>(newExp, parameters).Compile();
+    }
+
+    public override bool CanResolveMembersForType(Type type)
+    {
+        return type.IsValueType;
     }
 }

@@ -133,7 +133,7 @@ public class ClassMemberResolver : IMemberResolver
         throw new NotImplementedException();
     }
 
-    public bool CanResolveMembersForType(Type type){
+    public virtual bool CanResolveMembersForType(Type type){
         return !type.IsClass;
     }
 
