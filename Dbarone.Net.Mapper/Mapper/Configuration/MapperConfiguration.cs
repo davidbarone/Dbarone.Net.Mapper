@@ -5,49 +5,18 @@ using System.Reflection;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 
-public class RuleRegisterType
-{
-    public Type Type { get; set; }
-    public MapperOptions Options { get; set; }
-}
-
-public class ConfigCalculation
-{
-    public Type SourceType { get; set; }
-    public string MemberName { get; set; }
-    public Type MemberType { get; set; }
-    public ITypeConverter Calculation { get; set; }
-}
-
-public enum IgnoreIncludeEnum
-{
-    Ignore,
-    Include
-}
-
-public class ConfigIgnoreInclude
-{
-    public Type Type { get; set; }
-    public string Member { get; set; }
-    public IgnoreIncludeEnum IgnoreInclude { get; set; }
-}
-
-public class ConfigRename
-{
-    public Type Type { get; set; }
-    public string MemberName { get; set; }
-    public string InternalMemberName { get; set; }
-}
-
 /// <summary>
-/// Creates configuration for a <see cref="ObjectMapper" /> mapper object. Before being able to map any objects and types, you must create
-/// a mapper configuration, and from this generate a <see cref="ObjectMapper" /> object.
+/// Creates the configuration for a <see cref="ObjectMapper" /> mapper object.
+/// Before being able to map any objects and types, you must create
+/// a mapper configuration, and from this generate an <see cref="ObjectMapper" /> object.
 /// </summary>
 public class MapperConfiguration
 {
     #region Config
+
+    private IDictionary<Type, ConfigType> ConfigTypes = new Dictionary<Type, ConfigType>();
+
     private IList<IMemberResolver> ConfigResolvers { get; set; } = new List<IMemberResolver>();
-    private IDictionary<Type, RuleRegisterType> ConfigTypes = new Dictionary<Type, RuleRegisterType>();
     private IList<ConfigCalculation> ConfigCalculations = new List<ConfigCalculation>();
     private IList<ConfigIgnoreInclude> ConfigIgnoreIncludes = new List<ConfigIgnoreInclude>();
     private IDictionary<Tuple<Type, Type>, ITypeConverter> ConfigConverters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
@@ -172,7 +141,7 @@ public class MapperConfiguration
             options = new MapperOptions();
         }
 
-        this.ConfigTypes[type] = new RuleRegisterType()
+        this.ConfigTypes[type] = new ConfigType()
         {
             Type = type,
             Options = options
