@@ -38,11 +38,6 @@ public class MapperTypeConfiguration
     }
 
     /// <summary>
-    /// Create a new instance of the type.
-    /// </summary>
-    public CreateInstance CreateInstance { get; set; } = default!;
-
-    /// <summary>
     /// Validates the type configuration.
     /// </summary>
     public void Validate()

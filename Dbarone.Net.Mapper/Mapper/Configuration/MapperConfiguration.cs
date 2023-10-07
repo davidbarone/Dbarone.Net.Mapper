@@ -3,6 +3,41 @@ using System.Linq.Expressions;
 using Dbarone.Net.Extensions;
 using System.Reflection;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+
+public class RuleRegisterType
+{
+    public Type Type { get; set; }
+    public MapperOptions Options { get; set; }
+}
+
+public class ConfigCalculation
+{
+    public Type SourceType { get; set; }
+    public string MemberName { get; set; }
+    public Type MemberType { get; set; }
+    public ITypeConverter Calculation { get; set; }
+}
+
+public enum IgnoreIncludeEnum
+{
+    Ignore,
+    Include
+}
+
+public class ConfigIgnoreInclude
+{
+    public Type Type { get; set; }
+    public string Member { get; set; }
+    public IgnoreIncludeEnum IgnoreInclude { get; set; }
+}
+
+public class ConfigRename
+{
+    public Type Type { get; set; }
+    public string MemberName { get; set; }
+    public string InternalMemberName { get; set; }
+}
 
 /// <summary>
 /// Creates configuration for a <see cref="ObjectMapper" /> mapper object. Before being able to map any objects and types, you must create
@@ -10,10 +45,16 @@ using System.Linq;
 /// </summary>
 public class MapperConfiguration
 {
-    private IDictionary<Type, MapperTypeConfiguration> TypeConfiguration { get; set; } = new Dictionary<Type, MapperTypeConfiguration>();
-    private IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> MapConfiguration { get; set; } = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
-    private IDictionary<Tuple<Type, Type>, ITypeConverter> Converters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
-    private IList<IMemberResolver> Resolvers { get; set; } = new List<IMemberResolver>();
+    #region Config
+    private IList<IMemberResolver> ConfigResolvers { get; set; } = new List<IMemberResolver>();
+    private IDictionary<Type, RuleRegisterType> ConfigTypes = new Dictionary<Type, RuleRegisterType>();
+    private IList<ConfigCalculation> ConfigCalculations = new List<ConfigCalculation>();
+    private IList<ConfigIgnoreInclude> ConfigIgnoreIncludes = new List<ConfigIgnoreInclude>();
+    private IDictionary<Tuple<Type, Type>, ITypeConverter> ConfigConverters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
+    private IDictionary<Type, MemberFilterDelegate> ConfigMemberFilterRules = new Dictionary<Type, MemberFilterDelegate>();
+    private IList<ConfigRename> ConfigRenames = new List<ConfigRename>();
+
+    #endregion
 
     internal MapperConfiguration() { }
 
@@ -30,31 +71,47 @@ public class MapperConfiguration
 
     #endregion
 
-    #region Register IMemberResolvers
+    #region Register Resolvers
 
     /// <summary>
-    /// Registers an IMemberResolver.
+    /// Registers an IMemberResolver using a generic type.
     /// </summary>
-    /// <param name="resolver">An instance of an IMemberResolver.</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    /// <exception cref="Exception">Throws an exception if the type of resolver has already been registered.</exception>
-    public MapperConfiguration RegisterResolver(IMemberResolver resolver) {
-        if (this.Resolvers.Select(r=>r.GetType()).Contains(resolver.GetType())){
-            throw new Exception($"Resolver {resolver.GetType()} already registered.");
-        }
-        this.Resolvers.Add(resolver);
-        return this;
+    public MapperConfiguration RegisterResolvers<TResolver>() where TResolver : IMemberResolver
+    {
+        var resolverType = typeof(TResolver);
+        return RegisterResolver(resolverType);
     }
 
     /// <summary>
-    /// Returns an array of IMemberResolvers.
+    /// Registers an IMemberResolver by type.
     /// </summary>
-    /// <param name="resolvers">An array of IMemberResolver objects.</param>
+    /// <param name="resolverType">The type of a resolver.</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration RegisterResolvers(IMemberResolver[] resolvers) {
-        foreach (var resolver in resolvers){
-            this.Resolvers.Add(resolver);
+    /// <exception cref="Exception">Throws an exception if the type does not implement IMemberResolver.</exception>
+    public MapperConfiguration RegisterResolver(Type resolverType)
+    {
+        if (!typeof(IMemberResolver).IsAssignableFrom(resolverType))
+        {
+            throw new ArgumentException("Type must implement IMemberResolver,", "resolverType");
         }
+        IMemberResolver resolver = (IMemberResolver)Activator.CreateInstance(resolverType)!;
+        return RegisterResolver(resolver);
+    }
+
+    /// <summary>
+    /// Registers an IMemberResolver
+    /// </summary>
+    /// <param name="resolver">An IMemberResolver instance.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    /// <exception cref="Exception">Throws an exception if the type of resolver has already been registered.</exception>
+    public MapperConfiguration RegisterResolver(IMemberResolver resolver)
+    {
+        if (this.ConfigResolvers.Select(r => r.GetType()).Contains(resolver.GetType()))
+        {
+            throw new Exception($"Resolver {resolver.GetType()} already registered.");
+        }
+        this.ConfigResolvers.Add(resolver);
         return this;
     }
 
@@ -115,42 +172,12 @@ public class MapperConfiguration
             options = new MapperOptions();
         }
 
-        IMemberResolver memberResolver;
-        if (type.IsValueType)
-        {
-            memberResolver = new StructMemberResolver(type, options);
-        }
-        else if (type.IsDictionaryType())
-        {
-            memberResolver = new DictionaryMemberResolver(type);
-        }
-        else
-        {
-            memberResolver = new ClassMemberResolver(type, options);
-        }
-
-        string[] members = new string[] { };
-        List<MapperMemberConfiguration> memberConfig = new List<MapperMemberConfiguration>();
-        if (!memberResolver.DeferMemberResolution)
-        {
-            members = memberResolver.GetMembers();
-            memberConfig = members.Select(m => new MapperMemberConfiguration
-            {
-                MemberName = m,
-                DataType = memberResolver.GetMemberType(m),
-                Getter = memberResolver.GetGetter(m),
-                Setter = memberResolver.GetSetter(m)
-            }).ToList();
-        }
-
-        TypeConfiguration[type] = new MapperTypeConfiguration
+        this.ConfigTypes[type] = new RuleRegisterType()
         {
             Type = type,
-            Options = options,
-            MemberResolver = memberResolver,
-            CreateInstance = memberResolver.CreateInstance(null),
-            MemberConfiguration = memberConfig
+            Options = options
         };
+
         return this;
     }
 
@@ -159,7 +186,7 @@ public class MapperConfiguration
     #region Calculations
 
     /// <summary>
-    /// Registers a calculation for a type.
+    /// Registers a calculation for a type. Calculations are used to transform a value into another value. A calculation can be given a name allowing it to be used in mappings.
     /// </summary>
     /// <typeparam name="TSource">The source entity type.</typeparam>
     /// <typeparam name="TReturn">The type of the return value for the calculated member.</typeparam>
@@ -168,19 +195,16 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterCalculation<TSource, TReturn>(string memberName, Func<TSource?, TReturn?> calculation)
     {
-        var type = typeof(TSource);
-        var typeConfig = this.TypeConfiguration[type];
-        MapperMemberConfiguration calc = new MapperMemberConfiguration()
+        ConfigCalculation calc = new ConfigCalculation()
         {
+            SourceType = typeof(TSource),
             MemberName = memberName,
-            DataType = typeof(TReturn),
-            InternalMemberName = memberName,
-            Ignore = false,
-            Getter = new TypeConverter<TSource, TReturn>(calculation).Convert,
-            Setter = null,
-            Calculation = new TypeConverter<TSource, TReturn>(calculation)
+            Calculation = new TypeConverter<TSource, TReturn>(calculation),
+            MemberType = typeof(TReturn)
         };
-        typeConfig.MemberConfiguration.Add(calc);
+
+        this.ConfigCalculations.Add(calc);
+
         return this;
     }
 
@@ -247,11 +271,13 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration Ignore<T>(Expression<Func<T, object>> member)
     {
-        var type = typeof(T);
-        return this.ApplyMemberAction(member, (p) =>
+        ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
         {
-            p.Ignore = true;
+            Type = typeof(T),
+            Member = member.GetMemberPath(),
+            IgnoreInclude = IgnoreIncludeEnum.Ignore
         });
+        return this;
     }
 
     /// <summary>
@@ -262,12 +288,15 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration Ignore(Type type, params string[] members)
     {
-        var typeConfig = this.TypeConfiguration.First(c => c.Key == type).Value;
-        foreach (var member in members)
+        members.ToList().ForEach(m =>
         {
-            var memberConfig = typeConfig.MemberConfiguration.First(m => m.MemberName.Equals(member, StringComparison.Ordinal));
-            memberConfig.Ignore = true;
-        }
+            ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
+            {
+                Type = type,
+                Member = m,
+                IgnoreInclude = IgnoreIncludeEnum.Ignore
+            });
+        });
         return this;
     }
 
@@ -283,11 +312,13 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration Include<T>(Expression<Func<T, object>> member)
     {
-        var type = typeof(T);
-        return this.ApplyMemberAction(member, (p) =>
+        ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
         {
-            p.Ignore = false;
+            Type = typeof(T),
+            Member = member.GetMemberPath(),
+            IgnoreInclude = IgnoreIncludeEnum.Include
         });
+        return this;
     }
 
     /// <summary>
@@ -298,12 +329,15 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration Include(Type type, params string[] members)
     {
-        var typeConfig = this.TypeConfiguration.First(c => c.Key == type).Value;
-        foreach (var member in members)
+        members.ToList().ForEach(m =>
         {
-            var memberConfig = typeConfig.MemberConfiguration.First(m => m.MemberName.Equals(member, StringComparison.Ordinal));
-            memberConfig.Ignore = false;
-        }
+            ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
+            {
+                Type = type,
+                Member = m,
+                IgnoreInclude = IgnoreIncludeEnum.Include
+            });
+        });
         return this;
     }
 
@@ -331,8 +365,7 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration SetMemberFilterRule(Type type, MemberFilterDelegate memberFilterRule)
     {
-        var typeConfiguration = this.TypeConfiguration[type];
-        typeConfiguration.MemberFilterRule = memberFilterRule;
+        ConfigMemberFilterRules[type] = memberFilterRule;
         return this;
     }
 
@@ -350,9 +383,14 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterConverter<T, U>(Func<T, U> converter)
     {
+        if (this.ConfigConverters.Any(c => c.Key.Item1 == typeof(T) && c.Key.Item2 == typeof(U)))
+        {
+            throw new Exception("A converter between these 2 types has already been defined.");
+        }
+
         TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);
         Tuple<Type, Type> k = new Tuple<Type, Type>(typeof(T), typeof(U));
-        this.Converters[k] = typeConverter;
+        this.ConfigConverters[k] = typeConverter;
         return this;
     }
 
@@ -370,12 +408,7 @@ public class MapperConfiguration
     /// <exception cref="ArgumentNullException"></exception>
     public MapperConfiguration Rename<T>(Expression<Func<T, object>> member, string newName)
     {
-        if (newName.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(newName));
-
-        return this.ApplyMemberAction(member, (p) =>
-        {
-            p.InternalMemberName = newName;
-        });
+        return Rename(typeof(T), member.GetMemberPath(), newName);
     }
 
     /// <summary>
@@ -388,9 +421,12 @@ public class MapperConfiguration
     /// <exception cref="ArgumentNullException"></exception>
     public MapperConfiguration Rename(Type type, string member, string newName)
     {
-        var typeConfig = this.TypeConfiguration.First(c => c.Key == type).Value;
-        var memberConfig = typeConfig.MemberConfiguration.First(m => m.MemberName.Equals(member, StringComparison.Ordinal));
-        memberConfig.InternalMemberName = newName;
+        ConfigRenames.Add(new ConfigRename()
+        {
+            Type = type,
+            MemberName = member,
+            InternalMemberName = newName
+        });
         return this;
     }
 
@@ -411,23 +447,6 @@ public class MapperConfiguration
         throw new NotSupportedException();
     }
 
-    private MapperConfiguration ApplyMemberAction<T>(Expression<Func<T, object>> member, Action<MapperMemberConfiguration> action)
-    {
-        var type = typeof(T);
-
-        if (member == null) throw new ArgumentNullException(nameof(member));
-
-        var memb = this.TypeConfiguration[type].GetMemberRule(member);
-
-        if (memb == null)
-        {
-            throw new ArgumentNullException($"Member '{member.GetMemberPath()}' not found in type.");
-        }
-
-        action(memb);
-        return this;
-    }
-
     /// <summary>
     /// Validates the mapper configuration
     /// </summary>
@@ -437,46 +456,157 @@ public class MapperConfiguration
 
     }
 
+    private bool GetIgnoreStatus(Type type, string member)
+    {
+        MemberFilterDelegate? memberFilterRuleA = null;
+        MemberFilterDelegate? memberFilterRuleB = null;
+        MemberFilterDelegate? memberFilterRule = null;
+
+        if (ConfigTypes.ContainsKey(type))
+        {
+            throw new Exception($"GetIgnoreStatus. Invalid type: {type}.");
+        }
+
+        // Get member filter function if exists
+        if (ConfigMemberFilterRules.ContainsKey(type))
+        {
+            memberFilterRuleA = ConfigMemberFilterRules[type];
+        }
+
+        memberFilterRuleB = ConfigTypes[type].Options.MemberFilterRule;
+        memberFilterRule = memberFilterRuleA != null ? memberFilterRuleA : memberFilterRuleB;
+
+        var ignore = (memberFilterRule != null) ? memberFilterRule(member) : false;
+        foreach (var configIgnoreInclude in ConfigIgnoreIncludes.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
+        {
+            ignore = configIgnoreInclude.IgnoreInclude == IgnoreIncludeEnum.Ignore ? true : false;
+        }
+        return ignore;
+    }
+
+    private string GetInternalName(Type type, string memberName, IMemberRenameStrategy? memberRenameStrategy = null)
+    {
+        var internalMemberName = memberName;
+
+        // rename strategy present?
+        if (memberRenameStrategy != null)
+        {
+            internalMemberName = memberRenameStrategy!.RenameMember(memberName);
+        }
+
+        // loop through any specific rename rules. Last one wins. 
+        foreach (var rename in ConfigRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
+        {
+            internalMemberName = rename.InternalMemberName;
+        }
+        return internalMemberName;
+    }
+
     /// <summary>
     /// Takes all the configuration and builds an <see cref="ObjectMapper" /> object that can then be used to map objects.
     /// </summary>
     /// <returns>Returns a configured <see cref="ObjectMapper" /> object.</returns>
     public ObjectMapper Build()
     {
+        IDictionary<Type, MapperTypeConfiguration> buildTypes = new Dictionary<Type, MapperTypeConfiguration>();
+        IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> buildMaps = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
+
         // Add core resolvers
-        this.Resolvers.Add(new StructMemberResolver());
-        this.Resolvers.Add(new DictionaryMemberResolver());
- 
-        // Set InternalMemberName
-        foreach (var k in this.TypeConfiguration.Keys)
+        if (!this.ConfigResolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
         {
-            var v = this.TypeConfiguration[k];
-            if (!v.MemberResolver.DeferMemberResolution)
-            {
-                foreach (var item in v.MemberConfiguration)
-                {
-                    item.SetInternalMemberName(v.Options.MemberRenameStrategy);
-                    if (item.Ignore == null)
-                    {
-                        if (v.MemberFilterRule != null)
-                        {
-                            item.Ignore = !v.MemberFilterRule(item.MemberName);
-                        }
-                        else if (v.Options.MemberFilterRule != null)
-                        {
-                            item.Ignore = !v.Options.MemberFilterRule(item.MemberName);
-                        }
-                        else
-                        {
-                            item.Ignore = false;
-                        }
-                    }
-                }
-            }
-            v.Validate();
+            this.ConfigResolvers.Add(new StructMemberResolver());
         }
 
-        return new ObjectMapper(this.TypeConfiguration, this.Converters);
+        if (!this.ConfigResolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
+        {
+            this.ConfigResolvers.Add(new DictionaryMemberResolver());
+        }
+
+        if (!this.ConfigResolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
+        {
+            this.ConfigResolvers.Add(new ClassMemberResolver());
+        }
+
+        // go through each type
+        foreach (var configTypeKey in this.ConfigTypes.Keys)
+        {
+            var configType = this.ConfigTypes[configTypeKey];
+
+            IMemberResolver? resolver = null;
+
+            // Get resolver
+            foreach (var configResolver in this.ConfigResolvers)
+            {
+                if (configResolver.CanResolveMembersForType(configType.Type))
+                {
+                    resolver = configResolver;
+                    break;
+                }
+            }
+
+            // if no resolver found, throw error
+            if (resolver == null)
+            {
+                throw new Exception($"No member resolver found for type: ${configType.Type}.");
+            }
+
+            // Get members
+            string[] members = new string[] { };
+            List<MapperMemberConfiguration> buildMembers = new List<MapperMemberConfiguration>();
+            if (!resolver.DeferMemberResolution)
+            {
+                members = resolver.GetTypeMembers(configType.Type, configType.Options);
+                buildMembers = members.Select(m => new MapperMemberConfiguration
+                {
+                    MemberName = m,
+                    DataType = resolver.GetMemberType(configType.Type, m, configType.Options),
+                    Getter = resolver.GetGetter(configType.Type, m, configType.Options),
+                    Setter = resolver.GetSetter(configType.Type, m, configType.Options),
+                    Ignore = GetIgnoreStatus(configType.Type, m),
+                    InternalMemberName = GetInternalName(configType.Type, m, configType.Options.MemberRenameStrategy)
+                }).ToList();
+            }
+
+            // Create build type
+            buildTypes[configType.Type] = new MapperTypeConfiguration
+            {
+                Type = configType.Type,
+                Options = configType.Options,
+                MemberResolver = resolver,
+                MemberConfiguration = buildMembers,
+            };
+        }
+
+        // Add calculations to existing types
+
+        foreach (var configCalculation in this.ConfigCalculations)
+        {
+            var sourceType = configCalculation.SourceType;
+            if (!buildTypes.ContainsKey(sourceType))
+            {
+                throw new Exception($"Calculation exists for missing source type: ${sourceType.Name}.");
+            }
+
+            var configType = buildTypes[sourceType];
+            configType.MemberConfiguration.Add(new MapperMemberConfiguration()
+            {
+                MemberName = configCalculation.MemberName,
+                DataType = configCalculation.MemberType,
+                InternalMemberName = configCalculation.MemberName,
+                Ignore = false,
+                Getter = configCalculation.Calculation.Convert,
+                Setter = null,
+                Calculation = configCalculation.Calculation
+            });
+        }
+
+        // Validation
+        foreach (var buildTypeKey in buildTypes.Keys)
+        {
+            buildTypes[buildTypeKey].Validate();
+        }
+
+        return new ObjectMapper(buildTypes, this.ConfigConverters);
     }
 
     #endregion
