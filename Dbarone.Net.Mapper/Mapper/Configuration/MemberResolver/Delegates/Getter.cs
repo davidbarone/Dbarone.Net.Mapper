@@ -3,6 +3,6 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// Defines a basic getter delegate.
 /// </summary>
-/// <param name="obj">The object providing the value</param>
-/// <returns>A value</returns>
+/// <param name="obj">The object providing the value.</param>
+/// <returns>Returns a value from the object.</returns>
 public delegate object Getter(object obj);

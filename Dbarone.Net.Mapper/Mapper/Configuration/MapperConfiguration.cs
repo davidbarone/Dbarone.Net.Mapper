@@ -14,14 +14,13 @@ public class MapperConfiguration
 {
     #region Config
 
-    private IDictionary<Type, ConfigType> ConfigTypes = new Dictionary<Type, ConfigType>();
-
     private IList<IMemberResolver> ConfigResolvers { get; set; } = new List<IMemberResolver>();
+    private IDictionary<Type, ConfigType> ConfigTypes = new Dictionary<Type, ConfigType>();
     private IList<ConfigCalculation> ConfigCalculations = new List<ConfigCalculation>();
-    private IList<ConfigIgnoreInclude> ConfigIgnoreIncludes = new List<ConfigIgnoreInclude>();
+    private IList<ConfigMemberInclusion> ConfigMemberInclusions = new List<ConfigMemberInclusion>();
     private IDictionary<Tuple<Type, Type>, ITypeConverter> ConfigConverters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
-    private IDictionary<Type, MemberFilterDelegate> ConfigMemberFilterRules = new Dictionary<Type, MemberFilterDelegate>();
-    private IList<ConfigRename> ConfigRenames = new List<ConfigRename>();
+    private IDictionary<Type, MemberFilterDelegate> ConfigMemberFilters = new Dictionary<Type, MemberFilterDelegate>();
+    private IList<ConfigRename> ConfigMemberRenames = new List<ConfigRename>();
 
     #endregion
 

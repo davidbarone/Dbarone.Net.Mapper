@@ -3,7 +3,7 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// Configuration of member inclusion / exclusion for mapping.
 /// </summary>
-public class ConfigIgnoreInclude
+public class ConfigMemberInclusion
 {
     /// <summary>
     /// The type that the member belongs to.
