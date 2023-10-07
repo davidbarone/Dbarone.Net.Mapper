@@ -38,10 +38,15 @@ public class ObjectMapper
     /// </summary>
     /// 
     public IDictionary<Type, MapperTypeConfiguration> Configuration { get; }
+
     internal ObjectMapper(IDictionary<Type, MapperTypeConfiguration> configuration, IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters)
     {
         this.configuration = configuration;
         this.customTypeConverters = customTypeConverters;
+    }
+
+    internal object MapOneInternal(Type fromType, Type toType, object? obj, string memberPath, IDictionary<string, IEnumerable<MapperDelegate>> cachedMappings) {
+        
     }
 
     /// <summary>
@@ -55,18 +60,7 @@ public class ObjectMapper
     /// <exception cref="MapperException"></exception>
     public object MapOne(Type fromType, Type toType, object? obj)
     {
-        // validation
-        if (!configuration.ContainsKey(fromType)) {
-            throw new MapperException($"From type: [{fromType.Name}] not registered.");
-        }
 
-        if (!configuration.ContainsKey(toType)) {
-            throw new MapperException($"To type: [{fromType.Name}] not registered.");
-        }
-
-        if (toType.IsInterface) {
-            throw new MapperException($"To type cannot be interface type.");
-        }
 
         MapperTypeConfiguration fromTypeConfiguration = configuration[fromType];
         MapperTypeConfiguration toTypeConfiguration = configuration[toType];
@@ -133,45 +127,8 @@ public class ObjectMapper
                     throw new MapperException($"Cannot map from type: {fromRule.DataType} to type: {toRule.DataType}. Are you missing a Type Converter?");
                 }
             }
-            else if (toRule.DataType.IsBuiltInType() && fromRule.DataType.IsBuiltInType())
-            {
-                // built-in type -> built-in type
-                toRule.Setter.Invoke(newInstance, fromObj);
-            }
-            else if (
-                // enum -> enum
-                toRule.DataType.IsEnum &&
-                toRule.DataType.GetEnumUnderlyingType().IsBuiltInType() &&
-                fromRule.DataType.IsEnum &&
-                fromRule.DataType.GetEnumUnderlyingType().IsBuiltInType())
-            {
-                toRule.Setter.Invoke(newInstance, fromObj);
-            }
-            else if (
-                // nullable -> nullable
-                toRule.DataType.IsNullable() &&
-                toRule.DataType.GetNullableUnderlyingType()!.IsBuiltInType() &&
-                fromRule.DataType.IsNullable() &&
-                fromRule.DataType.GetNullableUnderlyingType()!.IsBuiltInType())
-            {
-                toRule.Setter.Invoke(newInstance, fromObj);
-            }
-            else if (this.configuration.Keys.Contains(toRule.DataType) && this.configuration.Keys.Contains(fromRule.DataType))
-            {
-                // reference type -> reference type (both types registered in mapper config)
-                var childObject = MapOne(fromRule.DataType, toRule.DataType, fromObj);
-                toRule.Setter.Invoke(newInstance, childObject);
-            }
-            else if (fromRule.DataType == toRule.DataType && (fromRule.DataType.IsValueType))
-            {
-                // from/to are same type, and ValueType. ValueTypes are automatically copied on assignment.
-                // No need to map properties.
-                toRule.Setter.Invoke(newInstance, fromObj);
-            }
-            else
-            {
-                throw new MapperException($"Cannot map from type: {fromRule.DataType} to {toRule.DataType}. Are you missing a type registration or mapping?");
-            }
+
+
         }
         return newInstance;
     }
@@ -203,15 +160,26 @@ public class ObjectMapper
         }
     }
 
-    /// <summary>
-    /// Validates the mapping between two types.
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TDestination"></typeparam>
-    public void Validate<TSource, TDestination>()
+    private IEnumerable<MapperDelegate> Build(Type sourceType, Type destinationType)
     {
-        var sourceConfig = this.configuration.First(c => c.Value.Type == typeof(TSource)).Value;
-        var destinationConfig = this.configuration.First(c => c.Value.Type == typeof(TDestination)).Value;
+        // validation
+        if (!configuration.ContainsKey(sourceType))
+        {
+            throw new MapperException($"Source type: [{sourceType.Name}] not registered.");
+        }
+
+        if (!configuration.ContainsKey(destinationType))
+        {
+            throw new MapperException($"Destination type: [{destinationType.Name}] not registered.");
+        }
+
+        if (destinationType.IsInterface)
+        {
+            throw new MapperException($"Destination type cannot be interface type.");
+        }
+
+        var sourceConfig = this.configuration.First(c => c.Value.Type == sourceType).Value;
+        var destinationConfig = this.configuration.First(c => c.Value.Type == destinationType).Value;
 
         if ((sourceConfig.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
@@ -243,26 +211,89 @@ public class ObjectMapper
             }
         }
 
-        // Check types match. Mapper will map all members which are in BOTH source and destination
-        // check all source member rules map to destination rules.
-        var mappedDestinationMembers = destinationConfig
+        // Get internal member names matching on source + destination
+        IEnumerable<string> matchedMembers = destinationConfig
             .MemberConfiguration
-            .Where(m => sourceConfig
+            .Where(mc => mc.Ignore == false)
+            .Select(mc => mc.InternalMemberName).Intersect(
+                sourceConfig
                 .MemberConfiguration
-                .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == true);
+                .Where(mc => mc.Ignore == false)
+                .Select(mc => mc.InternalMemberName)
+            );
 
-        var membersInvalidTypes = mappedDestinationMembers.Where(m =>
-            sourceConfig.MemberConfiguration.First(s => s.InternalMemberName.Equals(m.InternalMemberName, StringComparison.Ordinal)).DataType !=
-            destinationConfig.MemberConfiguration.First(d => d.InternalMemberName.Equals(m.InternalMemberName, StringComparison.Ordinal)).DataType
-        ).ToList();
-
-        if (membersInvalidTypes.Count() > 1)
+        IList<MapperDelegate> mappings = new List<MapperDelegate>();
+        foreach (var member in matchedMembers)
         {
-            var errorTypes = membersInvalidTypes.Select(m => m.MemberName).Aggregate("", (current, next) => current + " " + $"[{next}]");
-            throw new MapperException($"The following members have incompatible types and cannot be mapped: {errorTypes}.");
+            var sourceMemberConfig = sourceConfig.MemberConfiguration.First(mc => mc.InternalMemberName.Equals(member));
+            var destinationMemberConfig = destinationConfig.MemberConfiguration.First(mc => mc.InternalMemberName.Equals(member));
+            var sourceMemberType = sourceMemberConfig.DataType;
+            var destinationMemberType = destinationMemberConfig.DataType;
+
+            if (sourceMemberType == destinationMemberType)
+            {
+                if (sourceMemberType.IsBuiltInType())
+                {
+                    // built-in types - simple assign for map
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+                else if (
+                    // enum -> enum
+                    destinationMemberConfig.DataType.IsEnum &&
+                    destinationMemberConfig.DataType.GetEnumUnderlyingType().IsBuiltInType() &&
+                    sourceMemberConfig.DataType.IsEnum &&
+                    sourceMemberConfig.DataType.GetEnumUnderlyingType().IsBuiltInType())
+                {
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+                else if (
+                    // nullable -> nullable
+                    destinationMemberConfig.DataType.IsNullable() &&
+                    destinationMemberConfig.DataType.GetNullableUnderlyingType()!.IsBuiltInType() &&
+                    sourceMemberConfig.DataType.IsNullable() &&
+                    sourceMemberConfig.DataType.GetNullableUnderlyingType()!.IsBuiltInType())
+                {
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+            }
+            else if (this.configuration.Keys.Contains(destinationMemberType) && this.configuration.Keys.Contains(sourceMemberType))
+            {
+                // reference type -> reference type (both types registered in mapper config)
+                MapperDelegate mapping = (s, d) =>
+                {
+                    destinationMemberConfig.Setter(
+                        d,
+                        MapOne(sourceMemberType, destinationMemberType, sourceMemberConfig.Getter(s)));
+                };
+                mappings.Add(mapping);
+            }
+            else if (sourceMemberType == destinationMemberType && (sourceMemberType.IsValueType))
+            {
+                // from/to are same type, and ValueType. ValueTypes are automatically copied on assignment.
+                // No need to map properties.
+                MapperDelegate mapping = (s, d) =>
+                {
+                    destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
+                };
+                mappings.Add(mapping);
+            }
+            else
+            {
+                throw new MapperException($"Cannot map from type: {sourceType} to {destinationType}. Are you missing a type registration or mapping?");
+            }
         }
-
-        // if get here, then all good.
-
+        return mappings;
     }
 }
