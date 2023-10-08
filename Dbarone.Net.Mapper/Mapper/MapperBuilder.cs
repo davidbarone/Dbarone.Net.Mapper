@@ -6,8 +6,8 @@ namespace Dbarone.Net.Mapper;
 /// Takes a <see cref="MapperConfiguration" /> instance, and builds a mapper to handle the mapping between 2 types.
 /// </summary>
 public class MapperBuilder {
-    private MapperConfiguration Configuration { get; set; }
-    public MapperBuilder(MapperConfiguration configuration) {
+    private Config Configuration { get; set; }
+    public MapperBuilder(Config configuration) {
         this.Configuration = configuration;
     }
 
