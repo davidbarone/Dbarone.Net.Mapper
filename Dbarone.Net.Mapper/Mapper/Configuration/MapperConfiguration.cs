@@ -20,7 +20,7 @@ public class MapperConfiguration
     private IList<ConfigMemberInclusion> ConfigMemberInclusions = new List<ConfigMemberInclusion>();
     private IDictionary<Tuple<Type, Type>, ITypeConverter> ConfigConverters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
     private IDictionary<Type, MemberFilterDelegate> ConfigMemberFilters = new Dictionary<Type, MemberFilterDelegate>();
-    private IList<ConfigRename> ConfigMemberRenames = new List<ConfigRename>();
+    private IList<ConfigMemberRename> ConfigMemberRenames = new List<ConfigMemberRename>();
 
     #endregion
 
@@ -229,7 +229,7 @@ public class MapperConfiguration
 
     #endregion 
 
-    #region Ignore Members
+    #region Exclude Members
 
     /// <summary>
     /// Defines a member that will not be mapped.
@@ -237,13 +237,13 @@ public class MapperConfiguration
     /// <typeparam name="T">The source object type.</typeparam>
     /// <param name="member">A unary member expression to select a member on the source object type.</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration Ignore<T>(Expression<Func<T, object>> member)
+    public MapperConfiguration Exclude<T>(Expression<Func<T, object>> member)
     {
-        ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
+        ConfigMemberInclusions.Add(new ConfigMemberInclusion()
         {
             Type = typeof(T),
             Member = member.GetMemberPath(),
-            IgnoreInclude = IgnoreIncludeEnum.Ignore
+            IncludeExclude = IncludeExclude.Exclude
         });
         return this;
     }
@@ -254,15 +254,15 @@ public class MapperConfiguration
     /// <param name="type">The type.</param>
     /// <param name="members">The list of members to ignore</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration Ignore(Type type, params string[] members)
+    public MapperConfiguration Exclude(Type type, params string[] members)
     {
         members.ToList().ForEach(m =>
         {
-            ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
+            ConfigMemberInclusions.Add(new ConfigMemberInclusion()
             {
                 Type = type,
                 Member = m,
-                IgnoreInclude = IgnoreIncludeEnum.Ignore
+                IncludeExclude = IncludeExclude.Exclude
             });
         });
         return this;
@@ -280,11 +280,11 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration Include<T>(Expression<Func<T, object>> member)
     {
-        ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
+        ConfigMemberInclusions.Add(new ConfigMemberInclusion()
         {
             Type = typeof(T),
             Member = member.GetMemberPath(),
-            IgnoreInclude = IgnoreIncludeEnum.Include
+            IncludeExclude = IncludeExclude.Include
         });
         return this;
     }
@@ -299,11 +299,11 @@ public class MapperConfiguration
     {
         members.ToList().ForEach(m =>
         {
-            ConfigIgnoreIncludes.Add(new ConfigIgnoreInclude()
+            ConfigMemberInclusions.Add(new ConfigMemberInclusion()
             {
                 Type = type,
                 Member = m,
-                IgnoreInclude = IgnoreIncludeEnum.Include
+                IncludeExclude = IncludeExclude.Include
             });
         });
         return this;
@@ -333,7 +333,7 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration SetMemberFilterRule(Type type, MemberFilterDelegate memberFilterRule)
     {
-        ConfigMemberFilterRules[type] = memberFilterRule;
+        ConfigMemberFilters[type] = memberFilterRule;
         return this;
     }
 
@@ -389,7 +389,7 @@ public class MapperConfiguration
     /// <exception cref="ArgumentNullException"></exception>
     public MapperConfiguration Rename(Type type, string member, string newName)
     {
-        ConfigRenames.Add(new ConfigRename()
+        ConfigMemberRenames.Add(new ConfigMemberRename()
         {
             Type = type,
             MemberName = member,
@@ -424,7 +424,7 @@ public class MapperConfiguration
 
     }
 
-    private bool GetIgnoreStatus(Type type, string member)
+    private bool GetMemberInclusionStatus(Type type, string member)
     {
         MemberFilterDelegate? memberFilterRuleA = null;
         MemberFilterDelegate? memberFilterRuleB = null;
@@ -436,20 +436,20 @@ public class MapperConfiguration
         }
 
         // Get member filter function if exists
-        if (ConfigMemberFilterRules.ContainsKey(type))
+        if (ConfigMemberFilters.ContainsKey(type))
         {
-            memberFilterRuleA = ConfigMemberFilterRules[type];
+            memberFilterRuleA = ConfigMemberFilters[type];
         }
 
         memberFilterRuleB = ConfigTypes[type].Options.MemberFilterRule;
         memberFilterRule = memberFilterRuleA != null ? memberFilterRuleA : memberFilterRuleB;
 
-        var ignore = (memberFilterRule != null) ? memberFilterRule(member) : false;
-        foreach (var configIgnoreInclude in ConfigIgnoreIncludes.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
+        var isIncluded = (memberFilterRule != null) ? memberFilterRule(member) : false;
+        foreach (var configMemberInclusion in ConfigMemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
         {
-            ignore = configIgnoreInclude.IgnoreInclude == IgnoreIncludeEnum.Ignore ? true : false;
+            isIncluded = configMemberInclusion.IncludeExclude==IncludeExclude.Include ? true : false;
         }
-        return ignore;
+        return isIncluded;
     }
 
     private string GetInternalName(Type type, string memberName, IMemberRenameStrategy? memberRenameStrategy = null)
@@ -463,7 +463,7 @@ public class MapperConfiguration
         }
 
         // loop through any specific rename rules. Last one wins. 
-        foreach (var rename in ConfigRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
+        foreach (var rename in ConfigMemberRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
         {
             internalMemberName = rename.InternalMemberName;
         }
@@ -530,7 +530,7 @@ public class MapperConfiguration
                     DataType = resolver.GetMemberType(configType.Type, m, configType.Options),
                     Getter = resolver.GetGetter(configType.Type, m, configType.Options),
                     Setter = resolver.GetSetter(configType.Type, m, configType.Options),
-                    Ignore = GetIgnoreStatus(configType.Type, m),
+                    Ignore = GetMemberInclusionStatus(configType.Type, m),
                     InternalMemberName = GetInternalName(configType.Type, m, configType.Options.MemberRenameStrategy)
                 }).ToList();
             }

@@ -3,7 +3,7 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// Configuration relating to member renaming.
 /// </summary>
-public class ConfigRename
+public class ConfigMemberRename
 {
     /// <summary>
     /// The type that the member belongs to.
