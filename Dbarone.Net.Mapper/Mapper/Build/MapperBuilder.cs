@@ -109,7 +109,6 @@ public class MapperBuilder
 
     }
 
-
     /// <summary>
     /// Validates the source and destinations in respect of the end-point validation rules provided. 
     /// </summary>
@@ -134,34 +133,25 @@ public class MapperBuilder
         if ((destinationBuild.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
         {
             // check all source member rules map to destination rules.
-            var unmappedDestinationMembers = destinationConfiguration
-                .MemberConfiguration
-                .Where(m => sourceConfiguration
-                    .MemberConfiguration
+            var unmappedDestinationMembers = destinationBuild
+                .Members
+                .Where(m => sourceBuild
+                    .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
             foreach (var item in unmappedDestinationMembers)
             {
-                notifications.Add(new MapperBuildNotification
-                {
-                    SourceType = sourceConfiguration.Type,
-                    DestinationType = destinationConfiguration.Type,
-                    MemberName = item.MemberName,
-                    Message = "Destination end point validation enabled, but destination member is not mapped from source."
-                });
+                errors.Add(new MapperBuildError(destinationBuild.Type, MapperEndPoint.Destination, path, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
             }
         }
-
-        return notifications;
     }
-
 
     private void Build(Type sourceType, Type destinationType, string path, List<MapperBuildError> errors)
     {
         // validations
         if (destinationType.IsInterface)
         {
-            errors.Add(new MapperBuildError(sourceType, destinationType, path, null, $"Destination type cannot be interface."));
+            errors.Add(new MapperBuildError(destinationType, MapperEndPoint.Destination, path, null, $"Destination type cannot be interface."));
             return;
         }
 
@@ -171,11 +161,11 @@ public class MapperBuilder
         // Do we have the source + destination types registered?
         if (sourceConfig == null)
         {
-            errors.Add(new MapperBuildError(sourceType, destinationType, path, null, $"Source type not registered.");
+            errors.Add(new MapperBuildError(sourceType, MapperEndPoint.Source, path, null, $"Source type not registered."));
         }
         if (destinationConfig == null)
         {
-            errors.Add(new MapperBuildError(sourceType, destinationType, path, null, $"Destination type: ${destinationType.Name} not registered.");
+            errors.Add(new MapperBuildError(destinationType, MapperEndPoint.Destination, path, null, $"Destination type not registered."));
         }
 
         if (sourceConfig == null || destinationConfig == null)
@@ -199,35 +189,12 @@ public class MapperBuilder
         var sourceBuildType = Metadata.Types[sourceType];
         var destinationBuildType = Metadata.Types[destinationType];
 
+        // Validate each type separately
+        // to do
+        
         // Do end point validation
-        EndPointValidation()
+        EndPointValidation(sourceBuildType, destinationBuildType, path, errors);
 
-
-
-
-        // Are both source and destination types registered?
-        if (sourceConfig != null && destinationConfig != null)
-        {
-            // both source and destination types registered - normal mapping process
-
-            notifications.AddRange(EndPointValidation(sourceConfig, destinationConfig));
-            // do end point validation here.
-
-
-
-
-        }
-
-        // validation
-        if (!configuration.ContainsKey(sourceType))
-        {
-            throw new MapperException($"Source type: [{sourceType.Name}] not registered.");
-        }
-
-        if (!configuration.ContainsKey(destinationType))
-        {
-            throw new MapperException($"Destination type: [{destinationType.Name}] not registered.");
-        }
 
 
 
