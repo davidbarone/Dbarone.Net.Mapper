@@ -6,9 +6,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 
 /// <summary>
-/// Creates the configuration for a <see cref="ObjectMapper" /> mapper object.
-/// Before being able to map any objects and types, you must create
-/// a mapper configuration, and from this generate an <see cref="ObjectMapper" /> object.
+/// Creates a mapper configuration.
 /// </summary>
 public class MapperConfiguration
 {

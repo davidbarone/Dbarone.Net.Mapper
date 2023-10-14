@@ -19,10 +19,15 @@ public class MapperBuilder
     /// </summary>
     private BuildMetadataCache Metadata { get; set; }
 
+    /// <summary>
+    /// Creates a new <see cref="MapperBuilder"/> instance.
+    /// </summary>
+    /// <param name="configuration">The configuration used to create mapper objects.</param>
     public MapperBuilder(Config configuration)
     {
         this.Configuration = configuration;
         AddCoreResolvers();
+        Metadata = new BuildMetadataCache();
     }
 
     private void AddCoreResolvers()
@@ -67,31 +72,6 @@ public class MapperBuilder
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /// <summary>
-    /// Returns true if the source and destination mapper combination has been previously
-    /// built and saved to the cache.
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TDestination"></typeparam>
-    /// <returns></returns>
-    public bool HasMapper<TSource, TDestination>()
-    {
-
-    }
-
     /// <summary>
     /// Gets a mapper for a source and destination type combination. If the source and destination
     /// mapper has not been retrieved before, a one-time build process occurs to generate all the
@@ -127,7 +107,6 @@ public class MapperBuilder
             }
         }
     }
-
 
     /// <summary>
     /// Validates the source and destinations in respect of the end-point validation rules provided. 
@@ -335,6 +314,7 @@ public class MapperBuilder
         // rename strategy present?
         if (memberRenameStrategy != null)
         {
+
             internalMemberName = memberRenameStrategy!.RenameMember(memberName);
         }
 
@@ -348,6 +328,7 @@ public class MapperBuilder
 
     private void BuildMapRules(BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
     {
+        SourceDestination sourceDestination = new SourceDestination(sourceBuild.Type, destinationBuild.Type);
 
         // Get internal member names matching on source + destination
         IEnumerable<string> matchedMembers = destinationBuild
@@ -405,7 +386,8 @@ public class MapperBuilder
                     };
                     mappings.Add(mapping);
                 }
-                else {
+                else
+                {
                     // as long as source + destination types match, we can do straight 1:1 map
                     MapperDelegate mapping = (s, d) =>
                     {
@@ -415,9 +397,17 @@ public class MapperBuilder
                 }
             }
 
-            else if (this.Configuration.Converters.ContainsKey(sourceMemberType) && this.Configuration.Converters.ContainsKey(destinationMemberType)){
+            else if (this.Configuration.Converters.ContainsKey(sourceDestination))
+            {
                 // Use converter to map
-                
+                    // as long as source + destination types match, we can do straight 1:1 map
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        var converter = this.Configuration.Converters[sourceDestination];
+                        var converted = converter.Convert(sourceMemberBuild.Getter(s));
+                        destinationMemberBuild.Setter(d, converted);
+                    };
+                    mappings.Add(mapping);
             }
             else if (this.Configuration.Types.Keys.Contains(destinationMemberType) && this.Configuration.Types.Keys.Contains(sourceMemberType))
             {
@@ -447,14 +437,15 @@ public class MapperBuilder
         }
     }
 
-    private void AddCalculations(Type type, string path, List<MapperBuildError> errors) {
-
+    private void AddCalculations(Type type, string path, List<MapperBuildError> errors)
+    {
         // Add calculations to existing type
-        foreach (var calculation in this.Configuration.Calculations.Where(c=>c.SourceType==type))
+        foreach (var calculation in this.Configuration.Calculations.Where(c => c.SourceType == type))
         {
             var buildType = Metadata.Types[type];
 
-            buildType.Members.Add(new BuildMember {
+            buildType.Members.Add(new BuildMember
+            {
                 MemberName = calculation.MemberName,
                 DataType = calculation.MemberType,
                 InternalMemberName = calculation.MemberName,
