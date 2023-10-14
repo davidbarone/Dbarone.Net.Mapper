@@ -23,10 +23,26 @@ public class MapperBuildError {
     /// <summary>
     /// The optional member relating to the mapper build error.
     /// </summary>
-    public string MemberName { get; set; } = default!;
+    public string? MemberName { get; set; } = default!;
     
     /// <summary>
     /// The message relating to the mapper build error. 
     /// </summary>
     public string Message { get; set; } = default!;
+
+    /// <summary>
+    /// Creates a new MapperBuildError instance.
+    /// </summary>
+    /// <param name="sourceType">The source type.</param>
+    /// <param name="destinationType">The destination type.</param>
+    /// <param name="path">The path within the mapping.</param>
+    /// <param name="memberName">The optional member name</param>
+    /// <param name="message">The error message.</param>
+    public MapperBuildError(Type sourceType, Type destinationType, string path, string? memberName, string message) {
+        this.SourceType = sourceType;
+        this.DestinationType = destinationType;
+        this.Path = path;
+        this.MemberName = memberName;
+        this.Message = message;
+    }
 }

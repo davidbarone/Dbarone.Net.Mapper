@@ -16,8 +16,8 @@ public class MapperBuilder
     /// <summary>
     /// Stores the build-time metadata.
     /// </summary>
-    private BuildMetadata Metadata { get; set; }
-    
+    private BuildMetadataCache Metadata { get; set; }
+
     public MapperBuilder(Config configuration)
     {
         this.Configuration = configuration;
@@ -30,17 +30,34 @@ public class MapperBuilder
     /// <typeparam name="TDestination">The destination type.</typeparam>
     /// <returns>Returns an object mapper which can map objects from source to destination type.</returns>
     /// <exception cref="MapperBuildException">Throws an exception if any build-time errors occur.</exception>
-    public ObjectMapper<TSource, TDestination> BuildMapper<TSource, TDestination>() {
+    public ObjectMapper<TSource, TDestination> BuildMapper<TSource, TDestination>()
+    {
         List<MapperBuildError> errors = new List<MapperBuildError>();
-        Build(typeof(TSource), typeof(TDestination), errors);
+        var path = "";  // root path
+        Build(typeof(TSource), typeof(TDestination), path, errors);
 
         if (errors.Any())
         {
             throw new MapperBuildException("Errors occurred during build. See Errors collection for details.", errors);
-        } else {
+        }
+        else
+        {
             return new ObjectMapper<TSource, TDestination>()
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /// <summary>
     /// Returns true if the source and destination mapper combination has been previously
@@ -72,12 +89,6 @@ public class MapperBuilder
 
     }
 
-    private void BuildType(Type type) {
-        if (this.Configuration.Types.ContainsKey(type)) {
-            throw new MappException("")
-        }
-        
-    }
 
     /// <summary>
     /// Validates the source and destinations in respect of the end-point validation rules provided. 
@@ -134,19 +145,54 @@ public class MapperBuilder
     }
 
 
-    private void Build(Type sourceType, Type destinationType, List<MapperBuildError> errors)
+    private void Build(Type sourceType, Type destinationType, string path, List<MapperBuildError> errors)
     {
-        List<MapperBuildNotification> notifications = new List<MapperBuildNotification>();
+        // validations
+        if (destinationType.IsInterface)
+        {
+            errors.Add(new MapperBuildError(sourceType, destinationType, path, null, $"Destination type cannot be interface."));
+            return;
+        }
+
         var sourceConfig = this.Configuration.Types.FirstOrDefault(c => c.Value.Type == sourceType).Value;
         var destinationConfig = this.Configuration.Types.FirstOrDefault(c => c.Value.Type == destinationType).Value;
 
-        if (destinationType.IsInterface)
+        // Do we have the source + destination types registered?
+        if (sourceConfig == null)
         {
-            throw new MapperException($"Destination type cannot be interface type.");
+            errors.Add(new MapperBuildError(sourceType, destinationType, path, null, $"Source type not registered.");
+        }
+        if (destinationConfig == null)
+        {
+            errors.Add(new MapperBuildError(sourceType, destinationType, path, null, $"Destination type: ${destinationType.Name} not registered.");
         }
 
+        if (sourceConfig == null || destinationConfig == null)
+        {
+            // cannot proceed. Exit early.
+            return;
+        }
+
+        // Check whether types have been built?
+        if (!Metadata.Types.ContainsKey(sourceType))
+        {
+            BuildType(sourceType, path, errors);
+        }
+
+        if (!Metadata.Types.ContainsKey(destinationType)) {
+            BuildType(destinationType, path, errors);
+        }
+
+        // At this point, the types are built
+        var sourceBuildType = Metadata.Types[sourceType];
+        var destinationBuildType = Metadata.Types[destinationType];
+
+
+
+
+
         // Are both source and destination types registered?
-        if (sourceConfig != null && destinationConfig !=null)
+        if (sourceConfig != null && destinationConfig != null)
         {
             // both source and destination types registered - normal mapping process
 
@@ -257,4 +303,10 @@ public class MapperBuilder
         }
         return mappings;
     }
+
+    private void BuildType(Type type, string path,List<MapperBuildError> errors)
+    {
+
+    }
+
 }

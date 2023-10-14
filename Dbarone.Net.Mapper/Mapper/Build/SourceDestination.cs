@@ -1,9 +1,9 @@
-using System.Diagnostics;
+namespace Dbarone.Net.Mapper;
 
 /// <summary>
 /// Represents a source + destination tuple.
 /// </summary>
-public class SourceDestinationTuple {
+public class SourceDestination {
     
     /// <summary>
     /// The source type.
@@ -16,11 +16,11 @@ public class SourceDestinationTuple {
     public Type Destination { get; init; }
 
     /// <summary>
-    /// Creates a new <see cref="SourceDestinationTuple"/>. 
+    /// Creates a new <see cref="SourceDestination"/>. 
     /// </summary>
     /// <param name="source">The source type.</param>
     /// <param name="destination">The destination type.</param>
-    public SourceDestinationTuple(Type source, Type destination) {
+    public SourceDestination(Type source, Type destination) {
         this.Source = source;
         this.Destination = destination;
     }
