@@ -10,29 +10,6 @@ public class ObjectMapper<TSource, TDestination>
     private IDictionary<Type, MapperTypeConfiguration> configuration;
     private IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters;
 
-    #region Configuration
-
-    /// <summary>
-    /// Returns the number of types configured.
-    /// </summary>
-    /// <returns>Returns the number of types configured.</returns>
-    public Type[] GetTypeConfigurationKeys()
-    {
-        return configuration.Keys.ToArray();
-    }
-
-    /// <summary>
-    /// Gets the <see cref="MapperTypeConfiguration" /> configuration for a specific type.
-    /// </summary>
-    /// <param name="type">The type to get the configuration for.</param>
-    /// <returns>Returns a <see cref="MapperTypeConfiguration" /> object representing the specified configuration.</returns>
-    public MapperTypeConfiguration GetTypeConfiguration(Type type)
-    {
-        return configuration[type];
-    }
-
-    #endregion
-
     /// <summary>
     /// Returns the mapper configuration.
     /// </summary>
