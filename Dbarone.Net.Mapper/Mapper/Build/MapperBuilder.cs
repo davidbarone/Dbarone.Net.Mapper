@@ -68,7 +68,7 @@ public class MapperBuilder
         }
         else
         {
-            return new ObjectMapper<TSource, TDestination>()
+            return new ObjectMapper<TSource, TDestination>(null, null);
         }
     }
 
@@ -81,13 +81,9 @@ public class MapperBuilder
     /// <typeparam name="TDestination"></typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    public ObjectMapper GetMapper<TSource, TDestination>()
+    public ObjectMapper<TSource, TDestination> GetMapper<TSource, TDestination>()
     {
         throw new NotSupportedException();
-    }
-    public GetMapper(Type fromType, Type toType)
-    {
-
     }
 
     private void ValidateType(BuildType buildType, string path, List<MapperBuildError> errors)
@@ -351,88 +347,33 @@ public class MapperBuilder
 
             if (sourceMemberType == destinationMemberType)
             {
-                if (sourceMemberType.IsBuiltInType())
+                // member types the same - do simple assignment of value to destination object.
+                MapperDelegate mapping = (s, d) =>
                 {
-                    // built-in types - simple assign for map
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
-                    };
-                    mappings.Add(mapping);
-                }
-                else if (
-                    // enum -> enum
-                    destinationMemberBuild.DataType.IsEnum &&
-                    destinationMemberBuild.DataType.GetEnumUnderlyingType().IsBuiltInType() &&
-                    sourceMemberBuild.DataType.IsEnum &&
-                    sourceMemberBuild.DataType.GetEnumUnderlyingType().IsBuiltInType())
-                {
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
-                    };
-                    mappings.Add(mapping);
-                }
-                else if (
-                    // nullable -> nullable
-                    destinationMemberBuild.DataType.IsNullable() &&
-                    destinationMemberBuild.DataType.GetNullableUnderlyingType()!.IsBuiltInType() &&
-                    sourceMemberBuild.DataType.IsNullable() &&
-                    sourceMemberBuild.DataType.GetNullableUnderlyingType()!.IsBuiltInType())
-                {
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
-                    };
-                    mappings.Add(mapping);
-                }
-                else
-                {
-                    // as long as source + destination types match, we can do straight 1:1 map
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
-                    };
-                    mappings.Add(mapping);
-                }
+                    destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                };
+                mappings.Add(mapping);
             }
-
             else if (this.Configuration.Converters.ContainsKey(sourceDestination))
             {
-                // Use converter to map
-                    // as long as source + destination types match, we can do straight 1:1 map
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        var converter = this.Configuration.Converters[sourceDestination];
-                        var converted = converter.Convert(sourceMemberBuild.Getter(s));
-                        destinationMemberBuild.Setter(d, converted);
-                    };
-                    mappings.Add(mapping);
+                // Member types differ, but converter exists - convert then assign value to destination object.
+                MapperDelegate mapping = (s, d) =>
+                {
+                    var converter = this.Configuration.Converters[sourceDestination];
+                    var converted = converter.Convert(sourceMemberBuild.Getter(s));
+                    destinationMemberBuild.Setter(d, converted);
+                };
+                mappings.Add(mapping);
             }
             else if (this.Configuration.Types.Keys.Contains(destinationMemberType) && this.Configuration.Types.Keys.Contains(sourceMemberType))
             {
-                // reference type -> reference type (both types registered in mapper config)
-                MapperDelegate mapping = (s, d) =>
-                {
-                    destinationMemberConfig.Setter(
-                        d,
-                        MapOne(sourceMemberType, destinationMemberType, sourceMemberConfig.Getter(s)));
-                };
-                mappings.Add(mapping);
-            }
-            else if (sourceMemberType == destinationMemberType && (sourceMemberType.IsValueType))
-            {
-                // from/to are same type, and ValueType. ValueTypes are automatically copied on assignment.
-                // No need to map properties.
-                MapperDelegate mapping = (s, d) =>
-                {
-                    destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
-                };
-                mappings.Add(mapping);
+                // Member types differ, but mapping configuration exists for types
+                // create mapping rules recursively.
+                Build(sourceMemberType, destinationMemberType, path + "." + member, errors);
             }
             else
             {
-                throw new MapperException($"Cannot map from type: {sourceType} to {destinationType}. Are you missing a type registration or mapping?");
+                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, member, "Cannot create mapping rule from member. Are you missing a type registration?"));
             }
         }
     }
