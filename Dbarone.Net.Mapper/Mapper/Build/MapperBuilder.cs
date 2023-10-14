@@ -114,33 +114,24 @@ public class MapperBuilder
     /// Validates the source and destinations in respect of the end-point validation rules provided. 
     /// </summary>
     /// <returns></returns>
-    private List<MapperBuildNotification> EndPointValidation(MapperTypeConfiguration sourceConfiguration, MapperTypeConfiguration destinationConfiguration)
+    private void EndPointValidation(BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
     {
-
-        List<MapperBuildNotification> notifications = new List<MapperBuildNotification>();
-
-        if ((sourceConfiguration.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
+        if ((sourceBuild.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
             // check all source member rules map to destination rules.
-            var unmappedSourceMembers = sourceConfiguration
-                .MemberConfiguration
-                .Where(m => destinationConfiguration
-                    .MemberConfiguration
+            var unmappedSourceMembers = sourceBuild
+                .Members
+                .Where(m => destinationBuild
+                    .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
             foreach (var item in unmappedSourceMembers)
             {
-                notifications.Add(new MapperBuildNotification
-                {
-                    SourceType = sourceConfiguration.Type,
-                    DestinationType = destinationConfiguration.Type,
-                    MemberName = item.MemberName,
-                    Message = "Source end point validation enabled, but source member is not mapped to destination."
-                });
+                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
             }
         }
 
-        if ((destinationConfiguration.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+        if ((destinationBuild.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
         {
             // check all source member rules map to destination rules.
             var unmappedDestinationMembers = destinationConfiguration
@@ -208,6 +199,8 @@ public class MapperBuilder
         var sourceBuildType = Metadata.Types[sourceType];
         var destinationBuildType = Metadata.Types[destinationType];
 
+        // Do end point validation
+        EndPointValidation()
 
 
 
@@ -409,22 +402,22 @@ public class MapperBuilder
         MemberFilterDelegate? memberFilterRuleB = null;
         MemberFilterDelegate? memberFilterRule = null;
 
-        if (Config.Types.ContainsKey(type))
+        if (Configuration.Types.ContainsKey(type))
         {
             throw new Exception($"GetIgnoreStatus. Invalid type: {type}.");
         }
 
         // Get member filter function if exists
-        if (Config.MemberFilters.ContainsKey(type))
+        if (Configuration.MemberFilters.ContainsKey(type))
         {
-            memberFilterRuleA = Config.MemberFilters[type];
+            memberFilterRuleA = Configuration.MemberFilters[type];
         }
 
-        memberFilterRuleB = Config.Types[type].Options.MemberFilterRule;
+        memberFilterRuleB = Configuration.Types[type].Options.MemberFilterRule;
         memberFilterRule = memberFilterRuleA != null ? memberFilterRuleA : memberFilterRuleB;
 
         var isIncluded = (memberFilterRule != null) ? memberFilterRule(member) : false;
-        foreach (var configMemberInclusion in Config.MemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
+        foreach (var configMemberInclusion in Configuration.MemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
         {
             isIncluded = configMemberInclusion.IncludeExclude == IncludeExclude.Include ? true : false;
         }
@@ -442,12 +435,10 @@ public class MapperBuilder
         }
 
         // loop through any specific rename rules. Last one wins. 
-        foreach (var rename in Config.MemberRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
+        foreach (var rename in Configuration.MemberRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
         {
             internalMemberName = rename.InternalMemberName;
         }
         return internalMemberName;
     }
-
-
 }
