@@ -42,17 +42,6 @@ public class BuildType
     /// </summary>
     public void Validate()
     {
-        // Check no duplicate internal names
-        var duplicates = this.Members
-            .GroupBy(g => g.InternalMemberName)
-            .Where(g => g.Count() > 1)
-            .Select(g => g.Key).ToList();
-
-        if (duplicates.Any())
-        {
-            var duplicateValues = duplicates.Aggregate("", (current, next) => current + " " + $"[{next}]");
-            throw new MapperException($"The following internal member names have been used for multiple members on type: {this.Type}:{duplicateValues}.");
-        }
     }
 
     /// <summary>

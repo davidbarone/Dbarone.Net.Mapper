@@ -109,6 +109,25 @@ public class MapperBuilder
 
     }
 
+    private void ValidateType(BuildType buildType, string path, List<MapperBuildError> errors)
+    {
+        // Check no duplicate internal names
+        var duplicates = buildType.Members
+            .GroupBy(g => g.InternalMemberName)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key).ToList();
+
+        foreach (var duplicate in duplicates)
+        {
+            var members = buildType.Members.Where(m => m.InternalMemberName == duplicate);
+            foreach (var member in members)
+            {
+                errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, path, member.MemberName, "Member internal name not unique."));
+            }
+        }
+    }
+
+
     /// <summary>
     /// Validates the source and destinations in respect of the end-point validation rules provided. 
     /// </summary>
@@ -190,8 +209,9 @@ public class MapperBuilder
         var destinationBuildType = Metadata.Types[destinationType];
 
         // Validate each type separately
-        // to do
-        
+        ValidateType(sourceBuildType, path, errors);
+        ValidateType(destinationBuildType, path, errors);
+
         // Do end point validation
         EndPointValidation(sourceBuildType, destinationBuildType, path, errors);
 
