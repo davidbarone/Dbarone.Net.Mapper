@@ -276,6 +276,7 @@ public class MapperBuilder
                     mappings.Add(mapping);
                 }
             }
+            
             else if (this.configuration.Keys.Contains(destinationMemberType) && this.configuration.Keys.Contains(sourceMemberType))
             {
                 // reference type -> reference type (both types registered in mapper config)
