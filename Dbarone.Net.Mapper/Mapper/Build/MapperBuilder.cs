@@ -11,7 +11,7 @@ public class MapperBuilder
     /// <summary>
     /// The input configuration.
     /// </summary>
-    private Config Configuration { get; set; }
+    private Config Configuration { get; init; }
 
     /// <summary>
     /// Stores the build-time metadata.
@@ -21,6 +21,26 @@ public class MapperBuilder
     public MapperBuilder(Config configuration)
     {
         this.Configuration = configuration;
+        AddCoreResolvers();
+    }
+
+    private void AddCoreResolvers()
+    {
+        // Add core resolvers
+        if (!this.Configuration.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
+        {
+            this.Configuration.Resolvers.Add(new StructMemberResolver());
+        }
+
+        if (!this.Configuration.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
+        {
+            this.Configuration.Resolvers.Add(new DictionaryMemberResolver());
+        }
+
+        if (!this.Configuration.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
+        {
+            this.Configuration.Resolvers.Add(new ClassMemberResolver());
+        }
     }
 
     /// <summary>
@@ -179,7 +199,8 @@ public class MapperBuilder
             BuildType(sourceType, path, errors);
         }
 
-        if (!Metadata.Types.ContainsKey(destinationType)) {
+        if (!Metadata.Types.ContainsKey(destinationType))
+        {
             BuildType(destinationType, path, errors);
         }
 
@@ -304,9 +325,111 @@ public class MapperBuilder
         return mappings;
     }
 
-    private void BuildType(Type type, string path,List<MapperBuildError> errors)
+    private void BuildType(Type type, string path, List<MapperBuildError> errors)
     {
+        var configType = this.Configuration.Types[type];
+
+        IMemberResolver? resolver = null;
+
+        // Get resolver
+        foreach (var configResolver in this.Configuration.Resolvers)
+        {
+            if (configResolver.CanResolveMembersForType(configType.Type))
+            {
+                resolver = configResolver;
+                break;
+            }
+        }
+
+        if (resolver == null)
+        {
+            errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, null, "No resolver found for type."));
+            return;
+        }
+
+        // Get members
+        string[] members = new string[] { };
+        List<BuildMember> buildMembers = new List<BuildMember>();
+        if (!resolver.DeferMemberResolution)
+        {
+            members = resolver.GetTypeMembers(configType.Type, configType.Options);
+
+            foreach (var member in members)
+            {
+                var getter = resolver.GetGetter(configType.Type, member, configType.Options);
+                var setter = resolver.GetSetter(configType.Type, member, configType.Options);
+                var ignore = GetMemberInclusionStatus(configType.Type, m) 
+
+            }
+
+
+            buildMembers = members.Select(m => new BuildMember
+            {
+                MemberName = m,
+                DataType = resolver.GetMemberType(configType.Type, m, configType.Options),
+                Getter = resolver.GetGetter(configType.Type, m, configType.Options),
+                Setter = resolver.GetSetter(configType.Type, m, configType.Options),
+                Ignore = GetMemberInclusionStatus(configType.Type, m),
+                InternalMemberName = GetInternalName(configType.Type, m, configType.Options.MemberRenameStrategy)
+            }).ToList();
+        }
+
+        // Create build type
+        buildTypes[configType.Type] = new MapperTypeConfiguration
+        {
+            Type = configType.Type,
+            Options = configType.Options,
+            MemberResolver = resolver,
+            MemberConfiguration = buildMembers,
+        };
 
     }
+
+    private bool GetMemberInclusionStatus(Type type, string member)
+    {
+        MemberFilterDelegate? memberFilterRuleA = null;
+        MemberFilterDelegate? memberFilterRuleB = null;
+        MemberFilterDelegate? memberFilterRule = null;
+
+        if (Config.Types.ContainsKey(type))
+        {
+            throw new Exception($"GetIgnoreStatus. Invalid type: {type}.");
+        }
+
+        // Get member filter function if exists
+        if (Config.MemberFilters.ContainsKey(type))
+        {
+            memberFilterRuleA = Config.MemberFilters[type];
+        }
+
+        memberFilterRuleB = Config.Types[type].Options.MemberFilterRule;
+        memberFilterRule = memberFilterRuleA != null ? memberFilterRuleA : memberFilterRuleB;
+
+        var isIncluded = (memberFilterRule != null) ? memberFilterRule(member) : false;
+        foreach (var configMemberInclusion in Config.MemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
+        {
+            isIncluded = configMemberInclusion.IncludeExclude==IncludeExclude.Include ? true : false;
+        }
+        return isIncluded;
+    }
+
+    private string GetInternalName(Type type, string memberName, IMemberRenameStrategy? memberRenameStrategy = null)
+    {
+        var internalMemberName = memberName;
+
+        // rename strategy present?
+        if (memberRenameStrategy != null)
+        {
+            internalMemberName = memberRenameStrategy!.RenameMember(memberName);
+        }
+
+        // loop through any specific rename rules. Last one wins. 
+        foreach (var rename in Config.MemberRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
+        {
+            internalMemberName = rename.InternalMemberName;
+        }
+        return internalMemberName;
+    }
+
 
 }

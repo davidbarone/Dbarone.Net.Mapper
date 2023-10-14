@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
@@ -6,15 +8,15 @@ namespace Dbarone.Net.Mapper;
 public class MapperBuildError {
     
     /// <summary>
-    /// The source type relating to the mapper build error.  
+    /// The type relating to the mapper build error.  
     /// </summary>
-    public Type SourceType { get; set; } = default!;
-    
-    /// <summary>
-    /// The destination type relating to the mapper build error.
-    /// </summary>
-    public Type DestinationType { get; set; } = default!;
+    public Type Type { get; set; } = default!;
 
+    /// <summary>
+    /// The endpoint relating to the mapper build error.
+    /// </summary>
+    public MapperEndPoint EndPoint { get; set; } = default;
+    
     /// <summary>
     /// The member path relating to the mapper build error.
     /// </summary>
@@ -33,14 +35,14 @@ public class MapperBuildError {
     /// <summary>
     /// Creates a new MapperBuildError instance.
     /// </summary>
-    /// <param name="sourceType">The source type.</param>
-    /// <param name="destinationType">The destination type.</param>
+    /// <param name="type">The type.</param>
+    /// <param name="endPoint">The end point type.</param>
     /// <param name="path">The path within the mapping.</param>
     /// <param name="memberName">The optional member name</param>
     /// <param name="message">The error message.</param>
-    public MapperBuildError(Type sourceType, Type destinationType, string path, string? memberName, string message) {
-        this.SourceType = sourceType;
-        this.DestinationType = destinationType;
+    public MapperBuildError(Type type, MapperEndPoint endPoint, string path, string? memberName, string message) {
+        this.Type = type;
+        this.EndPoint = endPoint;
         this.Path = path;
         this.MemberName = memberName;
         this.Message = message;

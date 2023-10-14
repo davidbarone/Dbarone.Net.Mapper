@@ -5,9 +5,9 @@ using System;
 using System.Reflection;
 
 /// <summary>
-/// Defines the rules for a single member mapping.
+/// Defines the build-time metadata for a member on a type.
 /// </summary>
-public class MapperMemberConfiguration
+public class BuildMember
 {
     /// <summary>
     /// Member name for the mapping rule.
