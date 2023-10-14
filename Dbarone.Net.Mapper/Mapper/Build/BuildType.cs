@@ -20,7 +20,7 @@ public class BuildType
     /// <summary>
     /// Defines the members on the type.
     /// </summary>
-    public IList<MapperMemberConfiguration> MemberConfiguration { get; set; } = new List<MapperMemberConfiguration>();
+    public IList<BuildMember> Members { get; set; } = new List<BuildMember>();
 
     /// <summary>
     /// Provides the member resolving strategy for this type.
@@ -31,10 +31,10 @@ public class BuildType
     /// Resolves a member/unary expression to a member configuration.
     /// </summary>
     /// <param name="expr">A unary expression to select a member.</param>
-    /// <returns>Retuens the <see cref="MapperMemberConfiguration" /> instance matching the member selected.</returns>
-    public MapperMemberConfiguration? GetMemberRule(Expression expr)
+    /// <returns>Returns the <see cref="BuildMember" /> instance matching the member selected.</returns>
+    public BuildMember? GetMemberRule(Expression expr)
     {
-        return this.MemberConfiguration.FirstOrDefault(x => x.MemberName == expr.GetMemberPath());
+        return this.Members.FirstOrDefault(x => x.MemberName == expr.GetMemberPath());
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class BuildType
     public void Validate()
     {
         // Check no duplicate internal names
-        var duplicates = this.MemberConfiguration
+        var duplicates = this.Members
             .GroupBy(g => g.InternalMemberName)
             .Where(g => g.Count() > 1)
             .Select(g => g.Key).ToList();

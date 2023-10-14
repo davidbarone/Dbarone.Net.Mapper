@@ -356,33 +356,51 @@ public class MapperBuilder
 
             foreach (var member in members)
             {
+                var dataType = resolver.GetMemberType(configType.Type, member, configType.Options);
                 var getter = resolver.GetGetter(configType.Type, member, configType.Options);
                 var setter = resolver.GetSetter(configType.Type, member, configType.Options);
-                var ignore = GetMemberInclusionStatus(configType.Type, m) 
+                var ignore = GetMemberInclusionStatus(configType.Type, member);
+                var internalName = GetInternalName(configType.Type, member, configType.Options.MemberRenameStrategy);
 
+                // validations
+                if (dataType == null)
+                {
+                    errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "Data type not known for member."));
+                }
+                else if (getter == null)
+                {
+                    errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No getter for member."));
+                }
+                else if (setter == null)
+                {
+                    errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No setter for member."));
+                }
+                else
+                {
+                    // add member to build
+                    buildMembers.Add(new BuildMember
+                    {
+                        MemberName = member,
+                        DataType = dataType,
+                        Getter = getter,
+                        Setter = setter,
+                        Ignore = ignore,
+                        InternalMemberName = internalName
+                    });
+                }
             }
-
-
-            buildMembers = members.Select(m => new BuildMember
-            {
-                MemberName = m,
-                DataType = resolver.GetMemberType(configType.Type, m, configType.Options),
-                Getter = resolver.GetGetter(configType.Type, m, configType.Options),
-                Setter = resolver.GetSetter(configType.Type, m, configType.Options),
-                Ignore = GetMemberInclusionStatus(configType.Type, m),
-                InternalMemberName = GetInternalName(configType.Type, m, configType.Options.MemberRenameStrategy)
-            }).ToList();
         }
 
-        // Create build type
-        buildTypes[configType.Type] = new MapperTypeConfiguration
+        BuildType buildType = new BuildType
         {
             Type = configType.Type,
             Options = configType.Options,
             MemberResolver = resolver,
-            MemberConfiguration = buildMembers,
+            Members = buildMembers
         };
 
+        // Add to metadata
+        this.Metadata.Types[type] = buildType;
     }
 
     private bool GetMemberInclusionStatus(Type type, string member)
@@ -408,7 +426,7 @@ public class MapperBuilder
         var isIncluded = (memberFilterRule != null) ? memberFilterRule(member) : false;
         foreach (var configMemberInclusion in Config.MemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
         {
-            isIncluded = configMemberInclusion.IncludeExclude==IncludeExclude.Include ? true : false;
+            isIncluded = configMemberInclusion.IncludeExclude == IncludeExclude.Include ? true : false;
         }
         return isIncluded;
     }
