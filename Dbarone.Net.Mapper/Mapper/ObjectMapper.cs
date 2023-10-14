@@ -7,23 +7,11 @@ using System.Linq.Expressions;
 /// </summary>
 public class ObjectMapper<TSource, TDestination>
 {
-    private IDictionary<Type, MapperTypeConfiguration> configuration;
-    private IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters;
+    private IDictionary<SourceDestinationPath, SourceDestinationPathRules> MapRules { get; init; }
 
-    /// <summary>
-    /// Returns the mapper configuration.
-    /// </summary>
-    /// 
-    public IDictionary<Type, MapperTypeConfiguration> Configuration { get; }
-
-    internal ObjectMapper(IDictionary<Type, MapperTypeConfiguration> configuration, IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters)
+    internal ObjectMapper(IDictionary<SourceDestinationPath, SourceDestinationPathRules> mapRules)
     {
-        this.configuration = configuration;
-        this.customTypeConverters = customTypeConverters;
-    }
-
-    internal object MapOneInternal(Type fromType, Type toType, object? obj, string memberPath, IDictionary<string, IEnumerable<MapperDelegate>> cachedMappings) {
-        
+        this.MapRules = mapRules;
     }
 
     /// <summary>
