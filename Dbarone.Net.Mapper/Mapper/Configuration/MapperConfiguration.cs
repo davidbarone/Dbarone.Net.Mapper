@@ -418,51 +418,6 @@ public class MapperConfiguration
 
     }
 
-    private bool GetMemberInclusionStatus(Type type, string member)
-    {
-        MemberFilterDelegate? memberFilterRuleA = null;
-        MemberFilterDelegate? memberFilterRuleB = null;
-        MemberFilterDelegate? memberFilterRule = null;
-
-        if (Config.Types.ContainsKey(type))
-        {
-            throw new Exception($"GetIgnoreStatus. Invalid type: {type}.");
-        }
-
-        // Get member filter function if exists
-        if (Config.MemberFilters.ContainsKey(type))
-        {
-            memberFilterRuleA = Config.MemberFilters[type];
-        }
-
-        memberFilterRuleB = Config.Types[type].Options.MemberFilterRule;
-        memberFilterRule = memberFilterRuleA != null ? memberFilterRuleA : memberFilterRuleB;
-
-        var isIncluded = (memberFilterRule != null) ? memberFilterRule(member) : false;
-        foreach (var configMemberInclusion in Config.MemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
-        {
-            isIncluded = configMemberInclusion.IncludeExclude==IncludeExclude.Include ? true : false;
-        }
-        return isIncluded;
-    }
-
-    private string GetInternalName(Type type, string memberName, IMemberRenameStrategy? memberRenameStrategy = null)
-    {
-        var internalMemberName = memberName;
-
-        // rename strategy present?
-        if (memberRenameStrategy != null)
-        {
-            internalMemberName = memberRenameStrategy!.RenameMember(memberName);
-        }
-
-        // loop through any specific rename rules. Last one wins. 
-        foreach (var rename in Config.MemberRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
-        {
-            internalMemberName = rename.InternalMemberName;
-        }
-        return internalMemberName;
-    }
 
     /// <summary>
     /// Takes all the configuration and builds an <see cref="ObjectMapper" /> object that can then be used to map objects.
@@ -473,71 +428,23 @@ public class MapperConfiguration
         IDictionary<Type, MapperTypeConfiguration> buildTypes = new Dictionary<Type, MapperTypeConfiguration>();
         IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> buildMaps = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
 
-        // Add core resolvers
-        if (!this.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
-        {
-            this.Config.Resolvers.Add(new StructMemberResolver());
-        }
 
-        if (!this.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
-        {
-            this.Config.Resolvers.Add(new DictionaryMemberResolver());
-        }
 
-        if (!this.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
-        {
-            this.Config.Resolvers.Add(new ClassMemberResolver());
-        }
 
-        // go through each type
-        foreach (var configTypeKey in this.Config.Types.Keys)
-        {
-            var configType = this.Config.Types[configTypeKey];
 
-            IMemberResolver? resolver = null;
 
-            // Get resolver
-            foreach (var configResolver in this.Config.Resolvers)
-            {
-                if (configResolver.CanResolveMembersForType(configType.Type))
-                {
-                    resolver = configResolver;
-                    break;
-                }
-            }
 
-            // if no resolver found, throw error
-            if (resolver == null)
-            {
-                throw new Exception($"No member resolver found for type: ${configType.Type}.");
-            }
 
-            // Get members
-            string[] members = new string[] { };
-            List<MapperMemberConfiguration> buildMembers = new List<MapperMemberConfiguration>();
-            if (!resolver.DeferMemberResolution)
-            {
-                members = resolver.GetTypeMembers(configType.Type, configType.Options);
-                buildMembers = members.Select(m => new MapperMemberConfiguration
-                {
-                    MemberName = m,
-                    DataType = resolver.GetMemberType(configType.Type, m, configType.Options),
-                    Getter = resolver.GetGetter(configType.Type, m, configType.Options),
-                    Setter = resolver.GetSetter(configType.Type, m, configType.Options),
-                    Ignore = GetMemberInclusionStatus(configType.Type, m),
-                    InternalMemberName = GetInternalName(configType.Type, m, configType.Options.MemberRenameStrategy)
-                }).ToList();
-            }
 
-            // Create build type
-            buildTypes[configType.Type] = new MapperTypeConfiguration
-            {
-                Type = configType.Type,
-                Options = configType.Options,
-                MemberResolver = resolver,
-                MemberConfiguration = buildMembers,
-            };
-        }
+
+
+
+
+
+
+
+
+
 
         // Add calculations to existing types
 
