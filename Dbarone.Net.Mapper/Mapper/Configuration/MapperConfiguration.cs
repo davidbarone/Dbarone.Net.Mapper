@@ -446,28 +446,6 @@ public class MapperConfiguration
 
 
 
-        // Add calculations to existing types
-
-        foreach (var configCalculation in this.Config.Calculations)
-        {
-            var sourceType = configCalculation.SourceType;
-            if (!buildTypes.ContainsKey(sourceType))
-            {
-                throw new Exception($"Calculation exists for missing source type: ${sourceType.Name}.");
-            }
-
-            var configType = buildTypes[sourceType];
-            configType.MemberConfiguration.Add(new MapperMemberConfiguration()
-            {
-                MemberName = configCalculation.MemberName,
-                DataType = configCalculation.MemberType,
-                InternalMemberName = configCalculation.MemberName,
-                Ignore = false,
-                Getter = configCalculation.Calculation.Convert,
-                Setter = null,
-                Calculation = configCalculation.Calculation
-            });
-        }
 
         // Validation
         foreach (var buildTypeKey in buildTypes.Keys)

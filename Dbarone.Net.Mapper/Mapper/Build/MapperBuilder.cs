@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Dbarone.Net.Extensions;
 
 namespace Dbarone.Net.Mapper;
 
@@ -215,95 +216,10 @@ public class MapperBuilder
         // Do end point validation
         EndPointValidation(sourceBuildType, destinationBuildType, path, errors);
 
+        // Build Mappings
 
 
 
-
-        // Get internal member names matching on source + destination
-        IEnumerable<string> matchedMembers = destinationConfig
-            .MemberConfiguration
-            .Where(mc => mc.Ignore == false)
-            .Select(mc => mc.InternalMemberName).Intersect(
-                sourceConfig
-                .MemberConfiguration
-                .Where(mc => mc.Ignore == false)
-                .Select(mc => mc.InternalMemberName)
-            );
-
-        IList<MapperDelegate> mappings = new List<MapperDelegate>();
-        foreach (var member in matchedMembers)
-        {
-            var sourceMemberConfig = sourceConfig.MemberConfiguration.First(mc => mc.InternalMemberName.Equals(member));
-            var destinationMemberConfig = destinationConfig.MemberConfiguration.First(mc => mc.InternalMemberName.Equals(member));
-            var sourceMemberType = sourceMemberConfig.DataType;
-            var destinationMemberType = destinationMemberConfig.DataType;
-
-            if (sourceMemberType == destinationMemberType)
-            {
-                if (sourceMemberType.IsBuiltInType())
-                {
-                    // built-in types - simple assign for map
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
-                    };
-                    mappings.Add(mapping);
-                }
-                else if (
-                    // enum -> enum
-                    destinationMemberConfig.DataType.IsEnum &&
-                    destinationMemberConfig.DataType.GetEnumUnderlyingType().IsBuiltInType() &&
-                    sourceMemberConfig.DataType.IsEnum &&
-                    sourceMemberConfig.DataType.GetEnumUnderlyingType().IsBuiltInType())
-                {
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
-                    };
-                    mappings.Add(mapping);
-                }
-                else if (
-                    // nullable -> nullable
-                    destinationMemberConfig.DataType.IsNullable() &&
-                    destinationMemberConfig.DataType.GetNullableUnderlyingType()!.IsBuiltInType() &&
-                    sourceMemberConfig.DataType.IsNullable() &&
-                    sourceMemberConfig.DataType.GetNullableUnderlyingType()!.IsBuiltInType())
-                {
-                    MapperDelegate mapping = (s, d) =>
-                    {
-                        destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
-                    };
-                    mappings.Add(mapping);
-                }
-            }
-            
-            else if (this.configuration.Keys.Contains(destinationMemberType) && this.configuration.Keys.Contains(sourceMemberType))
-            {
-                // reference type -> reference type (both types registered in mapper config)
-                MapperDelegate mapping = (s, d) =>
-                {
-                    destinationMemberConfig.Setter(
-                        d,
-                        MapOne(sourceMemberType, destinationMemberType, sourceMemberConfig.Getter(s)));
-                };
-                mappings.Add(mapping);
-            }
-            else if (sourceMemberType == destinationMemberType && (sourceMemberType.IsValueType))
-            {
-                // from/to are same type, and ValueType. ValueTypes are automatically copied on assignment.
-                // No need to map properties.
-                MapperDelegate mapping = (s, d) =>
-                {
-                    destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
-                };
-                mappings.Add(mapping);
-            }
-            else
-            {
-                throw new MapperException($"Cannot map from type: {sourceType} to {destinationType}. Are you missing a type registration or mapping?");
-            }
-        }
-        return mappings;
     }
 
     private void BuildType(Type type, string path, List<MapperBuildError> errors)
@@ -428,5 +344,127 @@ public class MapperBuilder
             internalMemberName = rename.InternalMemberName;
         }
         return internalMemberName;
+    }
+
+    private void BuildMapRules(BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
+    {
+
+        // Get internal member names matching on source + destination
+        IEnumerable<string> matchedMembers = destinationBuild
+            .Members
+            .Where(mc => mc.Ignore == false)
+            .Select(mc => mc.InternalMemberName).Intersect(
+                sourceBuild
+                .Members
+                .Where(mc => mc.Ignore == false)
+                .Select(mc => mc.InternalMemberName)
+            );
+
+        IList<MapperDelegate> mappings = new List<MapperDelegate>();
+        foreach (var member in matchedMembers)
+        {
+            var sourceMemberBuild = sourceBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
+            var destinationMemberBuild = destinationBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
+            var sourceMemberType = sourceMemberBuild.DataType;
+            var destinationMemberType = destinationMemberBuild.DataType;
+
+            if (sourceMemberType == destinationMemberType)
+            {
+                if (sourceMemberType.IsBuiltInType())
+                {
+                    // built-in types - simple assign for map
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+                else if (
+                    // enum -> enum
+                    destinationMemberBuild.DataType.IsEnum &&
+                    destinationMemberBuild.DataType.GetEnumUnderlyingType().IsBuiltInType() &&
+                    sourceMemberBuild.DataType.IsEnum &&
+                    sourceMemberBuild.DataType.GetEnumUnderlyingType().IsBuiltInType())
+                {
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+                else if (
+                    // nullable -> nullable
+                    destinationMemberBuild.DataType.IsNullable() &&
+                    destinationMemberBuild.DataType.GetNullableUnderlyingType()!.IsBuiltInType() &&
+                    sourceMemberBuild.DataType.IsNullable() &&
+                    sourceMemberBuild.DataType.GetNullableUnderlyingType()!.IsBuiltInType())
+                {
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+                else {
+                    // as long as source + destination types match, we can do straight 1:1 map
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+            }
+
+            else if (this.Configuration.Types.Keys.Contains(destinationMemberType) && this.Configuration.Types.Keys.Contains(sourceMemberType))
+            {
+                // reference type -> reference type (both types registered in mapper config)
+                MapperDelegate mapping = (s, d) =>
+                {
+                    destinationMemberConfig.Setter(
+                        d,
+                        MapOne(sourceMemberType, destinationMemberType, sourceMemberConfig.Getter(s)));
+                };
+                mappings.Add(mapping);
+            }
+            else if (sourceMemberType == destinationMemberType && (sourceMemberType.IsValueType))
+            {
+                // from/to are same type, and ValueType. ValueTypes are automatically copied on assignment.
+                // No need to map properties.
+                MapperDelegate mapping = (s, d) =>
+                {
+                    destinationMemberConfig.Setter(d, sourceMemberConfig.Getter(s));
+                };
+                mappings.Add(mapping);
+            }
+            else
+            {
+                throw new MapperException($"Cannot map from type: {sourceType} to {destinationType}. Are you missing a type registration or mapping?");
+            }
+        }
+    }
+
+    private void AddCalculations(List<MapperBuildError> errors) {
+
+        // Add calculations to existing types
+        foreach (var configCalculation in this.Config.Calculations)
+        {
+            var sourceType = configCalculation.SourceType;
+            if (!buildTypes.ContainsKey(sourceType))
+            {
+                throw new Exception($"Calculation exists for missing source type: ${sourceType.Name}.");
+            }
+
+            var configType = buildTypes[sourceType];
+            configType.MemberConfiguration.Add(new MapperMemberConfiguration()
+            {
+                MemberName = configCalculation.MemberName,
+                DataType = configCalculation.MemberType,
+                InternalMemberName = configCalculation.MemberName,
+                Ignore = false,
+                Getter = configCalculation.Calculation.Convert,
+                Setter = null,
+                Calculation = configCalculation.Calculation
+            });
+        }
     }
 }
