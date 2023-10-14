@@ -8,10 +8,38 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 public class MapperBuilder
 {
+    /// <summary>
+    /// The input configuration.
+    /// </summary>
     private Config Configuration { get; set; }
+
+    /// <summary>
+    /// Stores the build-time metadata.
+    /// </summary>
+    private BuildMetadata Metadata { get; set; }
+    
     public MapperBuilder(Config configuration)
     {
         this.Configuration = configuration;
+    }
+
+    /// <summary>
+    /// Creates an object mapper for a source / destination
+    /// </summary>
+    /// <typeparam name="TSource">The source type.</typeparam>
+    /// <typeparam name="TDestination">The destination type.</typeparam>
+    /// <returns>Returns an object mapper which can map objects from source to destination type.</returns>
+    /// <exception cref="MapperBuildException">Throws an exception if any build-time errors occur.</exception>
+    public ObjectMapper<TSource, TDestination> BuildMapper<TSource, TDestination>() {
+        List<MapperBuildError> errors = new List<MapperBuildError>();
+        Build(typeof(TSource), typeof(TDestination), errors);
+
+        if (errors.Any())
+        {
+            throw new MapperBuildException("Errors occurred during build. See Errors collection for details.", errors);
+        } else {
+            return new ObjectMapper<TSource, TDestination>()
+        }
     }
 
     /// <summary>
@@ -42,6 +70,13 @@ public class MapperBuilder
     public GetMapper(Type fromType, Type toType)
     {
 
+    }
+
+    private void BuildType(Type type) {
+        if (this.Configuration.Types.ContainsKey(type)) {
+            throw new MappException("")
+        }
+        
     }
 
     /// <summary>
@@ -99,7 +134,7 @@ public class MapperBuilder
     }
 
 
-    private IEnumerable<MapperDelegate> Build(Type sourceType, Type destinationType)
+    private void Build(Type sourceType, Type destinationType, List<MapperBuildError> errors)
     {
         List<MapperBuildNotification> notifications = new List<MapperBuildNotification>();
         var sourceConfig = this.Configuration.Types.FirstOrDefault(c => c.Value.Type == sourceType).Value;

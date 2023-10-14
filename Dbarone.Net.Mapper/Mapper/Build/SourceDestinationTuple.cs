@@ -1,0 +1,52 @@
+using System.Diagnostics;
+
+/// <summary>
+/// Represents a source + destination tuple.
+/// </summary>
+public class SourceDestinationTuple {
+    
+    /// <summary>
+    /// The source type.
+    /// </summary>
+    public Type Source { get; init; }
+    
+    /// <summary>
+    /// The destination type.
+    /// </summary>
+    public Type Destination { get; init; }
+
+    /// <summary>
+    /// Creates a new <see cref="SourceDestinationTuple"/>. 
+    /// </summary>
+    /// <param name="source">The source type.</param>
+    /// <param name="destination">The destination type.</param>
+    public SourceDestinationTuple(Type source, Type destination) {
+        this.Source = source;
+        this.Destination = destination;
+    }
+
+    /// <summary>
+    /// Overrides implementation of GetHashCode.
+    /// See: https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-overriding-gethashcode
+    /// </summary>
+    /// <returns>Returns an integer which can be used to compare 2 instances.</returns>
+    public override int GetHashCode()
+    {
+        int hash = 17;
+
+        // Source + Destination cannot be null.
+        hash = hash * 23 + Source.GetHashCode();
+        hash = hash * 23 + Destination.GetHashCode();
+        return hash;        
+    }
+
+    /// <summary>
+    /// Overrides implementation of Equals.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public override bool Equals(object? obj)
+    {
+        return base.Equals(obj);
+    }
+}

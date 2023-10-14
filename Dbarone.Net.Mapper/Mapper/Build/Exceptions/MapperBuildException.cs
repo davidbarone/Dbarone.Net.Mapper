@@ -8,13 +8,13 @@ public class MapperBuildException : Exception
     /// <summary>
     /// The list of notifications occurring during the build process.
     /// </summary>
-    public List<MapperBuildNotification> Notifications { get; set; } = new List<MapperBuildNotification>();
+    public List<MapperBuildError> Errors { get; set; } = new List<MapperBuildError>();
 
     /// <summary>
     /// Exception constructor.
     /// </summary>
-    public MapperBuildException(string message, List<MapperBuildNotification> notifications) : base(message)
+    public MapperBuildException(string message, List<MapperBuildError> errors) : base(message)
     {
-        this.Notifications = notifications;
+        this.Errors = errors;
     }
 }

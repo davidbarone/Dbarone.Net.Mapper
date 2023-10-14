@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 /// <summary>
 /// The ObjectMapper class provides mapping functions to transform objects from one type to another. 
 /// </summary>
-public class ObjectMapper
+public class ObjectMapper<TSource, TDestination>
 {
     private IDictionary<Type, MapperTypeConfiguration> configuration;
     private IDictionary<Tuple<Type, Type>, ITypeConverter> customTypeConverters;
