@@ -198,28 +198,28 @@ public class MapperBuilder
         if (!Metadata.Types.ContainsKey(sourceType))
         {
             BuildType(sourceType, path, errors);
+            AddCalculations(sourceType, path, errors);
         }
 
         if (!Metadata.Types.ContainsKey(destinationType))
         {
             BuildType(destinationType, path, errors);
+            AddCalculations(destinationType, path, errors);
         }
 
         // At this point, the types are built
-        var sourceBuildType = Metadata.Types[sourceType];
-        var destinationBuildType = Metadata.Types[destinationType];
+        var sourceBuild = Metadata.Types[sourceType];
+        var destinationBuild = Metadata.Types[destinationType];
 
         // Validate each type separately
-        ValidateType(sourceBuildType, path, errors);
-        ValidateType(destinationBuildType, path, errors);
+        ValidateType(sourceBuild, path, errors);
+        ValidateType(destinationBuild, path, errors);
 
         // Do end point validation
-        EndPointValidation(sourceBuildType, destinationBuildType, path, errors);
+        EndPointValidation(sourceBuild, destinationBuild, path, errors);
 
         // Build Mappings
-
-
-
+        BuildMapRules(sourceBuild, destinationBuild, path, errors);
     }
 
     private void BuildType(Type type, string path, List<MapperBuildError> errors)
@@ -415,6 +415,10 @@ public class MapperBuilder
                 }
             }
 
+            else if (this.Configuration.Converters.ContainsKey(sourceMemberType) && this.Configuration.Converters.ContainsKey(destinationMemberType)){
+                // Use converter to map
+                
+            }
             else if (this.Configuration.Types.Keys.Contains(destinationMemberType) && this.Configuration.Types.Keys.Contains(sourceMemberType))
             {
                 // reference type -> reference type (both types registered in mapper config)
@@ -443,27 +447,21 @@ public class MapperBuilder
         }
     }
 
-    private void AddCalculations(List<MapperBuildError> errors) {
+    private void AddCalculations(Type type, string path, List<MapperBuildError> errors) {
 
-        // Add calculations to existing types
-        foreach (var configCalculation in this.Config.Calculations)
+        // Add calculations to existing type
+        foreach (var calculation in this.Configuration.Calculations.Where(c=>c.SourceType==type))
         {
-            var sourceType = configCalculation.SourceType;
-            if (!buildTypes.ContainsKey(sourceType))
-            {
-                throw new Exception($"Calculation exists for missing source type: ${sourceType.Name}.");
-            }
+            var buildType = Metadata.Types[type];
 
-            var configType = buildTypes[sourceType];
-            configType.MemberConfiguration.Add(new MapperMemberConfiguration()
-            {
-                MemberName = configCalculation.MemberName,
-                DataType = configCalculation.MemberType,
-                InternalMemberName = configCalculation.MemberName,
+            buildType.Members.Add(new BuildMember {
+                MemberName = calculation.MemberName,
+                DataType = calculation.MemberType,
+                InternalMemberName = calculation.MemberName,
                 Ignore = false,
-                Getter = configCalculation.Calculation.Convert,
+                Getter = calculation.Calculation.Convert,
                 Setter = null,
-                Calculation = configCalculation.Calculation
+                Calculation = calculation.Calculation
             });
         }
     }

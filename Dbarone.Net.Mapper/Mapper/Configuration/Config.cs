@@ -28,7 +28,7 @@ public class Config
     /// <summary>
     /// Converters enable a member to be converted from one type to another.
     /// </summary>
-    public IDictionary<Tuple<Type, Type>, ITypeConverter> Converters { get; set; } = new Dictionary<Tuple<Type, Type>, ITypeConverter>();
+    public IDictionary<SourceDestination, ITypeConverter> Converters { get; set; } = new Dictionary<SourceDestination, ITypeConverter>();
 
     /// <summary>
     /// Member filter rules provide a function to determine which members to include or exclude from mapping.

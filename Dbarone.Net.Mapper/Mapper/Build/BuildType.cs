@@ -38,26 +38,7 @@ public class BuildType
     }
 
     /// <summary>
-    /// Validates the type configuration.
-    /// </summary>
-    public void Validate()
-    {
-    }
-
-    /// <summary>
-    /// Returns the active member internal names used by this type.
-    /// </summary>
-    /// <returns></returns>
-    public string[] GetActiveInternalMemberNames() {
-        return this.MemberConfiguration.Where(m => m.Ignore == false).Select(m => m.InternalMemberName).ToArray();
-    }
-
-     /// <summary>
     /// Provides a member filtering rule.
     /// </summary>
     public MemberFilterDelegate? MemberFilterRule { get; set; } = null;
-   
-    public void ValidateMap() {
-
-    }
 }

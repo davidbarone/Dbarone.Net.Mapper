@@ -172,57 +172,6 @@ public class MapperConfiguration
 
     #endregion
 
-    #region Register Map
-
-    /// <summary>
-    /// Registers a specific type-to-type configuration. When registering via <see cref="RegisterType" /> only 1 endpoint
-    /// is specified, and the <see cref="ObjectMapper" /> automatically joins members based on member name. In cases
-    /// where a specific mapping between 2 types is required, this method can be used to provide custom behaviour.
-    /// </summary>
-    /// <typeparam name="TSource">The source type to map.</typeparam>
-    /// <typeparam name="TDestination">The destination type to map.</typeparam>
-    /// <param name="sourceOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the source type being registered.</param>
-    /// <param name="destinationOptions">An optional <see cref="MapperOptions" /> object containing configuration details for the destination type being registered.</param>
-    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration RegisterMap<TSource, TDestination>(MapperOptions sourceOptions, MapperOptions destinationOptions)
-    {
-        RegisterMap(typeof(TSource), sourceOptions, typeof(TDestination), destinationOptions);
-        return this;
-    }
-
-    /// <summary>
-    /// Registers a specific type-to-type configuration. When registering via <see cref="RegisterType" /> only 1 endpoint
-    /// is specified, and the <see cref="ObjectMapper" /> automatically joins members based on member name. In cases
-    /// where a specific mapping between 2 types is required, this method can be used to provide custom behaviour.
-    /// </summary>
-    /// <param name="sourceType">The source type participating in the map.</param>
-    /// <param name="sourceOptions">The source options.</param>
-    /// <param name="destinationType">The destination type participating in the map.</param>
-    /// <param name="destinationOptions">The destination options.</param>
-    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration RegisterMap(Type sourceType, MapperOptions sourceOptions, Type destinationType, MapperOptions destinationOptions)
-    {
-        var key = new Tuple<Type, Type>(
-            sourceType,
-            destinationType
-        );
-        var value = new Tuple<MapperTypeConfiguration, MapperTypeConfiguration>(
-            new MapperTypeConfiguration
-            {
-                Type = sourceType,
-                Options = sourceOptions
-            },
-            new MapperTypeConfiguration
-            {
-                Type = destinationType,
-                Options = destinationOptions
-            }
-        );
-        return this;
-    }
-
-    #endregion 
-
     #region Exclude Members
 
     /// <summary>
@@ -345,14 +294,17 @@ public class MapperConfiguration
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterConverter<T, U>(Func<T, U> converter)
     {
-        if (this.Config.Converters.Any(c => c.Key.Item1 == typeof(T) && c.Key.Item2 == typeof(U)))
+        var sourceType = typeof(T);
+        var destinationType = typeof(U);
+        var sourceDestination = new SourceDestination(sourceType, destinationType);
+
+        if (this.Config.Converters.ContainsKey(sourceDestination))
         {
             throw new Exception("A converter between these 2 types has already been defined.");
         }
 
         TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);
-        Tuple<Type, Type> k = new Tuple<Type, Type>(typeof(T), typeof(U));
-        this.Config.Converters[k] = typeConverter;
+        this.Config.Converters[sourceDestination] = typeConverter;
         return this;
     }
 
@@ -390,70 +342,6 @@ public class MapperConfiguration
             InternalMemberName = newName
         });
         return this;
-    }
-
-    #endregion
-
-    #region Private Members
-
-    /// <summary>
-    /// Maps a member from source to destination using lambda expressions.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="U"></typeparam>
-    /// <param name="fromMember"></param>
-    /// <param name="toMember"></param>
-    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration MapMember<T, U>(Expression<Func<T, object>> fromMember, Expression<Func<U, object>> toMember)
-    {
-        throw new NotSupportedException();
-    }
-
-    /// <summary>
-    /// Validates the mapper configuration
-    /// </summary>
-    public void Validate()
-    {
-        // ensure all mapping rules are connected
-
-    }
-
-
-    /// <summary>
-    /// Takes all the configuration and builds an <see cref="ObjectMapper" /> object that can then be used to map objects.
-    /// </summary>
-    /// <returns>Returns a configured <see cref="ObjectMapper" /> object.</returns>
-    public ObjectMapper Build()
-    {
-        IDictionary<Type, MapperTypeConfiguration> buildTypes = new Dictionary<Type, MapperTypeConfiguration>();
-        IDictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>> buildMaps = new Dictionary<Tuple<Type, Type>, Tuple<MapperTypeConfiguration, MapperTypeConfiguration>>();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Validation
-        foreach (var buildTypeKey in buildTypes.Keys)
-        {
-            buildTypes[buildTypeKey].Validate();
-        }
-
-        return new ObjectMapper(buildTypes, this.Config.Converters);
     }
 
     #endregion
