@@ -5,13 +5,15 @@ using System.Linq.Expressions;
 /// <summary>
 /// The ObjectMapper class provides mapping functions to transform objects from one type to another. 
 /// </summary>
-public class ObjectMapper<TSource, TDestination>
+public class ObjectMapper
 {
-    private IDictionary<SourceDestinationPath, SourceDestinationPathRules> MapRules { get; init; }
+    private MapperConfiguration Configuration { get; set; }
+    private MapperBuilder Builder { get; set; }
 
-    internal ObjectMapper(IDictionary<SourceDestinationPath, SourceDestinationPathRules> mapRules)
+    internal ObjectMapper(MapperConfiguration configuration)
     {
-        this.MapRules = mapRules;
+        this.Configuration = configuration;
+        this.Builder = new MapperBuilder(this.Configuration);
     }
 
     /// <summary>

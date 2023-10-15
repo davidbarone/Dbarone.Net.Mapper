@@ -5,14 +5,14 @@ using Dbarone.Net.Extensions;
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
-/// Takes a <see cref="MapperConfiguration" /> instance, and builds a mapper to handle the mapping between 2 types.
+/// Builds the mapping graph between 2 types.
 /// </summary>
 public class MapperBuilder
 {
     /// <summary>
-    /// The input configuration.
+    /// The input configuration for the map.
     /// </summary>
-    private Config Configuration { get; init; }
+    private MapperConfiguration Configuration { get; init; }
 
     /// <summary>
     /// Stores the build-time metadata.
@@ -23,67 +23,44 @@ public class MapperBuilder
     /// Creates a new <see cref="MapperBuilder"/> instance.
     /// </summary>
     /// <param name="configuration">The configuration used to create mapper objects.</param>
-    public MapperBuilder(Config configuration)
+    public MapperBuilder(MapperConfiguration configuration)
     {
         this.Configuration = configuration;
         AddCoreResolvers();
         Metadata = new BuildMetadataCache();
     }
 
+    public IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(Type sourceType, Type destinationType)
+    {
+        SourceDestination sourceDestination = new SourceDestination(sourceType, destinationType);
+
+        if (!Metadata.MapRules.ContainsKey(sourceDestination))
+        {
+            Build(sourceType, destinationType);
+        }
+
+        
+        // Return mapping rules for the source/destination pair
+        return this.Metadata.MapRules[sourceDestination];
+    }
+
     private void AddCoreResolvers()
     {
         // Add core resolvers
-        if (!this.Configuration.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
         {
-            this.Configuration.Resolvers.Add(new StructMemberResolver());
+            this.Configuration.Config.Resolvers.Add(new StructMemberResolver());
         }
 
-        if (!this.Configuration.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
         {
-            this.Configuration.Resolvers.Add(new DictionaryMemberResolver());
+            this.Configuration.Config.Resolvers.Add(new DictionaryMemberResolver());
         }
 
-        if (!this.Configuration.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
         {
-            this.Configuration.Resolvers.Add(new ClassMemberResolver());
+            this.Configuration.Config.Resolvers.Add(new ClassMemberResolver());
         }
-    }
-
-    /// <summary>
-    /// Creates an object mapper for a source / destination
-    /// </summary>
-    /// <typeparam name="TSource">The source type.</typeparam>
-    /// <typeparam name="TDestination">The destination type.</typeparam>
-    /// <returns>Returns an object mapper which can map objects from source to destination type.</returns>
-    /// <exception cref="MapperBuildException">Throws an exception if any build-time errors occur.</exception>
-    public ObjectMapper<TSource, TDestination> BuildMapper<TSource, TDestination>()
-    {
-        List<MapperBuildError> errors = new List<MapperBuildError>();
-        var path = "";  // root path
-        Build(typeof(TSource), typeof(TDestination), path, errors);
-
-        if (errors.Any())
-        {
-            throw new MapperBuildException("Errors occurred during build. See Errors collection for details.", errors);
-        }
-        else
-        {
-            return new ObjectMapper<TSource, TDestination>(null, null);
-        }
-    }
-
-    /// <summary>
-    /// Gets a mapper for a source and destination type combination. If the source and destination
-    /// mapper has not been retrieved before, a one-time build process occurs to generate all the
-    /// mapping rules, and a validation also takes place.
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TDestination"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="NotSupportedException"></exception>
-    public ObjectMapper<TSource, TDestination> GetMapper<TSource, TDestination>()
-    {
-        throw new NotSupportedException();
     }
 
     private void ValidateType(BuildType buildType, string path, List<MapperBuildError> errors)
@@ -141,17 +118,28 @@ public class MapperBuilder
         }
     }
 
-    private void Build(Type sourceType, Type destinationType, string path, List<MapperBuildError> errors)
+    private List<MapperBuildError> Build(Type sourceType, Type destinationType, string path = "", List<MapperBuildError>? errors = null)
     {
+        if (errors == null)
+        {
+            errors = new List<MapperBuildError>();
+        }
+
+        // Mapper rules already exist?
+        if (this.Metadata.MapRules.ContainsKey(new SourceDestination(sourceType, destinationType)))
+        {
+            return errors;
+        }
+
         // validations
         if (destinationType.IsInterface)
         {
             errors.Add(new MapperBuildError(destinationType, MapperEndPoint.Destination, path, null, $"Destination type cannot be interface."));
-            return;
+            return errors;
         }
 
-        var sourceConfig = this.Configuration.Types.FirstOrDefault(c => c.Value.Type == sourceType).Value;
-        var destinationConfig = this.Configuration.Types.FirstOrDefault(c => c.Value.Type == destinationType).Value;
+        var sourceConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == sourceType).Value;
+        var destinationConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == destinationType).Value;
 
         // Do we have the source + destination types registered?
         if (sourceConfig == null)
@@ -166,7 +154,7 @@ public class MapperBuilder
         if (sourceConfig == null || destinationConfig == null)
         {
             // cannot proceed. Exit early.
-            return;
+            return errors;
         }
 
         // Check whether types have been built?
@@ -195,16 +183,18 @@ public class MapperBuilder
 
         // Build Mappings
         BuildMapRules(sourceBuild, destinationBuild, path, errors);
+
+        return errors;
     }
 
     private void BuildType(Type type, string path, List<MapperBuildError> errors)
     {
-        var configType = this.Configuration.Types[type];
+        var configType = this.Configuration.Config.Types[type];
 
         IMemberResolver? resolver = null;
 
         // Get resolver
-        foreach (var configResolver in this.Configuration.Resolvers)
+        foreach (var configResolver in this.Configuration.Config.Resolvers)
         {
             if (configResolver.CanResolveMembersForType(configType.Type))
             {
@@ -281,22 +271,22 @@ public class MapperBuilder
         MemberFilterDelegate? memberFilterRuleB = null;
         MemberFilterDelegate? memberFilterRule = null;
 
-        if (Configuration.Types.ContainsKey(type))
+        if (Configuration.Config.Types.ContainsKey(type))
         {
             throw new Exception($"GetIgnoreStatus. Invalid type: {type}.");
         }
 
         // Get member filter function if exists
-        if (Configuration.MemberFilters.ContainsKey(type))
+        if (Configuration.Config.MemberFilters.ContainsKey(type))
         {
-            memberFilterRuleA = Configuration.MemberFilters[type];
+            memberFilterRuleA = Configuration.Config.MemberFilters[type];
         }
 
-        memberFilterRuleB = Configuration.Types[type].Options.MemberFilterRule;
+        memberFilterRuleB = Configuration.Config.Types[type].Options.MemberFilterRule;
         memberFilterRule = memberFilterRuleA != null ? memberFilterRuleA : memberFilterRuleB;
 
         var isIncluded = (memberFilterRule != null) ? memberFilterRule(member) : false;
-        foreach (var configMemberInclusion in Configuration.MemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
+        foreach (var configMemberInclusion in Configuration.Config.MemberInclusions.Where(c => c.Type == type && c.Member.Equals(member, StringComparison.Ordinal)))
         {
             isIncluded = configMemberInclusion.IncludeExclude == IncludeExclude.Include ? true : false;
         }
@@ -315,7 +305,7 @@ public class MapperBuilder
         }
 
         // loop through any specific rename rules. Last one wins. 
-        foreach (var rename in Configuration.MemberRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
+        foreach (var rename in Configuration.Config.MemberRenames.Where(c => c.Type == type && c.MemberName.Equals(memberName, StringComparison.Ordinal)))
         {
             internalMemberName = rename.InternalMemberName;
         }
@@ -354,22 +344,22 @@ public class MapperBuilder
                 };
                 mappings.Add(mapping);
             }
-            else if (this.Configuration.Converters.ContainsKey(sourceDestination))
+            else if (this.Configuration.Config.Converters.ContainsKey(sourceDestination))
             {
                 // Member types differ, but converter exists - convert then assign value to destination object.
                 MapperDelegate mapping = (s, d) =>
                 {
-                    var converter = this.Configuration.Converters[sourceDestination];
+                    var converter = this.Configuration.Config.Converters[sourceDestination];
                     var converted = converter.Convert(sourceMemberBuild.Getter(s));
                     destinationMemberBuild.Setter(d, converted);
                 };
                 mappings.Add(mapping);
             }
-            else if (this.Configuration.Types.Keys.Contains(destinationMemberType) && this.Configuration.Types.Keys.Contains(sourceMemberType))
+            else if (this.Configuration.Config.Types.Keys.Contains(destinationMemberType) && this.Configuration.Config.Types.Keys.Contains(sourceMemberType))
             {
                 // Member types differ, but mapping configuration exists for types
                 // create mapping rules recursively.
-                Build(sourceMemberType, destinationMemberType, path + "." + member, errors);
+                Build(sourceMemberType, destinationMemberType, "", errors);
             }
             else
             {
@@ -381,7 +371,7 @@ public class MapperBuilder
     private void AddCalculations(Type type, string path, List<MapperBuildError> errors)
     {
         // Add calculations to existing type
-        foreach (var calculation in this.Configuration.Calculations.Where(c => c.SourceType == type))
+        foreach (var calculation in this.Configuration.Config.Calculations.Where(c => c.SourceType == type))
         {
             var buildType = Metadata.Types[type];
 

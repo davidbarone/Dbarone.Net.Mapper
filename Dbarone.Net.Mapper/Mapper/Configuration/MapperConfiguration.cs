@@ -6,28 +6,13 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 
 /// <summary>
-/// Creates a mapper configuration.
+/// Provides the configuration for an <see cref="ObjectMapper"/> .
 /// </summary>
 public class MapperConfiguration
 {
     #region Config
 
-    private Config Config {get; set;} = new Config();
-
-    #endregion
-
-    internal MapperConfiguration() { }
-
-    #region ctor
-
-    /// <summary>
-    /// Creates a new <see cref="MapperConfiguration" /> instance.
-    /// </summary>
-    /// <returns>returns a new <see cref="MapperConfiguration" /> instance.</returns>
-    public static MapperConfiguration Create()
-    {
-        return new MapperConfiguration();
-    }
+    internal Config Config {get; set;} = new Config();
 
     #endregion
 
