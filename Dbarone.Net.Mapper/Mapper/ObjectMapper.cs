@@ -28,14 +28,12 @@ public class ObjectMapper
     public object MapOne(Type fromType, Type toType, object? obj)
     {
 
-
-        MapperTypeConfiguration fromTypeConfiguration = configuration[fromType];
-        MapperTypeConfiguration toTypeConfiguration = configuration[toType];
-
-        var newInstance = toTypeConfiguration.CreateInstance();
+        var toBuildType = this.Builder.GetBuildTypeFor(toType);
+        var fromBuildType = this.Builder.GetBuildTypeFor(fromType);
+        var newInstance = this.Builder.GetCreatorFor(toType).Invoke(new object[] { });
 
         // for dictionary + dynamic types, we need to get the source members now
-        if (fromTypeConfiguration.MemberResolver.DeferMemberResolution)
+        if (fromBuildType.MemberResolver.DeferMemberResolution)
         {
             var members = fromTypeConfiguration.MemberResolver.GetInstanceMembers(obj);
             var memberConfig = members.Select(m => new MapperMemberConfiguration
