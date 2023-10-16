@@ -30,6 +30,13 @@ public class MapperBuilder
         Metadata = new BuildMetadataCache();
     }
 
+    public BuildType GetBuildTypeFor(Type type) {
+        if (!Metadata.Types.ContainsKey(type)) {
+            throw new Exception("Type not found!");
+        }
+        return Metadata.Types[type];
+    }
+
     public IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(Type sourceType, Type destinationType)
     {
         SourceDestination sourceDestination = new SourceDestination(sourceType, destinationType);
@@ -39,9 +46,18 @@ public class MapperBuilder
             Build(sourceType, destinationType);
         }
 
-        
+
         // Return mapping rules for the source/destination pair
         return this.Metadata.MapRules[sourceDestination];
+    }
+
+    public CreateInstance GetCreatorFor(Type type)
+    {
+        if (!Metadata.Types.ContainsKey(type))
+        {
+
+        }
+        return Metadata.Types[type].MemberResolver.CreateInstance(type, new object[] { });
     }
 
     private void AddCoreResolvers()
@@ -121,6 +137,7 @@ public class MapperBuilder
     private List<MapperBuildError> Build(Type sourceType, Type destinationType, string path = "", List<MapperBuildError>? errors = null)
     {
         if (errors == null)
+
         {
             errors = new List<MapperBuildError>();
         }
