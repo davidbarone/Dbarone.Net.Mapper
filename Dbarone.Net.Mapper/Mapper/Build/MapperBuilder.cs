@@ -30,20 +30,32 @@ public class MapperBuilder
         Metadata = new BuildMetadataCache();
     }
 
-    public BuildType GetBuildTypeFor(Type type) {
-        if (!Metadata.Types.ContainsKey(type)) {
+    /// <summary>
+    /// Gets the build metadata for a single type.
+    /// </summary>
+    /// <param name="type">The type to get build information for.</param>
+    /// <returns>Returns the build information.</returns>
+    /// <exception cref="Exception">Throws an exception if the build type is not found.</exception>
+    public BuildType GetBuildTypeFor(Type type)
+    {
+        if (!Metadata.Types.ContainsKey(type))
+        {
             throw new Exception("Type not found!");
         }
         return Metadata.Types[type];
     }
 
-    public IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(Type sourceType, Type destinationType)
+    /// <summary>
+    /// Gets the mapping rules for a SourceDestination pairing.
+    /// </summary>
+    /// <param name="sourceType"></param>
+    /// <param name="destinationType"></param>
+    /// <returns></returns>
+    public IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(SourceDestination sourceDestination)
     {
-        SourceDestination sourceDestination = new SourceDestination(sourceType, destinationType);
-
         if (!Metadata.MapRules.ContainsKey(sourceDestination))
         {
-            Build(sourceType, destinationType);
+            Build(sourceDestination, sourceDestination);
         }
 
 
@@ -60,81 +72,9 @@ public class MapperBuilder
         return Metadata.Types[type].MemberResolver.CreateInstance(type, new object[] { });
     }
 
-    private void AddCoreResolvers()
-    {
-        // Add core resolvers
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new StructMemberResolver());
-        }
+    #region Private Core Build Methods
 
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new DictionaryMemberResolver());
-        }
-
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new ClassMemberResolver());
-        }
-    }
-
-    private void ValidateType(BuildType buildType, string path, List<MapperBuildError> errors)
-    {
-        // Check no duplicate internal names
-        var duplicates = buildType.Members
-            .GroupBy(g => g.InternalMemberName)
-            .Where(g => g.Count() > 1)
-            .Select(g => g.Key).ToList();
-
-        foreach (var duplicate in duplicates)
-        {
-            var members = buildType.Members.Where(m => m.InternalMemberName == duplicate);
-            foreach (var member in members)
-            {
-                errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, path, member.MemberName, "Member internal name not unique."));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Validates the source and destinations in respect of the end-point validation rules provided. 
-    /// </summary>
-    /// <returns></returns>
-    private void EndPointValidation(BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
-    {
-        if ((sourceBuild.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
-        {
-            // check all source member rules map to destination rules.
-            var unmappedSourceMembers = sourceBuild
-                .Members
-                .Where(m => destinationBuild
-                    .Members
-                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
-
-            foreach (var item in unmappedSourceMembers)
-            {
-                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
-            }
-        }
-
-        if ((destinationBuild.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
-        {
-            // check all source member rules map to destination rules.
-            var unmappedDestinationMembers = destinationBuild
-                .Members
-                .Where(m => sourceBuild
-                    .Members
-                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
-
-            foreach (var item in unmappedDestinationMembers)
-            {
-                errors.Add(new MapperBuildError(destinationBuild.Type, MapperEndPoint.Destination, path, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
-            }
-        }
-    }
-
-    private List<MapperBuildError> Build(Type sourceType, Type destinationType, string path = "", List<MapperBuildError>? errors = null)
+    private List<MapperBuildError> Build(SourceDestination sourceDestination, SourceDestination memberSourceDestination, string path = "", List<MapperBuildError>? errors = null)
     {
         if (errors == null)
 
@@ -143,29 +83,29 @@ public class MapperBuilder
         }
 
         // Mapper rules already exist?
-        if (this.Metadata.MapRules.ContainsKey(new SourceDestination(sourceType, destinationType)))
+        if (this.Metadata.MapRules.ContainsKey(sourceDestination))
         {
             return errors;
         }
 
         // validations
-        if (destinationType.IsInterface)
+        if (memberSourceDestination.Destination.IsInterface)
         {
-            errors.Add(new MapperBuildError(destinationType, MapperEndPoint.Destination, path, null, $"Destination type cannot be interface."));
+            errors.Add(new MapperBuildError(memberSourceDestination.Destination, MapperEndPoint.Destination, path, null, $"Destination type cannot be interface."));
             return errors;
         }
 
-        var sourceConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == sourceType).Value;
-        var destinationConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == destinationType).Value;
+        var sourceConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == memberSourceDestination.Source).Value;
+        var destinationConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == memberSourceDestination.Destination).Value;
 
         // Do we have the source + destination types registered?
         if (sourceConfig == null)
         {
-            errors.Add(new MapperBuildError(sourceType, MapperEndPoint.Source, path, null, $"Source type not registered."));
+            errors.Add(new MapperBuildError(memberSourceDestination.Source, MapperEndPoint.Source, path, null, $"Source type not registered."));
         }
         if (destinationConfig == null)
         {
-            errors.Add(new MapperBuildError(destinationType, MapperEndPoint.Destination, path, null, $"Destination type not registered."));
+            errors.Add(new MapperBuildError(memberSourceDestination.Destination, MapperEndPoint.Destination, path, null, $"Destination type not registered."));
         }
 
         if (sourceConfig == null || destinationConfig == null)
@@ -175,21 +115,21 @@ public class MapperBuilder
         }
 
         // Check whether types have been built?
-        if (!Metadata.Types.ContainsKey(sourceType))
+        if (!Metadata.Types.ContainsKey(memberSourceDestination.Source))
         {
-            BuildType(sourceType, path, errors);
-            AddCalculations(sourceType, path, errors);
+            BuildType(memberSourceDestination.Source, path, errors);
+            AddCalculations(memberSourceDestination.Source, path, errors);
         }
 
-        if (!Metadata.Types.ContainsKey(destinationType))
+        if (!Metadata.Types.ContainsKey(memberSourceDestination.Destination))
         {
-            BuildType(destinationType, path, errors);
-            AddCalculations(destinationType, path, errors);
+            BuildType(memberSourceDestination.Destination, path, errors);
+            AddCalculations(memberSourceDestination.Destination, path, errors);
         }
 
         // At this point, the types are built
-        var sourceBuild = Metadata.Types[sourceType];
-        var destinationBuild = Metadata.Types[destinationType];
+        var sourceBuild = Metadata.Types[memberSourceDestination.Source];
+        var destinationBuild = Metadata.Types[memberSourceDestination.Destination];
 
         // Validate each type separately
         ValidateType(sourceBuild, path, errors);
@@ -282,6 +222,137 @@ public class MapperBuilder
         this.Metadata.Types[type] = buildType;
     }
 
+    private void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
+    {
+        // Get internal member names matching on source + destination
+        IEnumerable<string> matchedMembers = destinationBuild
+            .Members
+            .Where(mc => mc.Ignore == false)
+            .Select(mc => mc.InternalMemberName).Intersect(
+                sourceBuild
+                .Members
+                .Where(mc => mc.Ignore == false)
+                .Select(mc => mc.InternalMemberName)
+            );
+
+        IList<MapperDelegate> mappings = new List<MapperDelegate>();
+        foreach (var member in matchedMembers)
+        {
+            var sourceMemberBuild = sourceBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
+            var destinationMemberBuild = destinationBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
+            var sourceMemberType = sourceMemberBuild.DataType;
+            var destinationMemberType = destinationMemberBuild.DataType;
+
+            if (sourceMemberType == destinationMemberType)
+            {
+                // member types the same - do simple assignment of value to destination object.
+                MapperDelegate mapping = (s, d) =>
+                {
+                    destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                };
+                mappings.Add(mapping);
+            }
+            else if (this.Configuration.Config.Converters.ContainsKey(sourceDestination))
+            {
+                // Member types differ, but converter exists - convert then assign value to destination object.
+                MapperDelegate mapping = (s, d) =>
+                {
+                    var converter = this.Configuration.Config.Converters[sourceDestination];
+                    var converted = converter.Convert(sourceMemberBuild.Getter(s));
+                    destinationMemberBuild.Setter(d, converted);
+                };
+                mappings.Add(mapping);
+            }
+            else if (this.Configuration.Config.Types.Keys.Contains(destinationMemberType) && this.Configuration.Config.Types.Keys.Contains(sourceMemberType))
+            {
+                // Member types differ, but mapping configuration exists for types
+                // create mapping rules recursively.
+                Build(sourceDestination, new SourceDestination(sourceMemberType, destinationMemberType), "", errors);
+            }
+            else
+            {
+                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, member, "Cannot create mapping rule from member. Are you missing a type registration?"));
+            }
+        }
+    }
+
+    #endregion
+
+    #region Helper Methods
+    private void AddCoreResolvers()
+    {
+        // Add core resolvers
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
+        {
+            this.Configuration.Config.Resolvers.Add(new StructMemberResolver());
+        }
+
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
+        {
+            this.Configuration.Config.Resolvers.Add(new DictionaryMemberResolver());
+        }
+
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
+        {
+            this.Configuration.Config.Resolvers.Add(new ClassMemberResolver());
+        }
+    }
+
+    private void ValidateType(BuildType buildType, string path, List<MapperBuildError> errors)
+    {
+        // Check no duplicate internal names
+        var duplicates = buildType.Members
+            .GroupBy(g => g.InternalMemberName)
+            .Where(g => g.Count() > 1)
+            .Select(g => g.Key).ToList();
+
+        foreach (var duplicate in duplicates)
+        {
+            var members = buildType.Members.Where(m => m.InternalMemberName == duplicate);
+            foreach (var member in members)
+            {
+                errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, path, member.MemberName, "Member internal name not unique."));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Validates the source and destinations in respect of the end-point validation rules provided. 
+    /// </summary>
+    /// <returns></returns>
+    private void EndPointValidation(BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
+    {
+        if ((sourceBuild.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
+        {
+            // check all source member rules map to destination rules.
+            var unmappedSourceMembers = sourceBuild
+                .Members
+                .Where(m => destinationBuild
+                    .Members
+                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
+
+            foreach (var item in unmappedSourceMembers)
+            {
+                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
+            }
+        }
+
+        if ((destinationBuild.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+        {
+            // check all source member rules map to destination rules.
+            var unmappedDestinationMembers = destinationBuild
+                .Members
+                .Where(m => sourceBuild
+                    .Members
+                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
+
+            foreach (var item in unmappedDestinationMembers)
+            {
+                errors.Add(new MapperBuildError(destinationBuild.Type, MapperEndPoint.Destination, path, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
+            }
+        }
+    }
+
     private bool GetMemberInclusionStatus(Type type, string member)
     {
         MemberFilterDelegate? memberFilterRuleA = null;
@@ -329,62 +400,6 @@ public class MapperBuilder
         return internalMemberName;
     }
 
-    private void BuildMapRules(BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
-    {
-        SourceDestination sourceDestination = new SourceDestination(sourceBuild.Type, destinationBuild.Type);
-
-        // Get internal member names matching on source + destination
-        IEnumerable<string> matchedMembers = destinationBuild
-            .Members
-            .Where(mc => mc.Ignore == false)
-            .Select(mc => mc.InternalMemberName).Intersect(
-                sourceBuild
-                .Members
-                .Where(mc => mc.Ignore == false)
-                .Select(mc => mc.InternalMemberName)
-            );
-
-        IList<MapperDelegate> mappings = new List<MapperDelegate>();
-        foreach (var member in matchedMembers)
-        {
-            var sourceMemberBuild = sourceBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
-            var destinationMemberBuild = destinationBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
-            var sourceMemberType = sourceMemberBuild.DataType;
-            var destinationMemberType = destinationMemberBuild.DataType;
-
-            if (sourceMemberType == destinationMemberType)
-            {
-                // member types the same - do simple assignment of value to destination object.
-                MapperDelegate mapping = (s, d) =>
-                {
-                    destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
-                };
-                mappings.Add(mapping);
-            }
-            else if (this.Configuration.Config.Converters.ContainsKey(sourceDestination))
-            {
-                // Member types differ, but converter exists - convert then assign value to destination object.
-                MapperDelegate mapping = (s, d) =>
-                {
-                    var converter = this.Configuration.Config.Converters[sourceDestination];
-                    var converted = converter.Convert(sourceMemberBuild.Getter(s));
-                    destinationMemberBuild.Setter(d, converted);
-                };
-                mappings.Add(mapping);
-            }
-            else if (this.Configuration.Config.Types.Keys.Contains(destinationMemberType) && this.Configuration.Config.Types.Keys.Contains(sourceMemberType))
-            {
-                // Member types differ, but mapping configuration exists for types
-                // create mapping rules recursively.
-                Build(sourceMemberType, destinationMemberType, "", errors);
-            }
-            else
-            {
-                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, member, "Cannot create mapping rule from member. Are you missing a type registration?"));
-            }
-        }
-    }
-
     private void AddCalculations(Type type, string path, List<MapperBuildError> errors)
     {
         // Add calculations to existing type
@@ -404,4 +419,7 @@ public class MapperBuilder
             });
         }
     }
+
+    #endregion
+
 }
