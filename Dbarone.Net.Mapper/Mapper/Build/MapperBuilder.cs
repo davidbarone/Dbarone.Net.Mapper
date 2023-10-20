@@ -226,9 +226,17 @@ public class MapperBuilder
         this.Metadata.Types[type] = buildType;
     }
 
-    public void AddDynamicMembers(Type type, string path, List<MapperBuildError> errors) {
-        
+    /// <summary>
+    /// Adds the dynamic members based on an object instance.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="path"></param>
+    /// <param name="obj"></param>
+    /// <param name="errors"></param>
+    public void AddDynamicMembers(Type type, string path, object? obj, List<MapperBuildError> errors) {
+
     }
+    
     private void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
     {
         // Get internal member names matching on source + destination
