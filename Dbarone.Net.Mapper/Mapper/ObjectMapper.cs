@@ -25,9 +25,14 @@ public class ObjectMapper
     /// <returns>Returns a mapped object of type `toType`.</returns>
     /// <exception cref="Exception"></exception>
     /// <exception cref="MapperException"></exception>
-    public object MapOne(Type fromType, Type toType, object? obj)
+    public object? MapOne(Type fromType, Type toType, object? obj)
     {
+        Dictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
+        return MapOneInternal(new SourceDestination(fromType, toType), fromType, toType, obj, "", dynamicMapRules);
+    }
 
+    private object? MapOneInternal(SourceDestination sourceDestination, Type fromType, Type toType, object? obj, string path, IDictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules)
+    {
         var toBuildType = this.Builder.GetBuildTypeFor(toType);
         var fromBuildType = this.Builder.GetBuildTypeFor(fromType);
         var newInstance = this.Builder.GetCreatorFor(toType).Invoke(new object[] { });
@@ -35,14 +40,24 @@ public class ObjectMapper
         // for dictionary + dynamic types, we need to get the source members now
         if (fromBuildType.MemberResolver.DeferMemberResolution)
         {
-            var members = fromTypeConfiguration.MemberResolver.GetInstanceMembers(obj);
-            var memberConfig = members.Select(m => new MapperMemberConfiguration
+            var members = fromBuildType.MemberResolver.GetInstanceMembers(obj);
+
+            foreach (var member in members)
             {
-                MemberName = m,
-                DataType = fromTypeConfiguration.MemberResolver.GetMemberType(m),
-                Getter = fromTypeConfiguration.MemberResolver.GetGetter(m),
-                Setter = fromTypeConfiguration.MemberResolver.GetSetter(m)
-            }).ToList();
+                var dataType = fromBuildType.MemberResolver.GetMemberType(fromType, member, fromBuildType.Options);
+                var getter = fromBuildType.MemberResolver.GetGetter(fromType, member, fromBuildType.Options);
+                var setter = fromBuildType.MemberResolver.GetSetter(fromType, member, fromBuildType.Options);
+                if (getter != null && setter != null)
+                {
+                    var buildMember = new BuildMember
+                    {
+                        MemberName = member,
+                        DataType = dataType,
+                        Getter = getter,
+                        Setter = setter
+                    };
+            }
+
             fromTypeConfiguration.MemberConfiguration = memberConfig;
             foreach (var item in fromTypeConfiguration.MemberConfiguration)
             {
@@ -97,6 +112,8 @@ public class ObjectMapper
         }
         return newInstance;
     }
+
+
 
     /// <summary>
     /// Maps / transforms an object from one type to another.

@@ -48,8 +48,7 @@ public class MapperBuilder
     /// <summary>
     /// Gets the mapping rules for a SourceDestination pairing.
     /// </summary>
-    /// <param name="sourceType"></param>
-    /// <param name="destinationType"></param>
+    /// <param name="sourceDestination">The source and destination types.</param>
     /// <returns></returns>
     public IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(SourceDestination sourceDestination)
     {
@@ -63,6 +62,11 @@ public class MapperBuilder
         return this.Metadata.MapRules[sourceDestination];
     }
 
+    /// <summary>
+    /// Returns the creator delegate for a type.
+    /// </summary>
+    /// <param name="type">The type.</param>
+    /// <returns>Returns a delegate that when invoked will create an instance of the object.</returns>
     public CreateInstance GetCreatorFor(Type type)
     {
         if (!Metadata.Types.ContainsKey(type))
@@ -139,7 +143,7 @@ public class MapperBuilder
         EndPointValidation(sourceBuild, destinationBuild, path, errors);
 
         // Build Mappings
-        BuildMapRules(sourceBuild, destinationBuild, path, errors);
+        BuildMapRules(sourceDestination, sourceBuild, destinationBuild, path, errors);
 
         return errors;
     }
@@ -222,6 +226,9 @@ public class MapperBuilder
         this.Metadata.Types[type] = buildType;
     }
 
+    public void AddDynamicMembers(Type type, string path, List<MapperBuildError> errors) {
+        
+    }
     private void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
     {
         // Get internal member names matching on source + destination
