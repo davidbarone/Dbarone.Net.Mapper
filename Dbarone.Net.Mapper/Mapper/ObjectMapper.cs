@@ -10,7 +10,7 @@ public class ObjectMapper
     private MapperConfiguration Configuration { get; set; }
     private MapperBuilder Builder { get; set; }
 
-    internal ObjectMapper(MapperConfiguration configuration)
+    public ObjectMapper(MapperConfiguration configuration)
     {
         this.Configuration = configuration;
         this.Builder = new MapperBuilder(this.Configuration);
