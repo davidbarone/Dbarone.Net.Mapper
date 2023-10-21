@@ -36,7 +36,7 @@ public class MapperBuilder
     /// <param name="type">The type to get build information for.</param>
     /// <returns>Returns the build information.</returns>
     /// <exception cref="Exception">Throws an exception if the build type is not found.</exception>
-    public BuildType GetBuildTypeFor(Type type)
+    internal BuildType GetBuildTypeFor(Type type)
     {
         if (!Metadata.Types.ContainsKey(type))
         {
@@ -50,7 +50,7 @@ public class MapperBuilder
     /// </summary>
     /// <param name="sourceDestination">The source and destination types.</param>
     /// <returns></returns>
-    public IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(SourceDestination sourceDestination)
+    internal IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(SourceDestination sourceDestination)
     {
         if (!Metadata.MapRules.ContainsKey(sourceDestination))
         {
@@ -67,7 +67,7 @@ public class MapperBuilder
     /// </summary>
     /// <param name="type">The type.</param>
     /// <returns>Returns a delegate that when invoked will create an instance of the object.</returns>
-    public CreateInstance GetCreatorFor(Type type)
+    internal CreateInstance GetCreatorFor(Type type)
     {
         if (!Metadata.Types.ContainsKey(type))
         {
@@ -227,17 +227,57 @@ public class MapperBuilder
     }
 
     /// <summary>
-    /// Adds the dynamic members based on an object instance.
+    /// Adds members to a dynamic type at runtime.
     /// </summary>
     /// <param name="type"></param>
     /// <param name="path"></param>
     /// <param name="obj"></param>
-    /// <param name="errors"></param>
-    public void AddDynamicMembers(Type type, string path, object? obj, List<MapperBuildError> errors) {
+    internal void AddDynamicMembers(Type type, string path, object? obj, List<MapperBuildError> errors)
+    {
+        var buildType = this.GetBuildTypeFor(type);
 
+        var members = buildType.MemberResolver.GetInstanceMembers(obj);
+
+        List<BuildMember> buildMembers = new List<BuildMember>();
+        foreach (var member in members)
+        {
+            var dataType = buildType.MemberResolver.GetMemberType(type, member, buildType.Options);
+            var getter = buildType.MemberResolver.GetGetter(type, member, buildType.Options);
+            var setter = buildType.MemberResolver.GetSetter(type, member, buildType.Options);
+            var ignore = GetMemberInclusionStatus(type, member);
+            var internalName = GetInternalName(type, member, buildType.Options.MemberRenameStrategy);
+
+            // validations
+            if (dataType == null)
+            {
+                errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "Data type not known for member."));
+            }
+            else if (getter == null)
+            {
+                errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No getter for member."));
+            }
+            else if (setter == null)
+            {
+                errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No setter for member."));
+            }
+            else
+            {
+                // add member to build
+                buildMembers.Add(new BuildMember
+                {
+                    MemberName = member,
+                    DataType = dataType,
+                    Getter = getter,
+                    Setter = setter,
+                    Ignore = ignore,
+                    InternalMemberName = internalName
+                });
+            }
+        }
+        buildType.Members = buildMembers;
     }
-    
-    private void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
+
+    internal void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
     {
         // Get internal member names matching on source + destination
         IEnumerable<string> matchedMembers = destinationBuild

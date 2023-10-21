@@ -36,84 +36,38 @@ public class ObjectMapper
         var toBuildType = this.Builder.GetBuildTypeFor(toType);
         var fromBuildType = this.Builder.GetBuildTypeFor(fromType);
         var newInstance = this.Builder.GetCreatorFor(toType).Invoke(new object[] { });
+        var errors = new List<MapperBuildError>();
 
         // for dictionary + dynamic types, we need to get the source members now
         if (fromBuildType.MemberResolver.DeferMemberResolution)
         {
-            var members = fromBuildType.MemberResolver.GetInstanceMembers(obj);
-
-            foreach (var member in members)
-            {
-                var dataType = fromBuildType.MemberResolver.GetMemberType(fromType, member, fromBuildType.Options);
-                var getter = fromBuildType.MemberResolver.GetGetter(fromType, member, fromBuildType.Options);
-                var setter = fromBuildType.MemberResolver.GetSetter(fromType, member, fromBuildType.Options);
-                if (getter != null && setter != null)
-                {
-                    var buildMember = new BuildMember
-                    {
-                        MemberName = member,
-                        DataType = dataType,
-                        Getter = getter,
-                        Setter = setter
-                    };
-            }
-
-            fromTypeConfiguration.MemberConfiguration = memberConfig;
-            foreach (var item in fromTypeConfiguration.MemberConfiguration)
-            {
-                item.SetInternalMemberName(fromTypeConfiguration.Options.MemberRenameStrategy);
-            }
-            fromTypeConfiguration.Validate();
+            Builder.AddDynamicMembers(fromType, path, obj, errors);
+            Builder.BuildMapRules(sourceDestination, fromBuildType, toBuildType, path, errors);
         }
 
-        // Get members to map. By default, the members come from the 'to' side.
-        // However, if the to type is deferred resolution, then the members come from the 'from' side.
-        List<string> internalMemberNames = null;
-        if (!toTypeConfiguration.MemberResolver.DeferMemberResolution)
+        // validate
+        if (errors.Any())
         {
-            internalMemberNames = toTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false).Select(m => m.InternalMemberName).ToList();
+            throw new MapperBuildException($"Error occurred building dynamic type: {fromBuildType.Type.Name}. Check Errors collection for more information.", errors);
         }
-        else
+
+        // Get mapping rules
+        var rules = Builder.GetMapRulesFor(sourceDestination);
+        var sourceDestinationPath = new SourceDestinationPath(sourceDestination, path);
+        var rulesForPath = rules[sourceDestinationPath];
+
+        // create 'to' instance
+        var toCreator = Builder.GetCreatorFor(toType);
+        var to = toCreator();
+
+        // Do mapping
+        foreach (var rule in rulesForPath.Maps)
         {
-            internalMemberNames = fromTypeConfiguration.MemberConfiguration.Where(r => r.Ignore == false).Select(m => m.InternalMemberName).ToList();
+            rule(obj, to);
         }
 
-        // If to type is dictionary / dynamic (DeferMemberResolution = true)
-        foreach (var internalMemberName in internalMemberNames)
-        {
-            // Get from rule
-            var toRule = toTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(internalMemberName, StringComparison.CurrentCultureIgnoreCase));
-            var fromRule = fromTypeConfiguration.MemberConfiguration.FirstOrDefault(mc => mc.InternalMemberName.Equals(internalMemberName, StringComparison.CurrentCultureIgnoreCase));
-
-            if (fromRule == null && (toTypeConfiguration.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
-            {
-                throw new Exception($"Cannot find member: {toRule.InternalMemberName} in source mapping configuration.");
-            }
-            var fromObj = fromRule.Getter.Invoke(obj!);
-
-            // Get type of from member:
-            if (toRule.DataType != fromRule.DataType)
-            {
-                // Check for custom type converter:
-                var validConverterKey = this.customTypeConverters.Keys.FirstOrDefault(k => k.Item1 == fromRule.DataType && k.Item2 == toRule.DataType);
-                if (validConverterKey != null)
-                {
-                    ITypeConverter typeConverter = this.customTypeConverters[validConverterKey];
-                    var convertedObject = typeConverter.Convert(fromObj);
-                    toRule.Setter.Invoke(newInstance, convertedObject!);
-                }
-                else
-                {
-                    throw new MapperException($"Cannot map from type: {fromRule.DataType} to type: {toRule.DataType}. Are you missing a Type Converter?");
-                }
-            }
-
-
-        }
-        return newInstance;
+        return to;
     }
-
-
 
     /// <summary>
     /// Maps / transforms an object from one type to another.
