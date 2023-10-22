@@ -20,6 +20,11 @@ public class MapperBuilder
     private BuildMetadataCache Metadata { get; set; }
 
     /// <summary>
+    /// Stores build errors.
+    /// </summary>
+    private Dictionary<SourceDestination, List<MapperBuildError>> Errors { get; set; } = new Dictionary<SourceDestination, List<MapperBuildError>>();
+
+    /// <summary>
     /// Creates a new <see cref="MapperBuilder"/> instance.
     /// </summary>
     /// <param name="configuration">The configuration used to create mapper objects.</param>
@@ -46,17 +51,23 @@ public class MapperBuilder
     }
 
     /// <summary>
+    /// Returns true if the source and destination type pairing exists.
+    /// </summary>
+    /// <param name="sourceDestination"></param>
+    /// <returns></returns>
+    public bool MapperExists(SourceDestination sourceDestination)
+    {
+        return Metadata.MapRules.ContainsKey(sourceDestination);
+    }
+
+    /// <summary>
     /// Gets the mapping rules for a SourceDestination pairing.
     /// </summary>
     /// <param name="sourceDestination">The source and destination types.</param>
     /// <returns></returns>
     internal IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(SourceDestination sourceDestination)
     {
-        if (!Metadata.MapRules.ContainsKey(sourceDestination))
-        {
-            Build(sourceDestination, sourceDestination);
-        }
-
+        Build(sourceDestination);
 
         // Return mapping rules for the source/destination pair
         return this.Metadata.MapRules[sourceDestination];
@@ -78,20 +89,23 @@ public class MapperBuilder
 
     #region Private Core Build Methods
 
-    private List<MapperBuildError> Build(SourceDestination sourceDestination, SourceDestination memberSourceDestination, string path = "", List<MapperBuildError>? errors = null)
+    public void Build(SourceDestination sourceDestination)
     {
-        if (errors == null)
-
+        if (!MapperExists(sourceDestination))
         {
-            errors = new List<MapperBuildError>();
+            var errors = new List<MapperBuildError>();
+            string path = "";
+            errors = Build(sourceDestination, sourceDestination, path, errors);
+            this.Errors[sourceDestination] = errors;
         }
-
-        // Mapper rules already exist?
-        if (this.Metadata.MapRules.ContainsKey(sourceDestination))
+        if (this.Errors.ContainsKey(sourceDestination) && this.Errors[sourceDestination].Any())
         {
-            return errors;
+            throw new MapperBuildException("Error occurred during build phase. See Errors collection for more information", this.Errors[sourceDestination]);
         }
+    }
 
+    private List<MapperBuildError> Build(SourceDestination sourceDestination, SourceDestination memberSourceDestination, string path, List<MapperBuildError> errors)
+    {
         // validations
         if (memberSourceDestination.Destination.IsInterface)
         {
