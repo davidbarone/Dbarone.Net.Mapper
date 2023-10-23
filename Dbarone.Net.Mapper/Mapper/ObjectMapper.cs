@@ -27,6 +27,7 @@ public class ObjectMapper
     /// <exception cref="MapperException"></exception>
     public object? MapOne(Type fromType, Type toType, object? obj)
     {
+        Builder.Build(new SourceDestination(fromType, toType));
         Dictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
         return MapOneInternal(new SourceDestination(fromType, toType), fromType, toType, obj, "", dynamicMapRules);
     }

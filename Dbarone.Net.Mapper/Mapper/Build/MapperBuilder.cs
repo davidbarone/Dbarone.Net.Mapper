@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using Dbarone.Net.Extensions;
 
@@ -291,56 +292,90 @@ public class MapperBuilder
         buildType.Members = buildMembers;
     }
 
+    private MethodInfo? GetImplicitCast(Type fromType, Type toType)
+    {
+        var method = fromType.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                        .FirstOrDefault(
+                            m => m.ReturnType == toType &&
+                            m.Name == "op_Implicit"
+                        );
+        return method;
+    }
+
     internal void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
     {
-        // Get internal member names matching on source + destination
-        IEnumerable<string> matchedMembers = destinationBuild
-            .Members
-            .Where(mc => mc.Ignore == false)
-            .Select(mc => mc.InternalMemberName).Intersect(
-                sourceBuild
+        IList<MapperDelegate> mappings = new List<MapperDelegate>();
+
+        // Check if types map directly via assignment
+        var implicitOperator = GetImplicitCast(sourceDestination.Source, sourceDestination.Destination);
+
+        if (sourceDestination.Source == sourceDestination.Destination)
+        {
+            MapperDelegate mapping = (s, d) =>
+            {
+                d = s;
+            };
+            mappings.Add(mapping);
+        }
+        else if (implicitOperator != null)
+        {
+            MapperDelegate mapping = (s, d) =>
+            {
+                d = implicitOperator.Invoke(s, new object[] { })!;
+            };
+            mappings.Add(mapping);
+        }
+        else
+        {
+            // member-wise mapping
+            // Get internal member names matching on source + destination
+            IEnumerable<string> matchedMembers = destinationBuild
                 .Members
                 .Where(mc => mc.Ignore == false)
-                .Select(mc => mc.InternalMemberName)
-            );
+                .Select(mc => mc.InternalMemberName).Intersect(
+                    sourceBuild
+                    .Members
+                    .Where(mc => mc.Ignore == false)
+                    .Select(mc => mc.InternalMemberName)
+                );
 
-        IList<MapperDelegate> mappings = new List<MapperDelegate>();
-        foreach (var member in matchedMembers)
-        {
-            var sourceMemberBuild = sourceBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
-            var destinationMemberBuild = destinationBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
-            var sourceMemberType = sourceMemberBuild.DataType;
-            var destinationMemberType = destinationMemberBuild.DataType;
+            foreach (var member in matchedMembers)
+            {
+                var sourceMemberBuild = sourceBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
+                var destinationMemberBuild = destinationBuild.Members.First(mc => mc.InternalMemberName.Equals(member));
+                var sourceMemberType = sourceMemberBuild.DataType;
+                var destinationMemberType = destinationMemberBuild.DataType;
 
-            if (sourceMemberType == destinationMemberType)
-            {
-                // member types the same - do simple assignment of value to destination object.
-                MapperDelegate mapping = (s, d) =>
+                if (sourceMemberType == destinationMemberType)
                 {
-                    destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
-                };
-                mappings.Add(mapping);
-            }
-            else if (this.Configuration.Config.Converters.ContainsKey(sourceDestination))
-            {
-                // Member types differ, but converter exists - convert then assign value to destination object.
-                MapperDelegate mapping = (s, d) =>
+                    // member types the same - do simple assignment of value to destination object.
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                    };
+                    mappings.Add(mapping);
+                }
+                else if (this.Configuration.Config.Converters.ContainsKey(sourceDestination))
                 {
-                    var converter = this.Configuration.Config.Converters[sourceDestination];
-                    var converted = converter.Convert(sourceMemberBuild.Getter(s));
-                    destinationMemberBuild.Setter(d, converted);
-                };
-                mappings.Add(mapping);
-            }
-            else if (this.Configuration.Config.Types.Keys.Contains(destinationMemberType) && this.Configuration.Config.Types.Keys.Contains(sourceMemberType))
-            {
-                // Member types differ, but mapping configuration exists for types
-                // create mapping rules recursively.
-                Build(sourceDestination, new SourceDestination(sourceMemberType, destinationMemberType), "", errors);
-            }
-            else
-            {
-                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, member, "Cannot create mapping rule from member. Are you missing a type registration?"));
+                    // Member types differ, but converter exists - convert then assign value to destination object.
+                    MapperDelegate mapping = (s, d) =>
+                    {
+                        var converter = this.Configuration.Config.Converters[sourceDestination];
+                        var converted = converter.Convert(sourceMemberBuild.Getter(s));
+                        destinationMemberBuild.Setter(d, converted);
+                    };
+                    mappings.Add(mapping);
+                }
+                else if (this.Configuration.Config.Types.Keys.Contains(destinationMemberType) && this.Configuration.Config.Types.Keys.Contains(sourceMemberType))
+                {
+                    // Member types differ, but mapping configuration exists for types
+                    // create mapping rules recursively.
+                    Build(sourceDestination, new SourceDestination(sourceMemberType, destinationMemberType), "", errors);
+                }
+                else
+                {
+                    errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, member, "Cannot create mapping rule from member. Are you missing a type registration?"));
+                }
             }
         }
     }
