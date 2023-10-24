@@ -46,6 +46,20 @@ public class SourceDestinationPath {
     /// <returns></returns>
     public override bool Equals(object? obj)
     {
-        return base.Equals(obj);
+          // If parameter is null return false.
+        if (obj == null)
+        {
+            return false;
+        }
+
+        // If parameter cannot be cast to SourceDestination return false.
+        SourceDestinationPath? sdp = obj as SourceDestinationPath;
+        if ((System.Object?)sdp == null)
+        {
+            return false;
+        }
+
+        // Return true if the fields match:
+        return (this.SourceDestination.Equals(sdp.SourceDestination)) && (this.Path.Equals(sdp.Path));
     }
 }

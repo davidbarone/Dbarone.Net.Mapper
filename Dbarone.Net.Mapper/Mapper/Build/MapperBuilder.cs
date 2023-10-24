@@ -378,6 +378,18 @@ public class MapperBuilder
                 }
             }
         }
+
+        // Cache the mapping rules
+        if (!this.Metadata.MapRules.ContainsKey(sourceDestination))
+        {
+            this.Metadata.MapRules[sourceDestination] = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
+        }
+        SourceDestinationPath key = new SourceDestinationPath(sourceDestination, path);
+        SourceDestinationPathRules rules = new SourceDestinationPathRules();
+        rules.SourceDestination = sourceDestination;
+        rules.Path = path;
+        rules.Maps = mappings;
+        this.Metadata.MapRules[sourceDestination][key] = rules;
     }
 
     #endregion
