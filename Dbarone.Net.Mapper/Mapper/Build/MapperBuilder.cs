@@ -314,6 +314,7 @@ public class MapperBuilder
             MapperDelegate mapping = (s, d) =>
             {
                 d = s;
+                return d;
             };
             mappings.Add(mapping);
         }
@@ -322,6 +323,7 @@ public class MapperBuilder
             MapperDelegate mapping = (s, d) =>
             {
                 d = implicitOperator.Invoke(s, new object[] { })!;
+                return d;
             };
             mappings.Add(mapping);
         }
@@ -352,6 +354,7 @@ public class MapperBuilder
                     MapperDelegate mapping = (s, d) =>
                     {
                         destinationMemberBuild.Setter(d, sourceMemberBuild.Getter(s));
+                        return d;
                     };
                     mappings.Add(mapping);
                 }
@@ -363,6 +366,7 @@ public class MapperBuilder
                         var converter = this.Configuration.Config.Converters[sourceDestination];
                         var converted = converter.Convert(sourceMemberBuild.Getter(s));
                         destinationMemberBuild.Setter(d, converted);
+                        return d;
                     };
                     mappings.Add(mapping);
                 }

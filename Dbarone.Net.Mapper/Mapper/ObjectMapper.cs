@@ -64,7 +64,8 @@ public class ObjectMapper
         // Do mapping
         foreach (var rule in rulesForPath.Maps)
         {
-            rule(obj, to);
+            // to passed by ref as some mappings assign obj -> to instead of operating on its members.
+            to = rule(obj, to);
         }
 
         return to;
