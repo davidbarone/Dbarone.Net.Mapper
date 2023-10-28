@@ -13,6 +13,16 @@ public class BuildType
     public Type Type { get; set; } = default!;
 
     /// <summary>
+    /// Returns true if the type is nullable value type.
+    /// </summary>
+    public bool IsNullable => this.Type.IsNullable();
+
+    /// <summary>
+    /// If the type is a nullable value type, returns the underlying type.
+    /// </summary>
+    public Type? NullableUnderlyingType => this.IsNullable ? Nullable.GetUnderlyingType(this.Type) : null;
+
+    /// <summary>
     /// Defines the options for the type.
     /// </summary>
     public MapperOptions Options { get; set; } = default!;
