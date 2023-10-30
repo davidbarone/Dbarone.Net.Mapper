@@ -13,5 +13,5 @@ public class BuildMetadataCache {
     /// <summary>
     /// Stores the build-time mapping rules between source and destination type pairs.
     /// </summary>
-    public Dictionary<SourceDestination, Dictionary<SourceDestinationPath, SourceDestinationPathRules>> MapRules { get; set; } = new Dictionary<SourceDestination, Dictionary<SourceDestinationPath, SourceDestinationPathRules>>();
+    public Dictionary<SourceDestination, MapperDelegate> Mappers { get; set; } = new Dictionary<SourceDestination, MapperDelegate>();
 }

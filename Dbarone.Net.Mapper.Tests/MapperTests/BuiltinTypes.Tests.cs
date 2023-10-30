@@ -3,7 +3,7 @@ using Dbarone.Net.Mapper;
 public class MapBuiltinTypesTests {
 
     [Fact]
-    public void Map_Int_ShouldMap() {
+    public void Map_Int_Should_Map() {
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<int>()
         );

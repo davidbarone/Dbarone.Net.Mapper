@@ -25,6 +25,8 @@ public class MapperBuilder
     /// </summary>
     private Dictionary<SourceDestination, List<MapperBuildError>> Errors { get; set; } = new Dictionary<SourceDestination, List<MapperBuildError>>();
 
+    private IMapperProvider[] MapperProviders;
+
     /// <summary>
     /// Creates a new <see cref="MapperBuilder"/> instance.
     /// </summary>
@@ -34,6 +36,10 @@ public class MapperBuilder
         this.Configuration = configuration;
         AddCoreResolvers();
         Metadata = new BuildMetadataCache();
+        this.MapperProviders = new IMapperProvider[] {
+            new MatchingTypeMapperProvider(),
+            new ImplicitOperatorMapperProvider()
+        };
     }
 
     /// <summary>
@@ -58,7 +64,7 @@ public class MapperBuilder
     /// <returns></returns>
     public bool MapperExists(SourceDestination sourceDestination)
     {
-        return Metadata.MapRules.ContainsKey(sourceDestination);
+        return Metadata.Mappers.ContainsKey(sourceDestination);
     }
 
     /// <summary>
@@ -66,12 +72,12 @@ public class MapperBuilder
     /// </summary>
     /// <param name="sourceDestination">The source and destination types.</param>
     /// <returns></returns>
-    internal IDictionary<SourceDestinationPath, SourceDestinationPathRules> GetMapRulesFor(SourceDestination sourceDestination)
+    internal MapperDelegate GetMapperFor(SourceDestination sourceDestination)
     {
         Build(sourceDestination);
 
         // Return mapping rules for the source/destination pair
-        return this.Metadata.MapRules[sourceDestination];
+        return this.Metadata.Mappers[sourceDestination];
     }
 
     /// <summary>
@@ -158,8 +164,7 @@ public class MapperBuilder
         EndPointValidation(sourceBuild, destinationBuild, path, errors);
 
         // Build Mappings
-        BuildMapRules(sourceDestination, sourceBuild, destinationBuild, path, errors);
-
+        this.Metadata.Mappers[sourceDestination] = GetMapper(sourceDestination);
         return errors;
     }
 
@@ -302,6 +307,15 @@ public class MapperBuilder
         return method;
     }
 
+    public MapperDelegate GetMapper(SourceDestination sourceDestination) {
+        foreach (var provider in this.MapperProviders) {
+            if (provider.CanCreateMapFor(sourceDestination.Source, sourceDestination.Destination)) {
+                return provider.GetMapFor(sourceDestination.Source, sourceDestination.Destination, this);
+            }
+        }
+        throw new Exception("whoops");
+    }
+
     internal void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
     {
         IList<MapperDelegate> mappings = new List<MapperDelegate>();
@@ -382,18 +396,6 @@ public class MapperBuilder
                 }
             }
         }
-
-        // Cache the mapping rules
-        if (!this.Metadata.MapRules.ContainsKey(sourceDestination))
-        {
-            this.Metadata.MapRules[sourceDestination] = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
-        }
-        SourceDestinationPath key = new SourceDestinationPath(sourceDestination, path);
-        SourceDestinationPathRules rules = new SourceDestinationPathRules();
-        rules.SourceDestination = sourceDestination;
-        rules.Path = path;
-        rules.Maps = mappings;
-        this.Metadata.MapRules[sourceDestination][key] = rules;
     }
 
     #endregion
