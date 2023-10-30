@@ -199,4 +199,6 @@ public class ClassMemberResolver : IMemberResolver
     {
         return type.IsClass;
     }
+
+    public virtual bool HasMembers => true;
 }

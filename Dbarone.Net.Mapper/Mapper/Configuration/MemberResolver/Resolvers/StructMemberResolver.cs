@@ -35,4 +35,7 @@ public class StructMemberResolver : ClassMemberResolver
     {
         return type.IsValueType;
     }
+
+    public virtual bool HasMembers => true;
+
 }

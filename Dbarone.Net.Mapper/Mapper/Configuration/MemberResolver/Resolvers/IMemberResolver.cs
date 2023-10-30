@@ -63,6 +63,11 @@ public interface IMemberResolver
     bool DeferMemberResolution { get; }
 
     /// <summary>
+    /// Returns true if this resolver can return members on a type.
+    /// </summary>.
+    bool HasMembers { get; }
+
+    /// <summary>
     /// Set to true if the current IMemberResolver can resolve members of the specified type.
     /// </summary>
     /// <param name="type">The type to resolve members for.</param>

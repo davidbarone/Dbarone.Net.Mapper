@@ -128,4 +128,7 @@ public class DictionaryMemberResolver : IMemberResolver
     {
         return type.IsDictionaryType();
     }
+
+    public virtual bool HasMembers => true;
+
 }
