@@ -6,11 +6,11 @@ public class ImplcitOperatorTests {
     public void Map_Int_To_Float_Should_Map() {
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<int>()
-            .RegisterType<float>()
+            .RegisterType<long>()
         );
 
         var a = 123;
-        var b = mapper.MapOne<int, float>(a);
-        Assert.Equal((float)a, b);
+        var b = mapper.MapOne<int, long>(a);
+        Assert.Equal((long)a, b);
     }
 }

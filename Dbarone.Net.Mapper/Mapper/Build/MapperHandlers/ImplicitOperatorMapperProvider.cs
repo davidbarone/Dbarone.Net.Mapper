@@ -7,7 +7,8 @@ public class ImplicitOperatorMapperProvider : IMapperProvider
 {
     private MethodInfo? GetImplicitCast(Type fromType, Type toType)
     {
-        var method = fromType.GetMethods(BindingFlags.Public | BindingFlags.Static)
+        var methods = fromType.GetMethods(BindingFlags.Public | BindingFlags.Static);
+        var method = methods
                         .FirstOrDefault(
                             m => m.ReturnType == toType &&
                             m.Name == "op_Implicit"

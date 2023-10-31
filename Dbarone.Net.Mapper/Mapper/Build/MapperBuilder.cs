@@ -38,7 +38,10 @@ public class MapperBuilder
         Metadata = new BuildMetadataCache();
         this.MapperProviders = new IMapperProvider[] {
             new MatchingTypeMapperProvider(),
-            new ImplicitOperatorMapperProvider()
+            new IConvertibleMapperProvider(),
+            new ConverterMapperProvider(),
+            new ImplicitOperatorMapperProvider(),
+            new MemberwiseMapperProvider()
         };
     }
 
