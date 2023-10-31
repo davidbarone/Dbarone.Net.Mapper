@@ -1,6 +1,6 @@
 using Dbarone.Net.Mapper;
 
-public class ImplcitOperatorTests {
+public class IConvertibleMapperProviderTests {
 
     [Fact]
     public void Map_Int_To_Float_Should_Map() {

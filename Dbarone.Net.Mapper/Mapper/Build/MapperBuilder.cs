@@ -445,7 +445,7 @@ public class MapperBuilder
         MemberFilterDelegate? memberFilterRuleB = null;
         MemberFilterDelegate? memberFilterRule = null;
 
-        if (Configuration.Config.Types.ContainsKey(type))
+        if (!Configuration.Config.Types.ContainsKey(type))
         {
             throw new Exception($"GetIgnoreStatus. Invalid type: {type}.");
         }

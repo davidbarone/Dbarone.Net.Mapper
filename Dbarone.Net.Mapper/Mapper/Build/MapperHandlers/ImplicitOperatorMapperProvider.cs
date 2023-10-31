@@ -13,6 +13,16 @@ public class ImplicitOperatorMapperProvider : IMapperProvider
                             m => m.ReturnType == toType &&
                             m.Name == "op_Implicit"
                         );
+        if (method == null)
+        {
+            // try reverse conversion
+            methods = toType.GetMethods(BindingFlags.Public | BindingFlags.Static);
+            method = methods
+                            .FirstOrDefault(
+                                m => m.ReturnType == toType &&
+                                m.Name == "op_Implicit"
+                            );
+        }
         return method;
     }
 
