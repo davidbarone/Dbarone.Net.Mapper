@@ -37,7 +37,6 @@ public class BuildType
     /// </summary>
     public IMemberResolver MemberResolver { get; set; } = default!;
 
-    public bool HasMembers => MemberResolver.GetType()==typeof(ClassMemberResolver)
     /// <summary>
     /// Resolves a member/unary expression to a member configuration.
     /// </summary>

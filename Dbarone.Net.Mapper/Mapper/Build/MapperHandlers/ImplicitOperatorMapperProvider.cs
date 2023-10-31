@@ -15,16 +15,16 @@ public class ImplicitOperatorMapperProvider : IMapperProvider
         return method;
     }
 
-    public bool CanCreateMapFor(Type from, Type to)
+    public bool CanCreateMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         // Check if types map directly via assignment
-        var implicitOperator = GetImplicitCast(from, to);
+        var implicitOperator = GetImplicitCast(from.Type, to.Type);
         return (implicitOperator != null);
     }
 
-    public MapperDelegate GetMapFor(Type from, Type to, MapperBuilder builder)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
-        var implicitOperator = GetImplicitCast(from, to);
+        var implicitOperator = GetImplicitCast(from.Type, to.Type);
         if (implicitOperator == null)
         {
             throw new Exception("whoops");

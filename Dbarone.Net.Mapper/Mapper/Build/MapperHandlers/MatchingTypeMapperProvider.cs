@@ -2,12 +2,12 @@ using Dbarone.Net.Mapper;
 
 public class MatchingTypeMapperProvider : IMapperProvider
 {
-    public bool CanCreateMapFor(Type from, Type to)
+    public bool CanCreateMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         return from == to;
     }
 
-    public MapperDelegate GetMapFor(Type from, Type to, MapperBuilder builder)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         MapperDelegate mapping = (s, d) =>
             {

@@ -13,12 +13,12 @@ public class MapperBuilder
     /// <summary>
     /// The input configuration for the map.
     /// </summary>
-    private MapperConfiguration Configuration { get; init; }
+    internal MapperConfiguration Configuration { get; init; }
 
     /// <summary>
     /// Stores the build-time metadata.
     /// </summary>
-    private BuildMetadataCache Metadata { get; set; }
+    internal BuildMetadataCache Metadata { get; set; }
 
     /// <summary>
     /// Stores build errors.
@@ -309,8 +309,10 @@ public class MapperBuilder
 
     public MapperDelegate GetMapper(SourceDestination sourceDestination) {
         foreach (var provider in this.MapperProviders) {
-            if (provider.CanCreateMapFor(sourceDestination.Source, sourceDestination.Destination)) {
-                return provider.GetMapFor(sourceDestination.Source, sourceDestination.Destination, this);
+            var sourceBuild = this.Metadata.Types[sourceDestination.Source];
+            var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
+            if (provider.CanCreateMapFor(sourceBuild, destinationBuild, this)) {
+                return provider.GetMapFor(sourceBuild, destinationBuild, this);
             }
         }
         throw new Exception("whoops");

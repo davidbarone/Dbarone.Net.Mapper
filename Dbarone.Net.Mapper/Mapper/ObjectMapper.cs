@@ -52,22 +52,9 @@ public class ObjectMapper
             throw new MapperBuildException($"Error occurred building dynamic type: {fromBuildType.Type.Name}. Check Errors collection for more information.", errors);
         }
 
-        // Get mapping rules
-        var rules = Builder.GetMapRulesFor(sourceDestination);
-        var sourceDestinationPath = new SourceDestinationPath(sourceDestination, path);
-        var rulesForPath = rules[sourceDestinationPath];
-
-        // create 'to' instance
-        var toCreator = Builder.GetCreatorFor(toType);
-        var to = toCreator();
-
-        // Do mapping
-        foreach (var rule in rulesForPath.Maps)
-        {
-            // to passed by ref as some mappings assign obj -> to instead of operating on its members.
-            to = rule(obj, to);
-        }
-
+        // Get mapper
+        var mapper = Builder.GetMapperFor(sourceDestination);
+        var to = mapper(obj, null);
         return to;
     }
 
