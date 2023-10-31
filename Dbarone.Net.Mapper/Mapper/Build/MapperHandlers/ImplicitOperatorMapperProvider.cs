@@ -42,7 +42,7 @@ public class ImplicitOperatorMapperProvider : IMapperProvider
         }
         MapperDelegate mapping = (s, d) =>
         {
-            d = implicitOperator.Invoke(s, new object[] { })!;
+            d = implicitOperator.Invoke(null, new object[] { s })!;
             return d;
         };
         return mapping;

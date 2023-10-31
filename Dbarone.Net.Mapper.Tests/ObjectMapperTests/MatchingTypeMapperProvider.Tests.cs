@@ -1,6 +1,6 @@
 using Dbarone.Net.Mapper;
 
-public class MapBuiltinTypesTests {
+public class MatchingTypeMapperProvider {
 
     [Fact]
     public void Map_Int_Should_Map() {

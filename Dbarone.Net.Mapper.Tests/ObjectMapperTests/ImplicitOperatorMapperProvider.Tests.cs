@@ -6,6 +6,11 @@ using Dbarone.Net.Mapper;
 public class ImplicitOperatorTest
 {
     public string StringValue { get; set; }
+
+    public ImplicitOperatorTest()
+    {
+    }
+
     public ImplicitOperatorTest(int i)
     {
         StringValue = new string('X', i);
