@@ -37,7 +37,7 @@ public class MapperBuilder
         AddCoreResolvers();
         Metadata = new BuildMetadataCache();
         this.MapperProviders = new IMapperProvider[] {
-            new MatchingTypeMapperProvider(),
+            new AssignableMapperProvider(),
             new IConvertibleMapperProvider(),
             new ConverterMapperProvider(),
             new ImplicitOperatorMapperProvider(),
