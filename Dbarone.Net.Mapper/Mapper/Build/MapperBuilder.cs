@@ -52,7 +52,7 @@ public class MapperBuilder
     public MapperDelegate GetMapper(SourceDestination sourceDestination, string path = "", List<MapperBuildError>? errors = null)
     {
         var isRoot = (path == "");
-        MapperDelegate mapper;
+        MapperDelegate mapper = null;
 
         if (isRoot)
         {
@@ -89,6 +89,10 @@ public class MapperBuilder
 
         // cache results
         this.Metadata.Errors[sourceDestination] = errors;
+        if (mapper != null)
+        {
+            this.Metadata.Mappers[sourceDestination] = mapper;
+        }
 
         // throw exception?
         if (this.Metadata.Errors.ContainsKey(sourceDestination) && this.Metadata.Errors[sourceDestination].Any())
