@@ -25,14 +25,14 @@ public class ObjectMapper
     /// <returns>Returns a mapped object of type `toType`.</returns>
     /// <exception cref="Exception"></exception>
     /// <exception cref="MapperException"></exception>
-    public object? MapOne(Type fromType, Type toType, object? obj)
+    public object? Map(Type fromType, Type toType, object? obj)
     {
         Builder.Build(new SourceDestination(fromType, toType));
         Dictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
-        return MapOneInternal(new SourceDestination(fromType, toType), fromType, toType, obj, "", dynamicMapRules);
+        return MapInternal(new SourceDestination(fromType, toType), fromType, toType, obj, "", dynamicMapRules);
     }
 
-    private object? MapOneInternal(SourceDestination sourceDestination, Type fromType, Type toType, object? obj, string path, IDictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules)
+    private object? MapInternal(SourceDestination sourceDestination, Type fromType, Type toType, object? obj, string path, IDictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules)
     {
         var toBuildType = this.Builder.GetBuildTypeFor(toType);
         var fromBuildType = this.Builder.GetBuildTypeFor(fromType);
@@ -43,7 +43,7 @@ public class ObjectMapper
         if (fromBuildType.MemberResolver.DeferMemberResolution)
         {
             Builder.AddDynamicMembers(fromType, path, obj, errors);
-            Builder.BuildMapRules(sourceDestination, fromBuildType, toBuildType, path, errors);
+            //Builder.BuildMapRules(sourceDestination, fromBuildType, toBuildType, path, errors);
         }
 
         // validate
@@ -65,24 +65,8 @@ public class ObjectMapper
     /// <typeparam name="TDestination"></typeparam>
     /// <param name="obj">Returns an object of the destination type.</param>
     /// <returns></returns>
-    public TDestination? MapOne<TSource, TDestination>(TSource? obj)
+    public TDestination? Map<TSource, TDestination>(TSource? obj)
     {
-        return (TDestination?)MapOne(typeof(TSource), typeof(TDestination), obj);
+        return (TDestination?)Map(typeof(TSource), typeof(TDestination), obj);
     }
-
-    /// <summary>
-    /// Maps a collection, list or array of items.
-    /// </summary>
-    /// <typeparam name="TSource">The type of the source object.</typeparam>
-    /// <typeparam name="TDestination">The type of the destination object.</typeparam>
-    /// <param name="obj">The source object. Must be an enumerable, collection, list or array of type U.</param>
-    /// <returns></returns>
-    public IEnumerable<TDestination?> MapMany<TSource, TDestination>(IEnumerable<TSource?> obj)
-    {
-        foreach (var item in obj)
-        {
-            yield return MapOne<TSource, TDestination>(item);
-        }
-    }
-
 }
