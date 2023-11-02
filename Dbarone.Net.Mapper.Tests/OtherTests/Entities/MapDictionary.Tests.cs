@@ -23,7 +23,7 @@ public class MapDictionaryTests
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<Dictionary<string, object>>());
 
-        var dict2 = mapper.MapOne<Dictionary<string, object>, Dictionary<string, object>>(dict1);
+        var dict2 = mapper.Map<Dictionary<string, object>, Dictionary<string, object>>(dict1);
         Assert.True(dict2.ValueEquals(dict1));
     }
 
@@ -34,7 +34,7 @@ public class MapDictionaryTests
             .RegisterType<Dictionary<string, object>>()
             .RegisterType<DictTestClass>());
 
-        var dict = mapper.MapOne<ClassA, Dictionary<string, object>>(a);
+        var dict = mapper.Map<ClassA, Dictionary<string, object>>(a);
         Assert.Equal(a.IntValue, dict["IntValue"]);
     }
 }

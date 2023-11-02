@@ -69,7 +69,7 @@ public class MapClassWithEnumsTests
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<EnumType>()
         );
-        var obj2 = mapper.MapOne<EnumType, EnumType>(obj1);
+        var obj2 = mapper.Map<EnumType, EnumType>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
 
@@ -80,7 +80,7 @@ public class MapClassWithEnumsTests
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<EnumTypeNullable>()
         );
-        var obj2 = mapper.MapOne<EnumTypeNullable, EnumTypeNullable>(obj1);
+        var obj2 = mapper.Map<EnumTypeNullable, EnumTypeNullable>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
 
@@ -91,7 +91,7 @@ public class MapClassWithEnumsTests
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<EnumTypeNullable>()
         );
-        var obj2 = mapper.MapOne<EnumTypeNullable, EnumTypeNullable>(obj1);
+        var obj2 = mapper.Map<EnumTypeNullable, EnumTypeNullable>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
 }

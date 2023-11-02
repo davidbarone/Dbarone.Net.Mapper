@@ -156,7 +156,7 @@ public class MapClassWithBuiltinTypesTests
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<BuiltinValueTypes>()
         );
-        var obj2 = mapper.MapOne<BuiltinValueTypes, BuiltinValueTypes>(obj1);
+        var obj2 = mapper.Map<BuiltinValueTypes, BuiltinValueTypes>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
 
@@ -167,7 +167,7 @@ public class MapClassWithBuiltinTypesTests
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<BuiltinValueTypes>()
         );
-        var obj2 = mapper.MapOne<BuiltinValueTypes, BuiltinValueTypes>(obj1);
+        var obj2 = mapper.Map<BuiltinValueTypes, BuiltinValueTypes>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
 
@@ -178,7 +178,7 @@ public class MapClassWithBuiltinTypesTests
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<BuiltinValueTypesNullable>()
         );
-        var obj2 = mapper.MapOne<BuiltinValueTypesNullable, BuiltinValueTypesNullable>(obj1);
+        var obj2 = mapper.Map<BuiltinValueTypesNullable, BuiltinValueTypesNullable>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
 }

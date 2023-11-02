@@ -33,7 +33,7 @@ public class ImplicitOperatorMapperProvider : IMapperProvider
         return (implicitOperator != null);
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
     {
         var implicitOperator = GetImplicitCast(from.Type, to.Type);
         if (implicitOperator == null)

@@ -7,8 +7,43 @@ public class MemberwiseMapperProvider : IMapperProvider
         return from.MemberResolver.HasMembers && to.MemberResolver.HasMembers;
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
+    private void EndPointValidation(BuildType from, BuildType to, string path, List<MapperBuildError> errors)
     {
+        if ((from.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
+        {
+            // check all source member rules map to destination rules.
+            var unmappedSourceMembers = from
+                .Members
+                .Where(m => to
+                    .Members
+                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
+
+            foreach (var item in unmappedSourceMembers)
+            {
+                errors.Add(new MapperBuildError(from.Type, MapperEndPoint.Source, path, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
+            }
+        }
+
+        if ((to.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+        {
+            // check all source member rules map to destination rules.
+            var unmappedDestinationMembers = to
+                .Members
+                .Where(m => from
+                    .Members
+                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
+
+            foreach (var item in unmappedDestinationMembers)
+            {
+                errors.Add(new MapperBuildError(to.Type, MapperEndPoint.Destination, path, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
+            }
+        }
+    }
+
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
+    {
+        EndPointValidation(from, to, path, errors);
+
         // member-wise mapping
         // Get internal member names matching on source + destination
         IEnumerable<string> matchedMembers = to
@@ -31,7 +66,7 @@ public class MemberwiseMapperProvider : IMapperProvider
         {
             var mSourceType = from.Members.First(m => m.MemberName == member).DataType;
             var mDestinationType = to.Members.First(m => m.MemberName == member).DataType;
-            var memberMapper = builder.GetMapperFor(new SourceDestination(mSourceType, mDestinationType));
+            var memberMapper = builder.GetMapper(new SourceDestination(mSourceType, mDestinationType));
             columnMappings[member] = memberMapper;
             sourceMemberGetters[member] = from.MemberResolver.GetGetter(mSourceType, member, from.Options);
             destinationMemberGetters[member] = to.MemberResolver.GetGetter(mDestinationType, member, from.Options);

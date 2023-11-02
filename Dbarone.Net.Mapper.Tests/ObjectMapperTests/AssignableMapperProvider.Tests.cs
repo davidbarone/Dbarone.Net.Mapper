@@ -9,7 +9,7 @@ public class AssignableMapperProvider {
         );
 
         var a = 123;
-        var b = mapper.MapOne<int, int>(a);
+        var b = mapper.Map<int, int>(a);
         Assert.Equal(a, b);
     }
 
@@ -21,7 +21,7 @@ public class AssignableMapperProvider {
         );
 
         var a = 123;
-        var b = mapper.MapOne<int, int?>(a);
+        var b = mapper.Map<int, int?>(a);
         Assert.Equal(a, b.Value);
     }
 

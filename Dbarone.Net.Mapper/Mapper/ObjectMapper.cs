@@ -27,35 +27,14 @@ public class ObjectMapper
     /// <exception cref="MapperException"></exception>
     public object? Map(Type fromType, Type toType, object? obj)
     {
-        Builder.Build(new SourceDestination(fromType, toType));
-        Dictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
-        return MapInternal(new SourceDestination(fromType, toType), fromType, toType, obj, "", dynamicMapRules);
-    }
-
-    private object? MapInternal(SourceDestination sourceDestination, Type fromType, Type toType, object? obj, string path, IDictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules)
-    {
-        var toBuildType = this.Builder.GetBuildTypeFor(toType);
-        var fromBuildType = this.Builder.GetBuildTypeFor(fromType);
-        var newInstance = this.Builder.GetCreatorFor(toType).Invoke(new object[] { });
-        var errors = new List<MapperBuildError>();
-
-        // for dictionary + dynamic types, we need to get the source members now
-        if (fromBuildType.MemberResolver.DeferMemberResolution)
-        {
-            Builder.AddDynamicMembers(fromType, path, obj, errors);
-            //Builder.BuildMapRules(sourceDestination, fromBuildType, toBuildType, path, errors);
-        }
-
-        // validate
-        if (errors.Any())
-        {
-            throw new MapperBuildException($"Error occurred building dynamic type: {fromBuildType.Type.Name}. Check Errors collection for more information.", errors);
-        }
-
-        // Get mapper
-        var mapper = Builder.GetMapperFor(sourceDestination);
+        SourceDestination sourceDestination = new SourceDestination(fromType, toType);
+        var mapper = Builder.GetMapper(sourceDestination);
         var to = mapper(obj, null);
         return to;
+
+        //Builder.Build();
+        //Dictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
+        //return MapInternal(new SourceDestination(fromType, toType), fromType, toType, obj, "", dynamicMapRules);
     }
 
     /// <summary>

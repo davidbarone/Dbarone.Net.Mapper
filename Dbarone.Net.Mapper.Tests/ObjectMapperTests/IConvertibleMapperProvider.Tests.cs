@@ -10,7 +10,7 @@ public class IConvertibleMapperProviderTests {
         );
 
         var a = 123;
-        var b = mapper.MapOne<int, long>(a);
+        var b = mapper.Map<int, long>(a);
         Assert.Equal((long)a, b);
     }
 }

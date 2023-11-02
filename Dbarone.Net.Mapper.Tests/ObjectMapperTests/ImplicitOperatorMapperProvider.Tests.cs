@@ -32,7 +32,7 @@ public class ImplicitOperatorMapperProviderTests
 
         int len = 10;
         var expected = new string('X', len);  // 'XXXXXXXXXX'
-        var actual = mapper.MapOne<int, ImplicitOperatorTest>(len);
+        var actual = mapper.Map<int, ImplicitOperatorTest>(len);
         Assert.Equal(expected, actual.StringValue);
     }
 }

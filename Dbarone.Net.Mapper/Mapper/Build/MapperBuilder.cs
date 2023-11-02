@@ -20,10 +20,6 @@ public class MapperBuilder
     /// </summary>
     internal BuildMetadataCache Metadata { get; set; }
 
-    /// <summary>
-    /// Stores build errors.
-    /// </summary>
-    private Dictionary<SourceDestination, List<MapperBuildError>> Errors { get; set; } = new Dictionary<SourceDestination, List<MapperBuildError>>();
 
     private IMapperProvider[] MapperProviders;
 
@@ -53,16 +49,55 @@ public class MapperBuilder
     /// <param name="sourceDestination"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public MapperDelegate GetMapper(SourceDestination sourceDestination) {
-        foreach (var provider in this.MapperProviders) {
+    public MapperDelegate GetMapper(SourceDestination sourceDestination, string path = "", List<MapperBuildError>? errors = null)
+    {
+        var isRoot = (path == "");
+        MapperDelegate mapper;
+
+        if (isRoot)
+        {
+            errors = new List<MapperBuildError>();
+        }
+
+        // generate mapper if not root or mapper doesn't exist
+        if (!(isRoot && MapperExists(sourceDestination)))
+        {
+            // source
+            if (!this.Metadata.Types.ContainsKey(sourceDestination.Source))
+            {
+                this.BuildType(sourceDestination.Source, path, errors);
+            }
             var sourceBuild = this.Metadata.Types[sourceDestination.Source];
+
+            // destination
+            if (!this.Metadata.Types.ContainsKey(sourceDestination.Destination))
+            {
+                this.BuildType(sourceDestination.Destination, path, errors);
+            }
             var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
-            if (provider.CanCreateMapFor(sourceBuild, destinationBuild, this)) {
-                return provider.GetMapFor(sourceBuild, destinationBuild, this);
+
+            // find mapper to handle source-destination
+            foreach (var provider in this.MapperProviders)
+            {
+                if (provider.CanCreateMapFor(sourceBuild, destinationBuild, this))
+                {
+                    mapper = provider.GetMapFor(sourceBuild, destinationBuild, this, path, errors);
+                    break;
+                }
             }
         }
-        throw new Exception("whoops");
-        
+
+        // cache results
+        this.Metadata.Errors[sourceDestination] = errors;
+
+        // throw exception?
+        if (this.Metadata.Errors.ContainsKey(sourceDestination) && this.Metadata.Errors[sourceDestination].Any())
+        {
+            throw new MapperBuildException("Error occurred during build phase. See Errors collection for more information", this.Metadata.Errors[sourceDestination]);
+        }
+
+        // return mapping
+        return this.Metadata.Mappers[sourceDestination];
     }
 
     #endregion
@@ -93,19 +128,6 @@ public class MapperBuilder
     }
 
     /// <summary>
-    /// Gets the mapping rules for a SourceDestination pairing.
-    /// </summary>
-    /// <param name="sourceDestination">The source and destination types.</param>
-    /// <returns></returns>
-    internal MapperDelegate GetMapperFor(SourceDestination sourceDestination)
-    {
-        Build(sourceDestination);
-
-        // Return mapping rules for the source/destination pair
-        return this.Metadata.Mappers[sourceDestination];
-    }
-
-    /// <summary>
     /// Returns the creator delegate for a type.
     /// </summary>
     /// <param name="type">The type.</param>
@@ -121,86 +143,13 @@ public class MapperBuilder
 
     #region Private Core Build Methods
 
-    /// <summary>
-    /// Builds a source + destination mapping ruleset.
-    /// </summary>
-    /// <param name="sourceDestination"></param>
-    /// <exception cref="MapperBuildException"></exception>
-    public void Build(SourceDestination sourceDestination)
-    {
-        if (!MapperExists(sourceDestination))
-        {
-            var errors = new List<MapperBuildError>();
-            string path = "";
-            errors = Build(sourceDestination, sourceDestination, path, errors);
-            this.Errors[sourceDestination] = errors;
-        }
-        if (this.Errors.ContainsKey(sourceDestination) && this.Errors[sourceDestination].Any())
-        {
-            throw new MapperBuildException("Error occurred during build phase. See Errors collection for more information", this.Errors[sourceDestination]);
-        }
-    }
-
-    private List<MapperBuildError> Build(SourceDestination sourceDestination, SourceDestination memberSourceDestination, string path, List<MapperBuildError> errors)
-    {
-        // validations
-        if (memberSourceDestination.Destination.IsInterface)
-        {
-            errors.Add(new MapperBuildError(memberSourceDestination.Destination, MapperEndPoint.Destination, path, null, $"Destination type cannot be interface."));
-            return errors;
-        }
-
-        var sourceConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == memberSourceDestination.Source).Value;
-        var destinationConfig = this.Configuration.Config.Types.FirstOrDefault(c => c.Value.Type == memberSourceDestination.Destination).Value;
-
-        // Do we have the source + destination types registered?
-        if (sourceConfig == null)
-        {
-            errors.Add(new MapperBuildError(memberSourceDestination.Source, MapperEndPoint.Source, path, null, $"Source type not registered."));
-        }
-        if (destinationConfig == null)
-        {
-            errors.Add(new MapperBuildError(memberSourceDestination.Destination, MapperEndPoint.Destination, path, null, $"Destination type not registered."));
-        }
-
-        if (sourceConfig == null || destinationConfig == null)
-        {
-            // cannot proceed. Exit early.
-            return errors;
-        }
-
-        // Check whether types have been built?
-        if (!Metadata.Types.ContainsKey(memberSourceDestination.Source))
-        {
-            BuildType(memberSourceDestination.Source, path, errors);
-            AddCalculations(memberSourceDestination.Source, path, errors);
-        }
-
-        if (!Metadata.Types.ContainsKey(memberSourceDestination.Destination))
-        {
-            BuildType(memberSourceDestination.Destination, path, errors);
-            AddCalculations(memberSourceDestination.Destination, path, errors);
-        }
-
-        // At this point, the types are built
-        var sourceBuild = Metadata.Types[memberSourceDestination.Source];
-        var destinationBuild = Metadata.Types[memberSourceDestination.Destination];
-
-        // Validate each type separately
-        ValidateType(sourceBuild, path, errors);
-        ValidateType(destinationBuild, path, errors);
-
-        // Do end point validation
-        EndPointValidation(sourceBuild, destinationBuild, path, errors);
-
-        // Build Mappings
-        this.Metadata.Mappers[sourceDestination] = GetMapper(sourceDestination);
-        return errors;
-    }
-
     private void BuildType(Type type, string path, List<MapperBuildError> errors)
     {
         var configType = this.Configuration.Config.Types[type];
+        if (configType == null)
+        {
+            errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, null, $"Type not registered in configuration."));
+        }
 
         IMemberResolver? resolver = null;
 
@@ -270,6 +219,12 @@ public class MapperBuilder
 
         // Add to metadata
         this.Metadata.Types[type] = buildType;
+
+        // Add calculations
+        AddCalculations(type, path, errors);
+
+        // Validate Type
+        ValidateType(buildType, path, errors);
     }
 
     /// <summary>
@@ -370,43 +325,6 @@ public class MapperBuilder
             foreach (var member in members)
             {
                 errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, path, member.MemberName, "Member internal name not unique."));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Validates the source and destinations in respect of the end-point validation rules provided. 
-    /// </summary>
-    /// <returns></returns>
-    private void EndPointValidation(BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
-    {
-        if ((sourceBuild.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
-        {
-            // check all source member rules map to destination rules.
-            var unmappedSourceMembers = sourceBuild
-                .Members
-                .Where(m => destinationBuild
-                    .Members
-                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
-
-            foreach (var item in unmappedSourceMembers)
-            {
-                errors.Add(new MapperBuildError(sourceBuild.Type, MapperEndPoint.Source, path, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
-            }
-        }
-
-        if ((destinationBuild.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
-        {
-            // check all source member rules map to destination rules.
-            var unmappedDestinationMembers = destinationBuild
-                .Members
-                .Where(m => sourceBuild
-                    .Members
-                    .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
-
-            foreach (var item in unmappedDestinationMembers)
-            {
-                errors.Add(new MapperBuildError(destinationBuild.Type, MapperEndPoint.Destination, path, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
             }
         }
     }

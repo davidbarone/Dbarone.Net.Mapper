@@ -24,7 +24,7 @@ public class MapStructsTests
         );
 
         var v1 = new VectorStructA() { X = 3, Y = 4 };
-        var v2 = mapper.MapOne<VectorStructA, VectorStructB>(v1);
+        var v2 = mapper.Map<VectorStructA, VectorStructB>(v1);
         Assert.Equal(3, v2.X);
     }
 
@@ -37,7 +37,7 @@ public class MapStructsTests
         );
 
         var v1 = new VectorStructA() { X = 3, Y = 4 };
-        var v2 = mapper.MapOne<VectorStructA, VectorStructA>(v1);
+        var v2 = mapper.Map<VectorStructA, VectorStructA>(v1);
         Assert.Equal(3, v2.X);
     }
 
