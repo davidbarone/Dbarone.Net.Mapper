@@ -217,10 +217,6 @@ public class MapperBuilder
                 {
                     errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No getter for member."));
                 }
-                else if (setter == null)
-                {
-                    errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No setter for member."));
-                }
                 else
                 {
                     // add member to build
