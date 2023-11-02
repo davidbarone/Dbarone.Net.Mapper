@@ -45,6 +45,28 @@ public class MapperBuilder
         };
     }
 
+    #region Public Methods
+
+    /// <summary>
+    /// Gets a mapper delegate which is able to map the SourceDestination pairing.
+    /// </summary>
+    /// <param name="sourceDestination"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public MapperDelegate GetMapper(SourceDestination sourceDestination) {
+        foreach (var provider in this.MapperProviders) {
+            var sourceBuild = this.Metadata.Types[sourceDestination.Source];
+            var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
+            if (provider.CanCreateMapFor(sourceBuild, destinationBuild, this)) {
+                return provider.GetMapFor(sourceBuild, destinationBuild, this);
+            }
+        }
+        throw new Exception("whoops");
+        
+    }
+
+    #endregion
+
     /// <summary>
     /// Gets the build metadata for a single type.
     /// </summary>
@@ -99,6 +121,11 @@ public class MapperBuilder
 
     #region Private Core Build Methods
 
+    /// <summary>
+    /// Builds a source + destination mapping ruleset.
+    /// </summary>
+    /// <param name="sourceDestination"></param>
+    /// <exception cref="MapperBuildException"></exception>
     public void Build(SourceDestination sourceDestination)
     {
         if (!MapperExists(sourceDestination))
@@ -306,57 +333,6 @@ public class MapperBuilder
         return method;
     }
 
-    public MapperDelegate GetMapper(SourceDestination sourceDestination) {
-        foreach (var provider in this.MapperProviders) {
-            var sourceBuild = this.Metadata.Types[sourceDestination.Source];
-            var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
-            if (provider.CanCreateMapFor(sourceBuild, destinationBuild, this)) {
-                return provider.GetMapFor(sourceBuild, destinationBuild, this);
-            }
-        }
-        throw new Exception("whoops");
-    }
-
-    internal void BuildMapRules(SourceDestination sourceDestination, BuildType sourceBuild, BuildType destinationBuild, string path, List<MapperBuildError> errors)
-    {
-        IList<MapperDelegate> mappings = new List<MapperDelegate>();
-
-        // Check if types map directly via assignment
-        var implicitOperator = GetImplicitCast(sourceDestination.Source, sourceDestination.Destination);
-
-        if (sourceDestination.Source == sourceDestination.Destination)
-        {
-            MapperDelegate mapping = (s, d) =>
-            {
-                d = s;
-                return d;
-            };
-            mappings.Add(mapping);
-        }
-        else if (implicitOperator != null)
-        {
-            MapperDelegate mapping = (s, d) =>
-            {
-                d = implicitOperator.Invoke(s, new object[] { })!;
-                return d;
-            };
-            mappings.Add(mapping);
-        }
-        else
-        {
-
-
-
-
-
-
-
-
-
-
-
-        }
-    }
 
     #endregion
 
