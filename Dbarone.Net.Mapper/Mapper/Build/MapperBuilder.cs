@@ -290,6 +290,11 @@ public class MapperBuilder
         {
             this.Configuration.Config.Resolvers.Add(new ClassMemberResolver());
         }
+
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(InterfaceMemberResolver)))
+        {
+            this.Configuration.Config.Resolvers.Add(new InterfaceMemberResolver());
+        }
     }
 
     private void ValidateType(BuildType buildType)

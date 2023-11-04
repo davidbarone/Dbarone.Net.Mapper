@@ -61,6 +61,11 @@ public class BuildType
     public bool IsEnumerable => this.Type.IsEnumerableType();
 
     /// <summary>
+    /// Gets the inner element type of collections or sequence types
+    /// </summary>
+    public Type? EnumerableElementType => this.Type.GetEnumerableElementType();
+
+    /// <summary>
     /// Returns true if the type is a generic type.
     /// </summary>
     public bool IsGenericType => this.Type.IsGenericType;
@@ -69,33 +74,6 @@ public class BuildType
     /// Returns true if the type is an open generic type, for example: List[]. 
     /// </summary>
     public bool isOpenGeneric => this.Type.IsGenericTypeDefinition;
-
-    /// <summary>
-    /// Gets the inner element type of collections or sequence types
-    /// </summary>
-    public Type ElementType
-    {
-        get
-        {
-            if (this.Type.IsArray)
-            {
-                // Type is array - get the array element type
-                return this.Type.GetElementType()!;
-            }
-            else if (this.Type.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(this.Type.GetGenericTypeDefinition()))
-            {
-                // Type is generic type implementing IEnumerable<>. Get the generic type parameter
-                return this.Type.GetGenericArguments()[0];
-            }
-            else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(this.Type)) {
-                return typeof(object);
-            }
-            else
-            {
-                throw new MapperBuildException(this.Type, MapperEndPoint.None, "", null, "Type not an IEnumerable or sequence type.");
-            }
-        }
-    }
 
     #endregion
 }
