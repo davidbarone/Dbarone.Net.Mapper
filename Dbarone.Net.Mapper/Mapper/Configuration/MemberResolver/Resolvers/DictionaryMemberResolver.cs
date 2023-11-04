@@ -71,7 +71,7 @@ public class DictionaryMemberResolver : IMemberResolver
     /// <param name="type">The type to create the CreateInstance delegate for.</param>
     /// <param name="args">The arguments to provide to the constructor function to create the new instance.</param>
     /// <returns>Returns a delegate that, when invoked, will create a new instance of an object.</returns>
-    public CreateInstance CreateInstance(Type type, params object[] args)
+    public CreateInstance? CreateInstance(Type type, params object[] args)
     {
         List<ParameterExpression> parameters = new List<ParameterExpression>();
 

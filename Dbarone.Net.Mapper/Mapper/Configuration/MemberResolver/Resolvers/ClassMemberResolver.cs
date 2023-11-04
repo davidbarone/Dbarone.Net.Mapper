@@ -44,7 +44,7 @@ public class ClassMemberResolver : IMemberResolver
     /// <param name="type">The type to create the delegate for.</param>
     /// <param name="args">The arguments provides to the constructor.</param>
     /// <returns>Returns a delegate that can create an instance.</returns>
-    public virtual CreateInstance CreateInstance(Type type, params object[] args)
+    public virtual CreateInstance? CreateInstance(Type type, params object[] args)
     {
         List<ParameterExpression> parameters = new List<ParameterExpression>();
 

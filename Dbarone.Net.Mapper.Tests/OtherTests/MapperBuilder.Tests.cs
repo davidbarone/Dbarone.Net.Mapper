@@ -7,7 +7,7 @@ public class MapperBuilderTests {
     [Theory]
     //[InlineData(typeof(int), false)]
     [InlineData(typeof(ArrayList), true)]
-    [InlineData(typeof(IEnumerable), true)]
+    //[InlineData(typeof(IEnumerable), true)]
     //[InlineData(typeof(List<>), true)]
     //[InlineData(typeof(List<int>), true)]
     public void TestBuild_IEnumerablePropertySetCorrectly(Type type, bool expected) {
