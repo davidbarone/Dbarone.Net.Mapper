@@ -21,7 +21,6 @@ public class ImplicitOperatorTest
 
 public class ImplicitOperatorMapperProviderTests
 {
-
     [Fact]
     public void Map_Int_To_Float_Should_Map()
     {

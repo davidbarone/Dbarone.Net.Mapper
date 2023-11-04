@@ -20,7 +20,6 @@ public class MapperBuilder
     /// </summary>
     internal BuildMetadataCache Metadata { get; set; }
 
-
     private IMapperProvider[] MapperProviders;
 
     /// <summary>
@@ -65,14 +64,14 @@ public class MapperBuilder
             // source
             if (!this.Metadata.Types.ContainsKey(sourceDestination.Source))
             {
-                this.BuildType(sourceDestination.Source, path, errors);
+                this.BuildType(sourceDestination.Source);
             }
             var sourceBuild = this.Metadata.Types[sourceDestination.Source];
 
             // destination
             if (!this.Metadata.Types.ContainsKey(sourceDestination.Destination))
             {
-                this.BuildType(sourceDestination.Destination, path, errors);
+                this.BuildType(sourceDestination.Destination);
             }
             var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
 
@@ -97,14 +96,23 @@ public class MapperBuilder
         // throw exception?
         if (this.Metadata.Errors.ContainsKey(sourceDestination) && this.Metadata.Errors[sourceDestination].Any())
         {
-            throw new MapperBuildException("Error occurred during build phase. See Errors collection for more information", this.Metadata.Errors[sourceDestination]);
+            throw new MapperBuildException(this.Metadata.Errors[sourceDestination]);
         }
 
         // return mapping
         return this.Metadata.Mappers[sourceDestination];
     }
 
-    #endregion
+    /// <summary>
+    /// Pre-emptively builds all type information provided by the configuration.
+    /// </summary>
+    public void Build()
+    {
+        foreach (var item in this.Configuration.Config.Types.Keys)
+        {
+            BuildType(item);
+        }
+    }
 
     /// <summary>
     /// Gets the build metadata for a single type.
@@ -112,7 +120,7 @@ public class MapperBuilder
     /// <param name="type">The type to get build information for.</param>
     /// <returns>Returns the build information.</returns>
     /// <exception cref="Exception">Throws an exception if the build type is not found.</exception>
-    internal BuildType GetBuildTypeFor(Type type)
+    public BuildType GetBuildTypeFor(Type type)
     {
         if (!Metadata.Types.ContainsKey(type))
         {
@@ -120,6 +128,8 @@ public class MapperBuilder
         }
         return Metadata.Types[type];
     }
+
+    #endregion
 
     /// <summary>
     /// Returns true if the source and destination type pairing exists.
@@ -147,12 +157,14 @@ public class MapperBuilder
 
     #region Private Core Build Methods
 
-    private void BuildType(Type type, string path, List<MapperBuildError> errors)
+    private void BuildType(Type type)
     {
+        List<MapperBuildError> errors = new List<MapperBuildError>();
+
         var configType = this.Configuration.Config.Types[type];
         if (configType == null)
         {
-            errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, null, $"Type not registered in configuration."));
+            throw new MapperBuildException(type, MapperEndPoint.None, "", null, "Type not registered in configuration.");
         }
 
         IMemberResolver? resolver = null;
@@ -169,66 +181,31 @@ public class MapperBuilder
 
         if (resolver == null)
         {
-            errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, null, "No resolver found for type."));
-            return;
+            throw new MapperBuildException(type, MapperEndPoint.None, "", null, "No resolver found for type.");
         }
 
-        // Get members
-        string[] members = new string[] { };
-        List<BuildMember> buildMembers = new List<BuildMember>();
-        if (!resolver.DeferMemberResolution)
-        {
-            members = resolver.GetTypeMembers(configType.Type, configType.Options);
-
-            foreach (var member in members)
-            {
-                var dataType = resolver.GetMemberType(configType.Type, member, configType.Options);
-                var getter = resolver.GetGetter(configType.Type, member, configType.Options);
-                var setter = resolver.GetSetter(configType.Type, member, configType.Options);
-                var ignore = GetMemberInclusionStatus(configType.Type, member);
-                var internalName = GetInternalName(configType.Type, member, configType.Options.MemberRenameStrategy);
-
-                // validations
-                if (dataType == null)
-                {
-                    errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "Data type not known for member."));
-                }
-                else if (getter == null)
-                {
-                    errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No getter for member."));
-                }
-                else
-                {
-                    // add member to build
-                    buildMembers.Add(new BuildMember
-                    {
-                        MemberName = member,
-                        DataType = dataType,
-                        Getter = getter,
-                        Setter = setter,
-                        Ignore = ignore,
-                        InternalMemberName = internalName
-                    });
-                }
-            }
-        }
 
         BuildType buildType = new BuildType
         {
             Type = configType.Type,
             Options = configType.Options,
             MemberResolver = resolver,
-            Members = buildMembers
         };
 
         // Add to metadata
         this.Metadata.Types[type] = buildType;
 
-        // Add calculations
-        AddCalculations(type, path, errors);
+        if (!buildType.isOpenGeneric)
+        {
+            // Add members
+            AddMembers(type);
 
-        // Validate Type
-        ValidateType(buildType, path, errors);
+            // Add calculations
+            AddCalculations(type);
+
+            // Validate Type
+            ValidateType(buildType);
+        }
     }
 
     /// <summary>
@@ -315,8 +292,10 @@ public class MapperBuilder
         }
     }
 
-    private void ValidateType(BuildType buildType, string path, List<MapperBuildError> errors)
+    private void ValidateType(BuildType buildType)
     {
+        List<MapperBuildError> errors = new List<MapperBuildError>();
+
         // Check no duplicate internal names
         var duplicates = buildType.Members
             .GroupBy(g => g.InternalMemberName)
@@ -328,7 +307,55 @@ public class MapperBuilder
             var members = buildType.Members.Where(m => m.InternalMemberName == duplicate);
             foreach (var member in members)
             {
-                errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, path, member.MemberName, "Member internal name not unique."));
+                errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, "", member.MemberName, "Member internal name not unique."));
+            }
+        }
+
+        if (errors.Any())
+        {
+            throw new MapperBuildException(errors);
+        }
+    }
+
+    private void AddMembers(Type type)
+    {
+        var buildType = this.GetBuildTypeFor(type);
+        var resolver = buildType.MemberResolver;
+        var configType = this.Configuration.Config.Types[type];
+
+        // Get members
+        string[] members = new string[] { };
+        List<BuildMember> buildMembers = new List<BuildMember>();
+        if (!resolver.DeferMemberResolution)
+        {
+            members = resolver.GetTypeMembers(configType.Type, configType.Options);
+
+            foreach (var member in members)
+            {
+                var dataType = resolver.GetMemberType(configType.Type, member, configType.Options);
+                var getter = resolver.GetGetter(configType.Type, member, configType.Options);
+                var setter = resolver.GetSetter(configType.Type, member, configType.Options);
+                var ignore = GetMemberInclusionStatus(configType.Type, member);
+                var internalName = GetInternalName(configType.Type, member, configType.Options.MemberRenameStrategy);
+
+                // validations
+                if (dataType == null)
+                {
+                    throw new MapperBuildException(type, MapperEndPoint.None, "", member, "Data type not known for member.");
+                }
+                else
+                {
+                    // add member to build
+                    buildMembers.Add(new BuildMember
+                    {
+                        MemberName = member,
+                        DataType = dataType,
+                        Getter = getter,
+                        Setter = setter,
+                        Ignore = ignore,
+                        InternalMemberName = internalName
+                    });
+                }
             }
         }
     }
@@ -380,7 +407,7 @@ public class MapperBuilder
         return internalMemberName;
     }
 
-    private void AddCalculations(Type type, string path, List<MapperBuildError> errors)
+    private void AddCalculations(Type type)
     {
         // Add calculations to existing type
         foreach (var calculation in this.Configuration.Config.Calculations.Where(c => c.SourceType == type))

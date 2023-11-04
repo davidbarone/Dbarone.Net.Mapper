@@ -32,12 +32,12 @@ public class BuildMember
     /// <summary>
     /// Delegate method to get the value from the instance. Returns a <see cref="Getter" /> object.
     /// </summary>
-    public Getter Getter { get; set; } = default!;
+    public Getter? Getter { get; set; } = default!;
 
     /// <summary>
     /// Delegate method to set the value to the instance. Returns a <see cref="Setter" /> object.
     /// </summary>
-    public Setter Setter { get; set; } = default!;
+    public Setter? Setter { get; set; } = default!;
 
     /// <summary>
     /// Set to true if a calculation.

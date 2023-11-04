@@ -1,6 +1,7 @@
 namespace Dbarone.Net.Mapper;
 using System.Reflection;
 using System.Linq.Expressions;
+using Dbarone.Net.Extensions;
 
 /// <summary>
 /// General resolver for classes.
@@ -72,9 +73,9 @@ public class ClassMemberResolver : IMemberResolver
             throw new ArgumentException(nameof(memberName));
         }
 
-        // if has no read
+        // if has no read or is indexer property
         var memberInfoAsPropertyInfo = memberInfo as PropertyInfo;
-        if (memberInfoAsPropertyInfo != null && memberInfoAsPropertyInfo.CanRead == false) return null;
+        if (memberInfoAsPropertyInfo != null && (memberInfoAsPropertyInfo.CanRead == false || memberInfoAsPropertyInfo.IsIndexerProperty() == true)) return null;
 
         var obj = Expression.Parameter(typeof(object), "o");
 
@@ -111,8 +112,8 @@ public class ClassMemberResolver : IMemberResolver
         var fieldInfo = memberInfo as FieldInfo;
         var propertyInfo = memberInfo as PropertyInfo;
 
-        // if is property and has no write
-        if (propertyInfo != null && propertyInfo.CanWrite == false) return null;
+        // if is property and has no write or is indexer property
+        if (propertyInfo != null && (propertyInfo.CanWrite == false || propertyInfo.IsIndexerProperty() == true)) return null;
 
         // if *Structs*, use direct reflection - net35 has no Expression.Unbox to cast target
         if (type.GetTypeInfo().IsValueType)
@@ -170,7 +171,7 @@ public class ClassMemberResolver : IMemberResolver
         {
             return propertyInfo.PropertyType;
         }
-        else if (fieldInfo!=null)
+        else if (fieldInfo != null)
         {
             return fieldInfo.FieldType;
         }

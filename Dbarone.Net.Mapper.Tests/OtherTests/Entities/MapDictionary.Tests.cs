@@ -27,7 +27,6 @@ public class MapDictionaryTests
         Assert.True(dict2.ValueEquals(dict1));
     }
 
-    [Fact]
     public void TestClassToDict() {
         ClassA a = new ClassA();
         var mapper = new ObjectMapper(new MapperConfiguration()

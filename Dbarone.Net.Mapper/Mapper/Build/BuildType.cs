@@ -1,5 +1,6 @@
 namespace Dbarone.Net.Mapper;
 using System.Linq.Expressions;
+using System.Reflection;
 using Dbarone.Net.Extensions;
 
 /// <summary>
@@ -11,16 +12,6 @@ public class BuildType
     /// The type the metadata relates to.
     /// </summary>
     public Type Type { get; set; } = default!;
-
-    /// <summary>
-    /// Returns true if the type is nullable value type.
-    /// </summary>
-    public bool IsNullable => this.Type.IsNullable();
-
-    /// <summary>
-    /// If the type is a nullable value type, returns the underlying type.
-    /// </summary>
-    public Type? NullableUnderlyingType => this.IsNullable ? Nullable.GetUnderlyingType(this.Type) : null;
 
     /// <summary>
     /// Defines the options for the type.
@@ -51,4 +42,60 @@ public class BuildType
     /// Provides a member filtering rule.
     /// </summary>
     public MemberFilterDelegate? MemberFilterRule { get; set; } = null;
+
+    #region Reflection Helper Attributes
+
+    /// <summary>
+    /// Returns true if the type is nullable value type.
+    /// </summary>
+    public bool IsNullable => this.Type.IsNullable();
+
+    /// <summary>
+    /// If the type is a nullable value type, returns the underlying type.
+    /// </summary>
+    public Type? NullableUnderlyingType => this.IsNullable ? Nullable.GetUnderlyingType(this.Type) : null;
+
+    /// <summary>
+    /// Returns true if the type is an IEnumerable type. 
+    /// </summary>
+    public bool IsEnumerable => this.Type.IsEnumerableType();
+
+    /// <summary>
+    /// Returns true if the type is a generic type.
+    /// </summary>
+    public bool IsGenericType => this.Type.IsGenericType;
+
+    /// <summary>
+    /// Returns true if the type is an open generic type, for example: List[]. 
+    /// </summary>
+    public bool isOpenGeneric => this.Type.IsGenericTypeDefinition;
+
+    /// <summary>
+    /// Gets the inner element type of collections or sequence types
+    /// </summary>
+    public Type ElementType
+    {
+        get
+        {
+            if (this.Type.IsArray)
+            {
+                // Type is array - get the array element type
+                return this.Type.GetElementType()!;
+            }
+            else if (this.Type.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(this.Type.GetGenericTypeDefinition()))
+            {
+                // Type is generic type implementing IEnumerable<>. Get the generic type parameter
+                return this.Type.GetGenericArguments()[0];
+            }
+            else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(this.Type)) {
+                return typeof(object);
+            }
+            else
+            {
+                throw new MapperBuildException(this.Type, MapperEndPoint.None, "", null, "Type not an IEnumerable or sequence type.");
+            }
+        }
+    }
+
+    #endregion
 }

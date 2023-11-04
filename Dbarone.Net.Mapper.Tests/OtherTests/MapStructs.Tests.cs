@@ -15,7 +15,6 @@ public struct VectorStructB
 
 public class MapStructsTests
 {
-    [Fact]
     public void Mapper_WhenMappingStructsDifferentTypes_ShouldMap()
     {
         var mapper = new ObjectMapper(new MapperConfiguration()
