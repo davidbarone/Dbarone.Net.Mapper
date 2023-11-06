@@ -9,10 +9,22 @@ public class EnumerableMapperProvider
         var mapper = new ObjectMapper(new MapperConfiguration()
             .RegisterType<int[]>()
             .RegisterType<float[]>()
+            .RegisterType<int>()
+            .RegisterType<float>()
         );
 
         int[] ints = new int[] { 1, 2, 3, 4, 5 };
         var floats = mapper.Map<int[], float[]>(ints);
         Assert.Equal((float)1, floats.First());
+    }
+
+    [Fact]
+    public void Test() {
+        object[] o = new object[10];
+        var t = o.GetType();
+        o.cas
+        var m = t.GetMethod("Cast");
+        var v = m;
+
     }
 }
