@@ -36,6 +36,7 @@ public class MapperBuilder
             new IConvertibleMapperProvider(),
             new ConverterMapperProvider(),
             new ImplicitOperatorMapperProvider(),
+            new EnumerableMapperProvider(),
             new MemberwiseMapperProvider()
         };
     }

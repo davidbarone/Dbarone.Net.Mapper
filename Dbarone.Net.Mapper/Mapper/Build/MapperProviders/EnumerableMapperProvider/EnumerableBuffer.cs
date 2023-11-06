@@ -72,7 +72,7 @@ public class EnumerableBuffer
     public IEnumerable ToGenericList(Type elementType)
     {
         // Get the cast method
-        var castMethod = this.Buffer.GetType().GetMethod("Cast");
+        var castMethod = this.Buffer.GetType().GetMethod("Cast", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
         // Get the cast method for the element type parameter, and invoke;
         var results = castMethod.MakeGenericMethod(elementType).Invoke(this.Buffer, null);
         return results as IEnumerable;
@@ -140,7 +140,8 @@ public class EnumerableBuffer
                     buffer = newBuffer;
                 }
                 var item = element;
-                if (mapper!=null) {
+                if (mapper != null)
+                {
                     item = mapper(item, null);
                 }
 
@@ -148,7 +149,20 @@ public class EnumerableBuffer
                 count++;
             }
         }
-        this.Count = count;
-        this.Buffer = buffer;
+
+        if (count == 0)
+        {
+            this.Buffer = new object[0];
+        }
+        else if (count == buffer.Length)
+        {
+            this.Count = count;
+            this.Buffer = buffer;
+        } else {
+            this.Count = count;
+            object[] final = new object[count];
+            Array.Copy(buffer, 0, final, 0, count);
+            this.Buffer = final;
+        }
     }
 }
