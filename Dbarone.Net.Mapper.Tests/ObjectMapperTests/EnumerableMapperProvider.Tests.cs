@@ -17,14 +17,4 @@ public class EnumerableMapperProvider
         var floats = mapper.Map<int[], float[]>(ints);
         Assert.Equal((float)1, floats.First());
     }
-
-    [Fact]
-    public void Test() {
-        object[] o = new object[10];
-        var t = o.GetType();
-        o.cas
-        var m = t.GetMethod("Cast");
-        var v = m;
-
-    }
 }

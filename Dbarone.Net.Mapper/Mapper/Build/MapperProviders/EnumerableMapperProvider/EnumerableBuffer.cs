@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Dynamic;
+using Dbarone.Net.Extensions;
 
 namespace Dbarone.Net.Extensions;
 
@@ -72,9 +73,9 @@ public class EnumerableBuffer
     public IEnumerable ToGenericList(Type elementType)
     {
         // Get the cast method
-        var castMethod = this.Buffer.GetType().GetMethod("Cast", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
+        var castMethod = typeof(IEnumerable).GetExtensionMethods().First(m => m.Name == "Cast");
         // Get the cast method for the element type parameter, and invoke;
-        var results = castMethod.MakeGenericMethod(elementType).Invoke(this.Buffer, null);
+        var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { this.Buffer });
         return results as IEnumerable;
     }
 
@@ -85,10 +86,9 @@ public class EnumerableBuffer
 
     public IEnumerable ToGenericIEnumerable(Type elementType)
     {
-        // Get the cast method
-        var castMethod = this.Buffer.GetType().GetMethod("Cast");
+        var castMethod = typeof(IEnumerable).GetExtensionMethods().First(m => m.Name == "Cast");
         // Get the cast method for the element type parameter, and invoke;
-        var results = castMethod.MakeGenericMethod(elementType).Invoke(this.Buffer, null);
+        var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { this.Buffer });
         return results as IEnumerable;
     }
 
@@ -99,11 +99,11 @@ public class EnumerableBuffer
 
     public IEnumerable ToArray(Type elementType)
     {
-        // Get the cast method
         var list = this.ToGenericList(elementType);
-        var castMethod = list.GetType().GetMethod("ToArray");
+
+        var castMethod = typeof(IEnumerable<>).GetExtensionMethods().First(m => m.Name == "ToArray");
         // Get the cast method for the element type parameter, and invoke;
-        var results = castMethod.MakeGenericMethod(elementType).Invoke(this.Buffer, null);
+        var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { list });
         return results as IEnumerable;
     }
 
@@ -158,7 +158,9 @@ public class EnumerableBuffer
         {
             this.Count = count;
             this.Buffer = buffer;
-        } else {
+        }
+        else
+        {
             this.Count = count;
             object[] final = new object[count];
             Array.Copy(buffer, 0, final, 0, count);
