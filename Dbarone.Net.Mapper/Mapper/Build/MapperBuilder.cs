@@ -162,7 +162,12 @@ public class MapperBuilder
     {
         List<MapperBuildError> errors = new List<MapperBuildError>();
 
+        if (!this.Configuration.Config.Types.ContainsKey(type) && this.Configuration.Config.AutoRegisterTypes) {
+            this.Configuration.RegisterType(type);
+        } 
+
         var configType = this.Configuration.Config.Types[type];
+
         if (configType == null)
         {
             throw new MapperBuildException(type, MapperEndPoint.None, "", null, "Type not registered in configuration.");

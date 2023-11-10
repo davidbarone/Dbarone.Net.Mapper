@@ -6,6 +6,12 @@ namespace Dbarone.Net.Mapper;
 public class Config
 {
     /// <summary>
+    /// If set to true, types will be automatically registered on demand with
+    /// default configuration if not registered in advance
+    /// </summary>
+    public bool AutoRegisterTypes { get; set; }
+
+    /// <summary>
     /// List of resolvers used to provide mapper services for types.
     /// </summary>
     public IList<IMemberResolver> Resolvers { get; set; } = new List<IMemberResolver>();

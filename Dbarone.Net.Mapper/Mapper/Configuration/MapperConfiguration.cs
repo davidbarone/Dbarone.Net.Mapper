@@ -16,6 +16,20 @@ public class MapperConfiguration
 
     #endregion
 
+    #region AutoRegisterTypes
+
+    /// <summary>
+    /// Sets the auto-register types flag.
+    /// </summary>
+    /// <param name="autoRegisterTypes">The auto-register types flag.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration SetAutoRegisterTypes(bool autoRegisterTypes) {
+        this.Config.AutoRegisterTypes = autoRegisterTypes;
+        return this;
+    }
+
+    #endregion
+
     #region Register Resolvers
 
     /// <summary>
