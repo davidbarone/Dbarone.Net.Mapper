@@ -369,6 +369,7 @@ public class MapperBuilder
                 }
             }
         }
+        buildType.Members = buildMembers;
     }
 
     private bool GetMemberInclusionStatus(Type type, string member)

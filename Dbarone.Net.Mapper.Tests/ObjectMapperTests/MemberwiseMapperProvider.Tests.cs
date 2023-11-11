@@ -15,12 +15,11 @@ public class MemberwiseMapperProviderTests {
     [Fact]
     public void MapCustomer() {
         var mapper = new ObjectMapper(new MapperConfiguration()
-            .RegisterType<CustomerEntity>()
-            .RegisterType<CustomerDto>()
+            .SetAutoRegisterTypes(true)
         );
 
         var customerA = new CustomerEntity() { CustomerId = 123, CustomerName = "Test Customer" }; 
         var customerB = mapper.Map<CustomerEntity, CustomerDto>(customerA);
-        Assert.Equal("TestCustomer", customerB.CustomerName);
+        Assert.Equal("Test Customer", customerB.CustomerName);
     }
 }

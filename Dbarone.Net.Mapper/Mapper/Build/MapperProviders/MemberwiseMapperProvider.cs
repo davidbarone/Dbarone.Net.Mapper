@@ -68,20 +68,20 @@ public class MemberwiseMapperProvider : IMapperProvider
             var mDestinationType = to.Members.First(m => m.MemberName == member).DataType;
             var memberMapper = builder.GetMapper(new SourceDestination(mSourceType, mDestinationType));
             columnMappings[member] = memberMapper;
-            sourceMemberGetters[member] = from.MemberResolver.GetGetter(mSourceType, member, from.Options);
-            destinationMemberGetters[member] = to.MemberResolver.GetGetter(mDestinationType, member, from.Options);
-            destinationMemberSetters[member] = to.MemberResolver.GetSetter(mDestinationType, member, from.Options);
+            sourceMemberGetters[member] = from.MemberResolver.GetGetter(from.Type, member, from.Options);
+            destinationMemberGetters[member] = to.MemberResolver.GetGetter(to.Type, member, from.Options);
+            destinationMemberSetters[member] = to.MemberResolver.GetSetter(to.Type, member, from.Options);
         }
 
         MapperDelegate mapping = (s, d) =>
             {
-                var creator = to.MemberResolver.CreateInstance;
-                var instance = creator(to.Type, null);
+                var creator = to.MemberResolver.CreateInstance(to.Type,null);
+                var instance = creator();
 
                 foreach (var member in matchedMembers)
                 {
                     var memberFrom = sourceMemberGetters[member](s);
-                    var memberTo = destinationMemberGetters[member](d);
+                    var memberTo = destinationMemberGetters[member](instance);
                     var memberMapper = columnMappings[member];
                     var memberMapped = memberMapper(memberFrom, memberTo);
                     destinationMemberSetters[member](instance, memberMapped);
