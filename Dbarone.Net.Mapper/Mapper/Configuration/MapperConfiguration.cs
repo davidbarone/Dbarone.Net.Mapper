@@ -52,7 +52,7 @@ public class MapperConfiguration
     {
         if (!typeof(IMemberResolver).IsAssignableFrom(resolverType))
         {
-            throw new ArgumentException("Type must implement IMemberResolver,", "resolverType");
+            throw new MapperConfigurationException("Resolve type must implement IMemberResolver");
         }
         IMemberResolver resolver = (IMemberResolver)Activator.CreateInstance(resolverType)!;
         return RegisterResolver(resolver);
@@ -68,7 +68,7 @@ public class MapperConfiguration
     {
         if (this.Config.Resolvers.Select(r => r.GetType()).Contains(resolver.GetType()))
         {
-            throw new Exception($"Resolver {resolver.GetType()} already registered.");
+            throw new MapperConfigurationException($"Resolver {resolver.GetType()} already registered.");
         }
         this.Config.Resolvers.Add(resolver);
         return this;
@@ -297,7 +297,7 @@ public class MapperConfiguration
 
         if (this.Config.Converters.ContainsKey(sourceDestination))
         {
-            throw new Exception("A converter between these 2 types has already been defined.");
+            throw new MapperConfigurationException("A converter between these 2 types has already been defined.");
         }
 
         TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);

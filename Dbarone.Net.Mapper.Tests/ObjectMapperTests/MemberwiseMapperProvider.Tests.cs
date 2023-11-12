@@ -47,4 +47,5 @@ public class MemberwiseMapperProviderTests {
         Assert.Equal("Test Address", customerB.Address.AddressLine1);
     }
 
+
 }
