@@ -5,7 +5,7 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// The MapperConfigurationException class is used for all exceptions throw during the configuration process.
 /// </summary>
-public class MapperConfigurationException : Exception
+public class MapperConfigurationException : MapperException
 {
     /// <summary>
     /// Exception constructor.

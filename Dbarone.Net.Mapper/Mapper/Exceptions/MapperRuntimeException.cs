@@ -5,7 +5,7 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// The MapperRuntimeException class is used for all exceptions throw during the runtime mapping process.
 /// </summary>
-public class MapperRuntimeException : Exception
+public class MapperRuntimeException : MapperException
 {
     /// <summary>
     /// Exception constructor.

@@ -23,18 +23,12 @@ public class ObjectMapper
     /// <param name="toType">The type to transform the object to.</param>
     /// <param name="obj">The object being transformed from. Must be assignable to `fromType`.</param>
     /// <returns>Returns a mapped object of type `toType`.</returns>
-    /// <exception cref="Exception"></exception>
-    /// <exception cref="MapperException"></exception>
     public object? Map(Type fromType, Type toType, object? obj)
     {
         SourceDestination sourceDestination = new SourceDestination(fromType, toType);
         var mapper = Builder.GetMapper(sourceDestination);
         var to = mapper(obj, null);
         return to;
-
-        //Builder.Build();
-        //Dictionary<SourceDestinationPath, SourceDestinationPathRules> dynamicMapRules = new Dictionary<SourceDestinationPath, SourceDestinationPathRules>();
-        //return MapInternal(new SourceDestination(fromType, toType), fromType, toType, obj, "", dynamicMapRules);
     }
 
     /// <summary>

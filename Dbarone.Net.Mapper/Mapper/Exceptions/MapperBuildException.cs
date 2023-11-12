@@ -5,7 +5,7 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// The MapperBuild exception class is used for all exceptions throw during the build process of the mapper.
 /// </summary>
-public class MapperBuildException : Exception
+public class MapperBuildException : MapperException
 {
     /// <summary>
     /// The list of notifications occurring during the build process.
