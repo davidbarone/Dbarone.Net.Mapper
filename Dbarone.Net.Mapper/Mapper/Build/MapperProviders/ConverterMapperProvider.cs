@@ -11,7 +11,7 @@ public class ConverterMapperProvider : IMapperProvider
         return builder.Configuration.Config.Converters.ContainsKey(sourceDestination);
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         SourceDestination sourceDestination = new SourceDestination(from.Type, to.Type);
         var converter = builder.Configuration.Config.Converters[sourceDestination];

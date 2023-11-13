@@ -19,8 +19,6 @@ public interface IMapperProvider {
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <param name="builder"></param>
-    /// <param name="path"></param>
-    /// <param name="errors"></param>
     /// <returns></returns>
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors);
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder);
 }

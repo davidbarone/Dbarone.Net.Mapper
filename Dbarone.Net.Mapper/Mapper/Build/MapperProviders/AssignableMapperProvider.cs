@@ -17,7 +17,7 @@ public class AssignableMapperProvider : IMapperProvider
         return to.Type.IsAssignableFrom(from.Type);
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         MapperDelegate mapping = (s, d) =>
             {

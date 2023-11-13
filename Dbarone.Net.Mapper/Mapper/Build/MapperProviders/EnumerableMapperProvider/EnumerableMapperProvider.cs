@@ -17,7 +17,7 @@ public class EnumerableMapperProvider : IMapperProvider
         return to.Type.IsEnumerableType() && from.Type.IsEnumerableType();
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         var fromElementType = from.EnumerableElementType;
         var toElementType = to.EnumerableElementType;

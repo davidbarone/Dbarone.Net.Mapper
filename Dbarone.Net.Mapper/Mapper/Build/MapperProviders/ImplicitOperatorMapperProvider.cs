@@ -33,12 +33,12 @@ public class ImplicitOperatorMapperProvider : IMapperProvider
         return (implicitOperator != null);
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         var implicitOperator = GetImplicitCast(from.Type, to.Type);
         if (implicitOperator == null)
         {
-            throw new Exception("whoops");
+            throw new MapperBuildException(from.Type, MapperEndPoint.Source, "", "", $"No implicit cast exists to {to.Type}.");
         }
         MapperDelegate mapping = (s, d) =>
         {
