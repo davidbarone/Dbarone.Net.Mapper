@@ -31,10 +31,10 @@ public class MapperBuildException : MapperException
     /// <summary>
     /// Exception constructor.
     /// </summary>
-    public MapperBuildException(Type type, MapperEndPoint endPoint, string path, string memberName, string message) : base("An error has occurred during the build phase. Refer to the inner Errors property for details.")
+    public MapperBuildException(Type type, MapperEndPoint endPoint, string memberName, string message) : base("An error has occurred during the build phase. Refer to the inner Errors property for details.")
     {
         this.Errors = new List<MapperBuildError>{
-            new MapperBuildError(type, endPoint, path, memberName, message)
+            new MapperBuildError(type, endPoint, memberName, message)
         };
     }
 }

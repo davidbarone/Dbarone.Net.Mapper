@@ -27,7 +27,7 @@ public class IConvertibleMapperProvider : IMapperProvider
         return typeof(IConvertible).IsAssignableFrom(from.Type) && this.ValidToTypes.Contains(to.Type);
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         // Member types differ, but converter exists - convert then assign value to destination object.
         MapperDelegate mapping = (s, d) =>

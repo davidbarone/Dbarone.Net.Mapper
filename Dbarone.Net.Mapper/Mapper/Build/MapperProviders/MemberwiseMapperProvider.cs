@@ -1,14 +1,16 @@
 using Dbarone.Net.Mapper;
 
 public class MemberwiseMapperProvider : IMapperProvider
+
 {
     public bool CanCreateMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
         return from.MemberResolver.HasMembers && to.MemberResolver.HasMembers;
     }
 
-    private void EndPointValidation(BuildType from, BuildType to, string path, List<MapperBuildError> errors)
+    private void EndPointValidation(BuildType from, BuildType to)
     {
+        List<MapperBuildError> errors = new List<MapperBuildError>();
         if ((from.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
             // check all source member rules map to destination rules.
@@ -20,7 +22,7 @@ public class MemberwiseMapperProvider : IMapperProvider
 
             foreach (var item in unmappedSourceMembers)
             {
-                errors.Add(new MapperBuildError(from.Type, MapperEndPoint.Source, path, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
+                errors.Add(new MapperBuildError(from.Type, MapperEndPoint.Source, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
             }
         }
 
@@ -35,14 +37,17 @@ public class MemberwiseMapperProvider : IMapperProvider
 
             foreach (var item in unmappedDestinationMembers)
             {
-                errors.Add(new MapperBuildError(to.Type, MapperEndPoint.Destination, path, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
+                errors.Add(new MapperBuildError(to.Type, MapperEndPoint.Destination, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
             }
+        }
+        if (errors.Any()){
+            throw new MapperBuildException("Error occurred during end point validation. See inner errors collection for more information.", errors);
         }
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder, string path, List<MapperBuildError> errors)
+    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
     {
-        EndPointValidation(from, to, path, errors);
+        EndPointValidation(from, to);
 
         // member-wise mapping
         // Get internal member names matching on source + destination

@@ -81,7 +81,7 @@ public class MapperBuilder
             {
                 if (provider.CanCreateMapFor(sourceBuild, destinationBuild, this))
                 {
-                    mapper = provider.GetMapFor(sourceBuild, destinationBuild, this, path, errors);
+                    mapper = provider.GetMapFor(sourceBuild, destinationBuild, this);
                     break;
                 }
             }
@@ -170,7 +170,7 @@ public class MapperBuilder
 
         if (configType == null)
         {
-            throw new MapperBuildException(type, MapperEndPoint.None, "", null, "Type not registered in configuration.");
+            throw new MapperBuildException(type, MapperEndPoint.None, null, "Type not registered in configuration.");
         }
 
         IMemberResolver? resolver = null;
@@ -187,7 +187,7 @@ public class MapperBuilder
 
         if (resolver == null)
         {
-            throw new MapperBuildException(type, MapperEndPoint.None, "", null, "No resolver found for type.");
+            throw new MapperBuildException(type, MapperEndPoint.None, null, "No resolver found for type.");
         }
 
 
@@ -238,15 +238,15 @@ public class MapperBuilder
             // validations
             if (dataType == null)
             {
-                errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "Data type not known for member."));
+                errors.Add(new MapperBuildError(type, MapperEndPoint.None, member, "Data type not known for member."));
             }
             else if (getter == null)
             {
-                errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No getter for member."));
+                errors.Add(new MapperBuildError(type, MapperEndPoint.None, member, "No getter for member."));
             }
             else if (setter == null)
             {
-                errors.Add(new MapperBuildError(type, MapperEndPoint.None, path, member, "No setter for member."));
+                errors.Add(new MapperBuildError(type, MapperEndPoint.None, member, "No setter for member."));
             }
             else
             {
@@ -318,7 +318,7 @@ public class MapperBuilder
             var members = buildType.Members.Where(m => m.InternalMemberName == duplicate);
             foreach (var member in members)
             {
-                errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, "", member.MemberName, "Member internal name not unique."));
+                errors.Add(new MapperBuildError(buildType.Type, MapperEndPoint.None, member.MemberName, "Member internal name not unique."));
             }
         }
 
@@ -352,7 +352,7 @@ public class MapperBuilder
                 // validations
                 if (dataType == null)
                 {
-                    throw new MapperBuildException(type, MapperEndPoint.None, "", member, "Data type not known for member.");
+                    throw new MapperBuildException(type, MapperEndPoint.None, member, "Data type not known for member.");
                 }
                 else
                 {

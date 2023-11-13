@@ -18,11 +18,6 @@ public class MapperBuildError {
     public MapperEndPoint EndPoint { get; set; } = default;
     
     /// <summary>
-    /// The member path relating to the mapper build error.
-    /// </summary>
-    public string Path { get; set; } = default!;
-
-    /// <summary>
     /// The optional member relating to the mapper build error.
     /// </summary>
     public string? MemberName { get; set; } = default!;
@@ -37,13 +32,11 @@ public class MapperBuildError {
     /// </summary>
     /// <param name="type">The type.</param>
     /// <param name="endPoint">The end point type.</param>
-    /// <param name="path">The path within the mapping.</param>
     /// <param name="memberName">The optional member name</param>
     /// <param name="message">The error message.</param>
-    public MapperBuildError(Type type, MapperEndPoint endPoint, string path, string? memberName, string message) {
+    public MapperBuildError(Type type, MapperEndPoint endPoint, string? memberName, string message) {
         this.Type = type;
         this.EndPoint = endPoint;
-        this.Path = path;
         this.MemberName = memberName;
         this.Message = message;
     }

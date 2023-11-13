@@ -38,7 +38,7 @@ public class ImplicitOperatorMapperProvider : IMapperProvider
         var implicitOperator = GetImplicitCast(from.Type, to.Type);
         if (implicitOperator == null)
         {
-            throw new MapperBuildException(from.Type, MapperEndPoint.Source, "", "", $"No implicit cast exists to {to.Type}.");
+            throw new MapperBuildException(from.Type, MapperEndPoint.Source, "", $"No implicit cast exists to {to.Type}.");
         }
         MapperDelegate mapping = (s, d) =>
         {
