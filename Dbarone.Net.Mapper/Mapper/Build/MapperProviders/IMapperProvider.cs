@@ -21,4 +21,6 @@ public interface IMapperProvider {
     /// <param name="builder"></param>
     /// <returns></returns>
     public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder);
+
+    public virtual GetMapPlanFor(BuildType from, BuildType to, MapperBuilder builder);
 }
