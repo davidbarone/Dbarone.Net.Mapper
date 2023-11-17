@@ -1,5 +1,7 @@
 using Dbarone.Net.Mapper;
 
+namespace Dbarone.Net.Mapper;
+
 /// <summary>
 /// Maps source type to destination type if source is assignable to destination. Occurs under following scenarios:
 /// 1. Source and destination are the same type.

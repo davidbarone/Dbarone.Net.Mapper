@@ -1,5 +1,7 @@
 using Dbarone.Net.Mapper;
 
+namespace Dbarone.Net.Mapper;
+
 public class MemberwiseMapperOperator : MapperOperator
 {
     public MemberwiseMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }

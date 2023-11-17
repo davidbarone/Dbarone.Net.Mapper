@@ -58,7 +58,7 @@ public abstract class MapperOperator
         foreach (var type in operatorTypes) {
             var mapperOperator = (MapperOperator)Activator.CreateInstance(type, builder, from, to);
             mapperOperators.Add(mapperOperator);
-            mapperOperators.OrderBy(o => o.Priority);
+            mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
         }
 
         // Find the first mapper operator that can map the types
