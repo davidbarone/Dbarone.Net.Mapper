@@ -10,14 +10,18 @@ using Dbarone.Net.Mapper;
 ///
 /// For more information, refer to: https://learn.microsoft.com/en-us/dotnet/api/system.type.isassignablefrom?view=net-7.0 
 /// </summary>
-public class AssignableMapperProvider : IMapperProvider
+public class AssignableMapperOperator : MapperOperator
 {
-    public bool CanCreateMapFor(BuildType from, BuildType to, MapperBuilder builder)
+    public AssignableMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
+
+    public override int Priority => 10;
+    
+    public override bool CanMap()
     {
-        return to.Type.IsAssignableFrom(from.Type);
+        return To.Type.IsAssignableFrom(From.Type);
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
+    public override MapperDelegate GetMap()
     {
         MapperDelegate mapping = (s, d) =>
             {

@@ -27,7 +27,7 @@ public class ObjectMapper
     {
         SourceDestination sourceDestination = new SourceDestination(fromType, toType);
         var mapper = Builder.GetMapper(sourceDestination);
-        var to = mapper(obj, null);
+        var to = mapper.GetMap()(obj, null);
         return to;
     }
 

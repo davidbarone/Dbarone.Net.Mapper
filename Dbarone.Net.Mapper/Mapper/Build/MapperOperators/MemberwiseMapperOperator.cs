@@ -1,61 +1,65 @@
 using Dbarone.Net.Mapper;
 
-public class MemberwiseMapperProvider : IMapperProvider
-
+public class MemberwiseMapperOperator : MapperOperator
 {
-    public bool CanCreateMapFor(BuildType from, BuildType to, MapperBuilder builder)
+    public MemberwiseMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
+
+    public override int Priority => 60;
+
+    public override bool CanMap()
     {
-        return from.MemberResolver.HasMembers && to.MemberResolver.HasMembers;
+        return From.MemberResolver.HasMembers && To.MemberResolver.HasMembers;
     }
 
-    private void EndPointValidation(BuildType from, BuildType to)
+    private void EndPointValidation()
     {
         List<MapperBuildError> errors = new List<MapperBuildError>();
-        if ((from.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
+        if ((From.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
             // check all source member rules map to destination rules.
-            var unmappedSourceMembers = from
+            var unmappedSourceMembers = From
                 .Members
-                .Where(m => to
+                .Where(m => To
                     .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
             foreach (var item in unmappedSourceMembers)
             {
-                errors.Add(new MapperBuildError(from.Type, MapperEndPoint.Source, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
+                errors.Add(new MapperBuildError(From.Type, MapperEndPoint.Source, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
             }
         }
 
-        if ((to.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+        if ((To.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
         {
             // check all source member rules map to destination rules.
-            var unmappedDestinationMembers = to
+            var unmappedDestinationMembers = To
                 .Members
-                .Where(m => from
+                .Where(m => From
                     .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
             foreach (var item in unmappedDestinationMembers)
             {
-                errors.Add(new MapperBuildError(to.Type, MapperEndPoint.Destination, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
+                errors.Add(new MapperBuildError(To.Type, MapperEndPoint.Destination, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
             }
         }
-        if (errors.Any()){
+        if (errors.Any())
+        {
             throw new MapperBuildException("Error occurred during end point validation. See inner errors collection for more information.", errors);
         }
     }
 
-    public MapperDelegate GetMapFor(BuildType from, BuildType to, MapperBuilder builder)
+    public override MapperDelegate GetMap()
     {
-        EndPointValidation(from, to);
+        EndPointValidation();
 
         // member-wise mapping
         // Get internal member names matching on source + destination
-        IEnumerable<string> matchedMembers = to
+        IEnumerable<string> matchedMembers = To
             .Members
             .Where(mc => mc.Ignore == false)
             .Select(mc => mc.InternalMemberName).Intersect(
-                from
+                From
                 .Members
                 .Where(mc => mc.Ignore == false)
                 .Select(mc => mc.InternalMemberName)
@@ -69,18 +73,18 @@ public class MemberwiseMapperProvider : IMapperProvider
 
         foreach (var member in matchedMembers)
         {
-            var mSourceType = from.Members.First(m => m.MemberName == member).DataType;
-            var mDestinationType = to.Members.First(m => m.MemberName == member).DataType;
-            var memberMapper = builder.GetMapper(new SourceDestination(mSourceType, mDestinationType));
-            columnMappings[member] = memberMapper;
-            sourceMemberGetters[member] = from.MemberResolver.GetGetter(from.Type, member, from.Options);
-            destinationMemberGetters[member] = to.MemberResolver.GetGetter(to.Type, member, from.Options);
-            destinationMemberSetters[member] = to.MemberResolver.GetSetter(to.Type, member, from.Options);
+            var mSourceType = From.Members.First(m => m.MemberName == member).DataType;
+            var mDestinationType = To.Members.First(m => m.MemberName == member).DataType;
+            var memberMapper = Builder.GetMapper(new SourceDestination(mSourceType, mDestinationType));
+            columnMappings[member] = memberMapper.GetMap();
+            sourceMemberGetters[member] = From.MemberResolver.GetGetter(From.Type, member, From.Options);
+            destinationMemberGetters[member] = To.MemberResolver.GetGetter(To.Type, member, From.Options);
+            destinationMemberSetters[member] = To.MemberResolver.GetSetter(To.Type, member, From.Options);
         }
 
         MapperDelegate mapping = (s, d) =>
             {
-                var creator = to.MemberResolver.CreateInstance(to.Type,null);
+                var creator = To.MemberResolver.CreateInstance(To.Type, null);
                 var instance = creator();
 
                 foreach (var member in matchedMembers)

@@ -20,8 +20,6 @@ public class MapperBuilder
     /// </summary>
     internal BuildMetadataCache Metadata { get; set; }
 
-    private IMapperProvider[] MapperProviders;
-
     /// <summary>
     /// Creates a new <see cref="MapperBuilder"/> instance.
     /// </summary>
@@ -31,14 +29,6 @@ public class MapperBuilder
         this.Configuration = configuration;
         AddCoreResolvers();
         Metadata = new BuildMetadataCache();
-        this.MapperProviders = new IMapperProvider[] {
-            new AssignableMapperProvider(),
-            new IConvertibleMapperProvider(),
-            new ConverterMapperProvider(),
-            new ImplicitOperatorMapperProvider(),
-            new EnumerableMapperProvider(),
-            new MemberwiseMapperProvider()
-        };
     }
 
     #region Public Methods
@@ -49,59 +39,26 @@ public class MapperBuilder
     /// <param name="sourceDestination"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public MapperDelegate GetMapper(SourceDestination sourceDestination, string path = "", List<MapperBuildError>? errors = null)
+    public MapperOperator GetMapper(SourceDestination sourceDestination)
     {
-        var isRoot = (path == "");
-        MapperDelegate mapper = null;
+        MapperOperator? mapperOperator = null;
 
-        if (isRoot)
+        // source
+        if (!this.Metadata.Types.ContainsKey(sourceDestination.Source))
         {
-            errors = new List<MapperBuildError>();
+            this.BuildType(sourceDestination.Source);
         }
+        var sourceBuild = this.Metadata.Types[sourceDestination.Source];
 
-        // generate mapper if not root or mapper doesn't exist
-        if (!(isRoot && MapperExists(sourceDestination)))
+        // destination
+        if (!this.Metadata.Types.ContainsKey(sourceDestination.Destination))
         {
-            // source
-            if (!this.Metadata.Types.ContainsKey(sourceDestination.Source))
-            {
-                this.BuildType(sourceDestination.Source);
-            }
-            var sourceBuild = this.Metadata.Types[sourceDestination.Source];
-
-            // destination
-            if (!this.Metadata.Types.ContainsKey(sourceDestination.Destination))
-            {
-                this.BuildType(sourceDestination.Destination);
-            }
-            var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
-
-            // find mapper to handle source-destination
-            foreach (var provider in this.MapperProviders)
-            {
-                if (provider.CanCreateMapFor(sourceBuild, destinationBuild, this))
-                {
-                    mapper = provider.GetMapFor(sourceBuild, destinationBuild, this);
-                    break;
-                }
-            }
+            this.BuildType(sourceDestination.Destination);
         }
+        var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
 
-        // cache results
-        this.Metadata.Errors[sourceDestination] = errors;
-        if (mapper != null)
-        {
-            this.Metadata.Mappers[sourceDestination] = mapper;
-        }
-
-        // throw exception?
-        if (this.Metadata.Errors.ContainsKey(sourceDestination) && this.Metadata.Errors[sourceDestination].Any())
-        {
-            throw new MapperBuildException(this.Metadata.Errors[sourceDestination]);
-        }
-
-        // return mapping
-        return this.Metadata.Mappers[sourceDestination];
+        // find mapper to handle source-destination
+        return MapperOperator.Create(this, sourceBuild, destinationBuild);
     }
 
     /// <summary>
@@ -133,16 +90,6 @@ public class MapperBuilder
     #endregion
 
     /// <summary>
-    /// Returns true if the source and destination type pairing exists.
-    /// </summary>
-    /// <param name="sourceDestination"></param>
-    /// <returns></returns>
-    public bool MapperExists(SourceDestination sourceDestination)
-    {
-        return Metadata.Mappers.ContainsKey(sourceDestination);
-    }
-
-    /// <summary>
     /// Returns the creator delegate for a type.
     /// </summary>
     /// <param name="type">The type.</param>
@@ -162,9 +109,10 @@ public class MapperBuilder
     {
         List<MapperBuildError> errors = new List<MapperBuildError>();
 
-        if (!this.Configuration.Config.Types.ContainsKey(type) && this.Configuration.Config.AutoRegisterTypes) {
+        if (!this.Configuration.Config.Types.ContainsKey(type) && this.Configuration.Config.AutoRegisterTypes)
+        {
             this.Configuration.RegisterType(type);
-        } 
+        }
 
         var configType = this.Configuration.Config.Types[type];
 
