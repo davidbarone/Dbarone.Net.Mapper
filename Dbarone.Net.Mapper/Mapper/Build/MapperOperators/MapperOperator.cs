@@ -89,7 +89,7 @@ public abstract class MapperOperator
             this.From.MemberResolver.GetType().Name,
             this.To.Type.Name,
             this.To.MemberResolver.GetType().Name,
-            this.GetChildren().Values.Select(c => c.ToExecutionPlanNode())
+            this.GetChildren().ToDictionary(c => c.Key, c => c.Value.ToExecutionPlanNode())
         );
     }
 }

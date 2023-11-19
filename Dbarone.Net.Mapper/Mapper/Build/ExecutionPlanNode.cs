@@ -11,7 +11,7 @@ public class ExecutionPlanNode
     public string FromMemberResolver { get; set; }
     public string ToType { get; set; }
     public string ToMemberResolver { get; set; }
-    public IEnumerable<ExecutionPlanNode> Children { get; set; }
+    public IDictionary<string, ExecutionPlanNode> Children { get; set; }
 
     /// <summary>
     /// Creates a new ExecutionPlanNode.
@@ -22,7 +22,7 @@ public class ExecutionPlanNode
     /// <param name="toType">The to type.</param>
     /// <param name="toMemberResolver">The to member resolver.</param>
     /// <param name="children">The child nodes.</param>
-    public ExecutionPlanNode(string mapperOperation, string fromType, string fromMemberResolver, string toType, string toMemberResolver, IEnumerable<ExecutionPlanNode> children)
+    public ExecutionPlanNode(string mapperOperation, string fromType, string fromMemberResolver, string toType, string toMemberResolver, IDictionary<string, ExecutionPlanNode> children)
     {
         this.MapperOperation = mapperOperation;
         this.FromType = fromType;

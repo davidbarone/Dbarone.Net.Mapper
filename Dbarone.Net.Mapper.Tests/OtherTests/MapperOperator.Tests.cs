@@ -20,7 +20,7 @@ public class CompanyDto
 {
     public int CompanyId { get; set; }
     public string CompanyName { get; set; }
-    public List<Person> Employees { get; set; }
+    public List<PersonDto> Employees { get; set; }
 }
 
 public class PersonDto
@@ -61,6 +61,7 @@ public class MapperOperatorTests
 
         var mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
         var op = mapper.GetOperator<Company, CompanyDto>();
-        var debug = op.ToExecutionPlanNode().ToString();
+        var executionPlan = op.ToExecutionPlanNode();
+        Assert.NotNull(executionPlan);
     }
 }
