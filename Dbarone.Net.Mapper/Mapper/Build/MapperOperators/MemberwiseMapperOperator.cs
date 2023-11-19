@@ -51,34 +51,44 @@ public class MemberwiseMapperOperator : MapperOperator
         }
     }
 
-    public override MapperDelegate GetMap()
+    protected override IDictionary<string, MapperOperator> GetChildren()
     {
-        EndPointValidation();
+        Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
 
         // member-wise mapping
         // Get internal member names matching on source + destination
-        IEnumerable<string> matchedMembers = To
-            .Members
-            .Where(mc => mc.Ignore == false)
-            .Select(mc => mc.InternalMemberName).Intersect(
-                From
+        var members = To
                 .Members
                 .Where(mc => mc.Ignore == false)
-                .Select(mc => mc.InternalMemberName)
-            );
+                .Select(mc => mc.InternalMemberName).Intersect(
+                    From
+                    .Members
+                    .Where(mc => mc.Ignore == false)
+                    .Select(mc => mc.InternalMemberName)
+                );
 
-        // Get mapper delegates for each member mapping
-        Dictionary<string, MapperDelegate> columnMappings = new Dictionary<string, MapperDelegate>();
-        Dictionary<string, Getter> sourceMemberGetters = new Dictionary<string, Getter>();
-        Dictionary<string, Getter> destinationMemberGetters = new Dictionary<string, Getter>();
-        Dictionary<string, Setter> destinationMemberSetters = new Dictionary<string, Setter>();
-
-        foreach (var member in matchedMembers)
+        foreach (var member in members)
         {
             var mSourceType = From.Members.First(m => m.MemberName == member).DataType;
             var mDestinationType = To.Members.First(m => m.MemberName == member).DataType;
             var memberMapper = Builder.GetMapper(new SourceDestination(mSourceType, mDestinationType));
-            columnMappings[member] = memberMapper.GetMap();
+            children[member] = memberMapper;
+        }
+        return children;
+    }
+
+
+    public override MapperDelegate GetMap()
+    {
+        EndPointValidation();
+
+        // Get mapper delegates for each member mapping
+        Dictionary<string, Getter> sourceMemberGetters = new Dictionary<string, Getter>();
+        Dictionary<string, Getter> destinationMemberGetters = new Dictionary<string, Getter>();
+        Dictionary<string, Setter> destinationMemberSetters = new Dictionary<string, Setter>();
+
+        foreach (var member in GetChildren().Keys)
+        {
             sourceMemberGetters[member] = From.MemberResolver.GetGetter(From.Type, member, From.Options);
             destinationMemberGetters[member] = To.MemberResolver.GetGetter(To.Type, member, From.Options);
             destinationMemberSetters[member] = To.MemberResolver.GetSetter(To.Type, member, From.Options);
@@ -89,11 +99,11 @@ public class MemberwiseMapperOperator : MapperOperator
                 var creator = To.MemberResolver.CreateInstance(To.Type, null);
                 var instance = creator();
 
-                foreach (var member in matchedMembers)
+                foreach (var member in GetChildren().Keys)
                 {
                     var memberFrom = sourceMemberGetters[member](s);
                     var memberTo = destinationMemberGetters[member](instance);
-                    var memberMapper = columnMappings[member];
+                    var memberMapper = this.GetChildren()[member].GetMap();
                     var memberMapped = memberMapper(memberFrom, memberTo);
                     destinationMemberSetters[member](instance, memberMapped);
                 }
