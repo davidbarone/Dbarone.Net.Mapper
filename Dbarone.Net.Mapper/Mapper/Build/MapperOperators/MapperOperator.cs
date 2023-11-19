@@ -1,7 +1,7 @@
 using System.Reflection;
 using Dbarone.Net.Extensions;
 
-using Dbarone.Net.Mapper;
+namespace Dbarone.Net.Mapper;
 
 /// <summary>
 /// Base class for all mapper operator types.
@@ -40,7 +40,8 @@ public abstract class MapperOperator
     /// <returns></returns>
     public abstract MapperDelegate GetMap();
 
-    protected virtual IDictionary<string, MapperOperator> GetChildren() {
+    protected virtual IDictionary<string, MapperOperator> GetChildren()
+    {
         return new Dictionary<string, MapperOperator>();
     }
 
@@ -52,18 +53,22 @@ public abstract class MapperOperator
     /// <param name="to">The to type.</param>
     /// <returns>A <see cref="MapperOperator"/> instance that can map from / to types.</returns>
     /// <exception cref="MapperBuildException">Throws an exception if no suitable mapper found.</exception>
-    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to) {
-        var operatorTypes = AppDomain.CurrentDomain.GetTypesAssignableFrom(typeof(MapperOperator)).Where(t=>!t.IsAbstract);
+    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to)
+    {
+        var operatorTypes = AppDomain.CurrentDomain.GetTypesAssignableFrom(typeof(MapperOperator)).Where(t => !t.IsAbstract);
         List<MapperOperator> mapperOperators = new List<MapperOperator>();
-        foreach (var type in operatorTypes) {
+        foreach (var type in operatorTypes)
+        {
             var mapperOperator = (MapperOperator)Activator.CreateInstance(type, builder, from, to);
             mapperOperators.Add(mapperOperator);
             mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
         }
 
         // Find the first mapper operator that can map the types
-        foreach (var mapperOperator in mapperOperators) {
-            if (mapperOperator.CanMap()) {
+        foreach (var mapperOperator in mapperOperators)
+        {
+            if (mapperOperator.CanMap())
+            {
                 return mapperOperator;
             }
         }
@@ -73,10 +78,18 @@ public abstract class MapperOperator
     }
 
     /// <summary>
-    /// Pretty-prints the current mapper operator. Used to display the full mapping operation.
+    /// Returns an <see cref="ExecutionPlanNode"/> object that contains key information for the operation. Used to output a graph of the mapping execution plan.
     /// </summary>
-    /// <returns>A string value containing the complete mapping operation.</returns>
-    public string PrettyPrint() {
-        return "";
+    /// <returns>An <see cref="ExecutionPlanNode"/> object representing the mapping execution plan.</returns>
+    public ExecutionPlanNode ToExecutionPlanNode()
+    {
+        return new ExecutionPlanNode(
+            this.GetType().Name,
+            this.From.Type.Name,
+            this.From.MemberResolver.GetType().Name,
+            this.To.Type.Name,
+            this.To.MemberResolver.GetType().Name,
+            this.GetChildren().Values.Select(c => c.ToExecutionPlanNode())
+        );
     }
 }

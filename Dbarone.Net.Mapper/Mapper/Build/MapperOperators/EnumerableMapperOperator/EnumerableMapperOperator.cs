@@ -21,16 +21,22 @@ public class EnumerableMapperOperator : MapperOperator
         return To.Type.IsEnumerableType() && From.Type.IsEnumerableType();
     }
 
-    public override MapperDelegate GetMap()
+    protected override IDictionary<string, MapperOperator> GetChildren()
     {
+        Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
         var fromElementType = From.EnumerableElementType;
         var toElementType = To.EnumerableElementType;
         var elementMapping = Builder.GetMapper(new SourceDestination(fromElementType, toElementType));
+        children["[]"] = elementMapping;
+        return children;
+    }
 
+    public override MapperDelegate GetMap()
+    {
         MapperDelegate mapping = (s, d) =>
             {
                 var arr = (s as IEnumerable);
-                EnumerableBuffer buffer = new EnumerableBuffer(arr, elementMapping.GetMap());
+                EnumerableBuffer buffer = new EnumerableBuffer(arr, GetChildren()["[]"].GetMap());
                 return buffer.To(To.Type);
             };
 
