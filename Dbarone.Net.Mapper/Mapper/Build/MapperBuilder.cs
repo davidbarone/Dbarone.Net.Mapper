@@ -16,9 +16,9 @@ public class MapperBuilder
     internal MapperConfiguration Configuration { get; init; }
 
     /// <summary>
-    /// Stores the build-time metadata.
+    /// Build-time type information.
     /// </summary>
-    internal BuildMetadataCache Metadata { get; set; }
+    internal Dictionary<Type, BuildType> BuildTypes { get; set; } = new Dictionary<Type, BuildType>();
 
     /// <summary>
     /// Creates a new <see cref="MapperBuilder"/> instance.
@@ -28,7 +28,6 @@ public class MapperBuilder
     {
         this.Configuration = configuration;
         AddCoreResolvers();
-        Metadata = new BuildMetadataCache();
     }
 
     #region Public Methods
@@ -44,18 +43,18 @@ public class MapperBuilder
         MapperOperator? mapperOperator = null;
 
         // source
-        if (!this.Metadata.Types.ContainsKey(sourceDestination.Source))
+        if (!this.BuildTypes.ContainsKey(sourceDestination.Source))
         {
             this.BuildType(sourceDestination.Source);
         }
-        var sourceBuild = this.Metadata.Types[sourceDestination.Source];
+        var sourceBuild = this.BuildTypes[sourceDestination.Source];
 
         // destination
-        if (!this.Metadata.Types.ContainsKey(sourceDestination.Destination))
+        if (!this.BuildTypes.ContainsKey(sourceDestination.Destination))
         {
             this.BuildType(sourceDestination.Destination);
         }
-        var destinationBuild = this.Metadata.Types[sourceDestination.Destination];
+        var destinationBuild = this.BuildTypes[sourceDestination.Destination];
 
         // find mapper to handle source-destination
         return MapperOperator.Create(this, sourceBuild, destinationBuild);
@@ -80,11 +79,11 @@ public class MapperBuilder
     /// <exception cref="Exception">Throws an exception if the build type is not found.</exception>
     public BuildType GetBuildTypeFor(Type type)
     {
-        if (!Metadata.Types.ContainsKey(type))
+        if (!BuildTypes.ContainsKey(type))
         {
             throw new Exception("Type not found!");
         }
-        return Metadata.Types[type];
+        return BuildTypes[type];
     }
 
     #endregion
@@ -96,11 +95,11 @@ public class MapperBuilder
     /// <returns>Returns a delegate that when invoked will create an instance of the object.</returns>
     internal CreateInstance GetCreatorFor(Type type)
     {
-        if (!Metadata.Types.ContainsKey(type))
+        if (!BuildTypes.ContainsKey(type))
         {
 
         }
-        return Metadata.Types[type].MemberResolver.CreateInstance(type, new object[] { });
+        return BuildTypes[type].MemberResolver.CreateInstance(type, new object[] { });
     }
 
     #region Private Core Build Methods
@@ -147,7 +146,7 @@ public class MapperBuilder
         };
 
         // Add to metadata
-        this.Metadata.Types[type] = buildType;
+        this.BuildTypes[type] = buildType;
 
         if (!buildType.isOpenGeneric)
         {
@@ -372,7 +371,7 @@ public class MapperBuilder
         // Add calculations to existing type
         foreach (var calculation in this.Configuration.Config.Calculations.Where(c => c.SourceType == type))
         {
-            var buildType = Metadata.Types[type];
+            var buildType = BuildTypes[type];
 
             buildType.Members.Add(new BuildMember
             {
