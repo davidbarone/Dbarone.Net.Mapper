@@ -63,5 +63,8 @@ public class MapperOperatorTests
         var op = mapper.GetOperator<Company, CompanyDto>();
         var executionPlan = op.ToExecutionPlanNode();
         Assert.NotNull(executionPlan);
+
+        // Also do map
+        var companyB = mapper.Map<Company, CompanyDto>(companyA); 
     }
 }

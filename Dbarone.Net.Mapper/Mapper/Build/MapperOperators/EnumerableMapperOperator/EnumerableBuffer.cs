@@ -34,17 +34,17 @@ public class EnumerableBuffer
         }
         else if (type.IsArray)
         {
-            var elementType = type.GetElementType();
+            var elementType = type.GetEnumerableElementType();
             return ToArray(elementType);
         }
         else if (type.IsAssignableToGenericType(typeof(List<>)))
         {
-            var elementType = type.GetElementType();
+            var elementType = type.GetEnumerableElementType();
             return ToGenericList(elementType);
         }
         else if (type.IsAssignableToGenericType(typeof(IEnumerable<>)))
         {
-            var elementType = type.GetElementType();
+            var elementType = type.GetEnumerableElementType();
             return ToGenericIEnumerable(elementType);
         }
         throw new Exception("whoops");
