@@ -56,11 +56,11 @@ public interface IMemberResolver
     Type GetMemberType(Type type, string memberName, MapperOptions options);
 
     /// <summary>
-    /// Set to true for dictionary and dynamic types, where the member information
-    /// must be deferred until mapping time. If set to false, the member information
+    /// Set to true for dictionary and dynamic types, where the mapper build process
+    /// must be deferred until mapping time. If set to false, the mapping process is member information
     /// is obtained at build time.
     /// </summary>
-    bool DeferMemberResolution { get; }
+    bool DeferBuild { get; }
 
     /// <summary>
     /// Returns true if this resolver can return members on a type.

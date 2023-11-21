@@ -2,11 +2,11 @@ using Dbarone.Net.Mapper;
 
 namespace Dbarone.Net.Mapper;
 
-public class MemberwiseMapperOperator : MapperOperator
+public class MemberwiseMapperDeferBuildOperator : MapperOperator
 {
-    public MemberwiseMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
+    public MemberwiseMapperDeferBuildOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
 
-    public override int Priority => 70;
+    public override int Priority => 60;
 
     public override bool CanMap()
     {

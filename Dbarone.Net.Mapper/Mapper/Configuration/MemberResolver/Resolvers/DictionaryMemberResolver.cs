@@ -13,7 +13,7 @@ public class DictionaryMemberResolver : IMemberResolver
     /// must be deferred until mapping time. If set to false, the member information
     /// is obtained at build time.
     /// </summary>
-    public bool DeferMemberResolution => true;
+    public bool DeferBuild => true;
 
     /// <summary>
     /// Returns a getter delegate that gets a member value for an object.

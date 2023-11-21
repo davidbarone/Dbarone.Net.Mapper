@@ -36,7 +36,7 @@ public class ClassMemberResolver : IMemberResolver
     /// must be deferred until mapping time. If set to false, the member information
     /// is obtained at build time.
     /// </summary>
-    public bool DeferMemberResolution => false;
+    public bool DeferBuild => false;
 
     /// <summary>
     /// Returns a delete that creates instances for reference types.

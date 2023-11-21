@@ -284,7 +284,7 @@ public class MapperBuilder
         // Get members
         string[] members = new string[] { };
         List<BuildMember> buildMembers = new List<BuildMember>();
-        if (!resolver.DeferMemberResolution)
+        if (!resolver.DeferBuild)
         {
             members = resolver.GetTypeMembers(configType.Type, configType.Options);
 
