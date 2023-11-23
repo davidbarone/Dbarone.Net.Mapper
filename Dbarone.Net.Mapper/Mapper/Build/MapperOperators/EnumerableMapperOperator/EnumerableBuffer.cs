@@ -70,13 +70,15 @@ public class EnumerableBuffer
         return this.Buffer.Cast<T>().ToList();
     }
 
-    public IEnumerable ToGenericList(Type elementType)
+    public IList ToGenericList(Type elementType)
     {
         // Get the cast method
         var castMethod = typeof(IEnumerable).GetExtensionMethods().First(m => m.Name == "Cast");
         // Get the cast method for the element type parameter, and invoke;
         var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { this.Buffer });
-        return results as IEnumerable;
+        var toListMethod = typeof(IEnumerable<>).GetExtensionMethods().First(m => m.Name == "ToList");
+        var returnValue = toListMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { results });
+        return returnValue as IList;
     }
 
     public IEnumerable<T> ToGenericIEnumerable<T>()

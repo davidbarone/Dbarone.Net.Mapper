@@ -65,6 +65,8 @@ public class MapperOperatorTests
         Assert.NotNull(executionPlan);
 
         // Also do map
-        var companyB = mapper.Map<Company, CompanyDto>(companyA); 
+        var companyB = mapper.Map<Company, CompanyDto>(companyA);
+
+        Assert.NotNull(companyB);
     }
 }
