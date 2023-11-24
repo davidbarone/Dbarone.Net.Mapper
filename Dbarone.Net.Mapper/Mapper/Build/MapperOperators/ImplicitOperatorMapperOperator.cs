@@ -4,7 +4,7 @@ namespace Dbarone.Net.Mapper;
 
 public class ImplicitOperatorMapperOperator : MapperOperator
 {
-    public ImplicitOperatorMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
+    public ImplicitOperatorMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent) { }
 
     public override int Priority => 40;
 

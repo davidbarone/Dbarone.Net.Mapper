@@ -11,9 +11,10 @@ public abstract class MapperOperator
     protected MapperBuilder Builder { get; set; }
     protected BuildType From { get; set; }
     protected BuildType To { get; set; }
-
-    public MapperOperator(MapperBuilder builder, BuildType from, BuildType to)
+    protected MapperOperator Parent { get; set; }
+    public MapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null)
     {
+        this.Parent = parent;
         this.Builder = builder;
         this.From = from;
         this.To = to;
@@ -45,6 +46,19 @@ public abstract class MapperOperator
         return new Dictionary<string, MapperOperator>();
     }
 
+    private IDictionary<string, MapperOperator> _children = null;
+    public IDictionary<string, MapperOperator> Children
+    {
+        get
+        {
+            if (_children == null)
+            {
+                _children = GetChildren();
+            }
+            return _children;
+        }
+    }
+
     /// <summary>
     /// Factory method to create a new MapperOperator instance based on from / to types.
     /// </summary>
@@ -53,13 +67,13 @@ public abstract class MapperOperator
     /// <param name="to">The to type.</param>
     /// <returns>A <see cref="MapperOperator"/> instance that can map from / to types.</returns>
     /// <exception cref="MapperBuildException">Throws an exception if no suitable mapper found.</exception>
-    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to)
+    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null)
     {
         var operatorTypes = AppDomain.CurrentDomain.GetTypesAssignableFrom(typeof(MapperOperator)).Where(t => !t.IsAbstract);
         List<MapperOperator> mapperOperators = new List<MapperOperator>();
         foreach (var type in operatorTypes)
         {
-            var mapperOperator = (MapperOperator)Activator.CreateInstance(type, builder, from, to);
+            var mapperOperator = (MapperOperator)Activator.CreateInstance(type, builder, from, to, parent);
             mapperOperators.Add(mapperOperator);
             mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
         }
@@ -81,15 +95,42 @@ public abstract class MapperOperator
     /// Returns an <see cref="ExecutionPlanNode"/> object that contains key information for the operation. Used to output a graph of the mapping execution plan.
     /// </summary>
     /// <returns>An <see cref="ExecutionPlanNode"/> object representing the mapping execution plan.</returns>
-    public ExecutionPlanNode ToExecutionPlanNode()
+    public ExecutionPlanNode ToExecutionPlanNode(ExecutionPlanNode parent = null)
     {
-        return new ExecutionPlanNode(
+        ExecutionPlanNode node = new ExecutionPlanNode(
+            this.GetPath(),
             this.GetType().Name,
             this.From.Type.Name,
             this.From.MemberResolver.GetType().Name,
             this.To.Type.Name,
             this.To.MemberResolver.GetType().Name,
-            this.GetChildren().ToDictionary(c => c.Key, c => c.Value.ToExecutionPlanNode())
+            parent
         );
+        var children = this.Children;
+        foreach (var key in children.Keys)
+        {
+            node.AddChild(key, children[key].ToExecutionPlanNode(node));
+        }
+        return node;
+    }
+
+    public string GetPath()
+    {
+        if (this.Parent == null)
+        {
+            return "";
+        }
+        else
+        {
+            foreach (var key in this.Parent.Children.Keys)
+            {
+                var item = this.Parent.Children[key];
+                if (Object.ReferenceEquals(item, this))
+                {
+                    return $"{this.Parent.GetPath()}.{key}";
+                }
+            }
+            throw new Exception("shouldn't get here");
+        }
     }
 }

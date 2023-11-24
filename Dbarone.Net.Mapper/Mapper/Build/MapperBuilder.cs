@@ -38,7 +38,7 @@ public class MapperBuilder
     /// <param name="sourceDestination"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public MapperOperator GetMapper(SourceDestination sourceDestination)
+    public MapperOperator GetMapper(SourceDestination sourceDestination, MapperOperator parent = null)
     {
         MapperOperator? mapperOperator = null;
 
@@ -57,7 +57,7 @@ public class MapperBuilder
         var destinationBuild = this.BuildTypes[sourceDestination.Destination];
 
         // find mapper to handle source-destination
-        return MapperOperator.Create(this, sourceBuild, destinationBuild);
+        return MapperOperator.Create(this, sourceBuild, destinationBuild, parent);
     }
 
     /// <summary>

@@ -8,7 +8,7 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 public class ConvertibleMapperOperator : MapperOperator
 {
-    public ConvertibleMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
+    public ConvertibleMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent) { }
 
     public override int Priority => 20;
 

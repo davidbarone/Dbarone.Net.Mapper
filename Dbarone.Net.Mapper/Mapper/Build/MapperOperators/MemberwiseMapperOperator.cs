@@ -4,7 +4,36 @@ namespace Dbarone.Net.Mapper;
 
 public class MemberwiseMapperOperator : MapperOperator
 {
-    public MemberwiseMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
+    public MemberwiseMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent)
+    {
+
+    }
+
+    protected override IDictionary<string, MapperOperator> GetChildren()
+    {
+        Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
+
+        // member-wise mapping
+        // Get internal member names matching on source + destination
+        var members = To
+                .Members
+                .Where(mc => mc.Ignore == false)
+                .Select(mc => mc.InternalMemberName).Intersect(
+                    From
+                    .Members
+                    .Where(mc => mc.Ignore == false)
+                    .Select(mc => mc.InternalMemberName)
+                );
+
+        foreach (var member in members)
+        {
+            var mSourceType = From.Members.First(m => m.MemberName == member).DataType;
+            var mDestinationType = To.Members.First(m => m.MemberName == member).DataType;
+            var memberMapper = Builder.GetMapper(new SourceDestination(mSourceType, mDestinationType), this);
+            children[member] = memberMapper;
+        }
+        return children;
+    }
 
     public override int Priority => 70;
 
@@ -51,33 +80,6 @@ public class MemberwiseMapperOperator : MapperOperator
         }
     }
 
-    protected override IDictionary<string, MapperOperator> GetChildren()
-    {
-        Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
-
-        // member-wise mapping
-        // Get internal member names matching on source + destination
-        var members = To
-                .Members
-                .Where(mc => mc.Ignore == false)
-                .Select(mc => mc.InternalMemberName).Intersect(
-                    From
-                    .Members
-                    .Where(mc => mc.Ignore == false)
-                    .Select(mc => mc.InternalMemberName)
-                );
-
-        foreach (var member in members)
-        {
-            var mSourceType = From.Members.First(m => m.MemberName == member).DataType;
-            var mDestinationType = To.Members.First(m => m.MemberName == member).DataType;
-            var memberMapper = Builder.GetMapper(new SourceDestination(mSourceType, mDestinationType));
-            children[member] = memberMapper;
-        }
-        return children;
-    }
-
-
     public override MapperDelegate GetMap()
     {
         EndPointValidation();
@@ -87,11 +89,11 @@ public class MemberwiseMapperOperator : MapperOperator
                 var creator = To.MemberResolver.CreateInstance(To.Type, null);
                 var instance = creator();
 
-                foreach (var member in GetChildren().Keys)
+                foreach (var member in Children.Keys)
                 {
                     var memberFrom = From.MemberResolver.GetGetter(From.Type, member, From.Options)(s);
                     var memberTo = To.MemberResolver.GetGetter(To.Type, member, From.Options)(instance);
-                    var memberMapper = this.GetChildren()[member].GetMap();
+                    var memberMapper = this.Children[member].GetMap();
                     var memberMapped = memberMapper(memberFrom, memberTo);
                     To.MemberResolver.GetSetter(To.Type, member, From.Options)(instance, memberMapped);
                 }

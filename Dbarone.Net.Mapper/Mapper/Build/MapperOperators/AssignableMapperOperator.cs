@@ -14,7 +14,7 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 public class AssignableMapperOperator : MapperOperator
 {
-    public AssignableMapperOperator(MapperBuilder builder, BuildType from, BuildType to) : base(builder, from, to) { }
+    public AssignableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent) { }
 
     public override int Priority => 10;
     
