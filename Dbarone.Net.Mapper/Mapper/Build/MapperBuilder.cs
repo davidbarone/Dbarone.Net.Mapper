@@ -20,6 +20,15 @@ public class MapperBuilder
     /// </summary>
     internal Dictionary<Type, BuildType> BuildTypes { get; set; } = new Dictionary<Type, BuildType>();
 
+    #region Callbacks
+
+    /// <summary>
+    /// Callback for when new mapper operator is built.
+    /// </summary>
+    public CreateOperatorDelegate? OnCreateOperator = null;
+
+    #endregion
+
     /// <summary>
     /// Creates a new <see cref="MapperBuilder"/> instance.
     /// </summary>
@@ -57,7 +66,7 @@ public class MapperBuilder
         var destinationBuild = this.BuildTypes[sourceDestination.Destination];
 
         // find mapper to handle source-destination
-        return MapperOperator.Create(this, sourceBuild, destinationBuild, parent);
+        return MapperOperator.Create(this, sourceBuild, destinationBuild, parent, this.OnCreateOperator);
     }
 
     /// <summary>

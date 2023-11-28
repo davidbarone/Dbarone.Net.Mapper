@@ -67,7 +67,7 @@ public abstract class MapperOperator
     /// <param name="to">The to type.</param>
     /// <returns>A <see cref="MapperOperator"/> instance that can map from / to types.</returns>
     /// <exception cref="MapperBuildException">Throws an exception if no suitable mapper found.</exception>
-    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null)
+    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null, CreateOperatorDelegate onCreateOperator = null)
     {
         var operatorTypes = AppDomain.CurrentDomain.GetTypesAssignableFrom(typeof(MapperOperator)).Where(t => !t.IsAbstract);
         List<MapperOperator> mapperOperators = new List<MapperOperator>();
@@ -83,6 +83,11 @@ public abstract class MapperOperator
         {
             if (mapperOperator.CanMap())
             {
+                // Throw event
+                if (onCreateOperator != null)
+                {
+                    onCreateOperator(mapperOperator.ToExecutionPlanNode());
+                }
                 return mapperOperator;
             }
         }

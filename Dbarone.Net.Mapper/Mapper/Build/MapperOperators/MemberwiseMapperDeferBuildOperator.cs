@@ -38,7 +38,7 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
 
     public override bool CanMap()
     {
-        return From.MemberResolver.HasMembers && To.MemberResolver.HasMembers;
+        return From.MemberResolver.HasMembers && To.MemberResolver.HasMembers && From.MemberResolver.DeferBuild;
     }
 
     private void EndPointValidation()

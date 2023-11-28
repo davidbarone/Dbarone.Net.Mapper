@@ -10,6 +10,30 @@ public class ObjectMapper
     private MapperConfiguration Configuration { get; set; }
     private MapperBuilder Builder { get; set; }
 
+    #region Callbacks
+
+    /// <summary>
+    /// Event raised whenever a new mapper operator is built.
+    /// </summary>
+
+    private CreateOperatorDelegate? _onCreateOperator;
+
+    public CreateOperatorDelegate? OnCreateOperator
+    {
+        get
+        {
+            return _onCreateOperator;
+        }
+        set
+        {
+            _onCreateOperator = value;
+            this.Builder.OnCreateOperator = value;
+        }
+    }
+
+    #endregion
+
+
     public ObjectMapper(MapperConfiguration configuration)
     {
         this.Configuration = configuration;
@@ -49,8 +73,9 @@ public class ObjectMapper
     /// <param name="from">The from type.</param>
     /// <param name="to">The to type.</param>
     /// <returns>Returns the mapping execution plan.</returns>
-    public MapperOperator GetOperator(Type from, Type to) {
-         SourceDestination sourceDestination = new SourceDestination(from, to);
+    public MapperOperator GetOperator(Type from, Type to)
+    {
+        SourceDestination sourceDestination = new SourceDestination(from, to);
         var mapper = Builder.GetMapper(sourceDestination);
         return mapper;
     }
@@ -61,7 +86,8 @@ public class ObjectMapper
     /// <typeparam name="TSource">The from type.</typeparam>
     /// <typeparam name="TDestination">The to type.</typeparam>
     /// <returns>Returns the mapping execution plan.</returns>
-    public MapperOperator GetOperator<TSource, TDestination>() {
+    public MapperOperator GetOperator<TSource, TDestination>()
+    {
         return GetOperator(typeof(TSource), typeof(TDestination));
     }
 }
