@@ -14,15 +14,33 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 public class AssignableMapperOperator : MapperOperator
 {
-    public AssignableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent) { }
+    /// <summary>
+    /// Creates a new <see cref="AssignableMapperOperator"/> instance. 
+    /// </summary>
+    /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
+    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
+    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
+    public AssignableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent) { }
 
+    /// <summary>
+    /// Overrides the priority of the <see cref="AssignableMapperOperator"/> instance.
+    /// </summary>
     public override int Priority => 10;
-    
+
+    /// <summary>
+    /// The <see cref="AssignableMapperOperator"/> operator is able to map when the From object is assignable to the To type. 
+    /// </summary>
+    /// <returns>Returns true when the From object is assignable to the To type.</returns>
     public override bool CanMap()
     {
         return To.Type.IsAssignableFrom(From.Type);
     }
 
+    /// <summary>
+    /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
+    /// </summary>
+    /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
     public override MapperDelegate GetMap()
     {
         MapperDelegate mapping = (s, d) =>
