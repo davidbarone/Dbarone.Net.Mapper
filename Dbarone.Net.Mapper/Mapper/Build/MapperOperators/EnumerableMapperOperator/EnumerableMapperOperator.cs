@@ -23,12 +23,27 @@ public class EnumerableMapperOperator : MapperOperator
     {
     }
 
+    /// <summary>
+    /// GetChildren implementation for <see cref="EnumerableMapperOperator"/>.
+    /// </summary>
+    /// <returns>Returns the children operators.</returns>
+    /// <exception cref="MapperBuildException"></exception>
     protected override IDictionary<string, MapperOperator> GetChildren()
     {
         // Children
         Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
         var fromElementType = From.EnumerableElementType;
         var toElementType = To.EnumerableElementType;
+
+        if (fromElementType == null)
+        {
+            throw new MapperBuildException(From.Type, MapperEndPoint.Source, "", "Element type is null.");
+        }
+        if (toElementType == null)
+        {
+            throw new MapperBuildException(To.Type, MapperEndPoint.Destination, "", "Element type is null.");
+        }
+
         var elementMapping = Builder.GetMapper(new SourceDestination(fromElementType, toElementType), this);
         children["[]"] = elementMapping;
         return children;
@@ -57,6 +72,10 @@ public class EnumerableMapperOperator : MapperOperator
         MapperDelegate mapping = (s, d) =>
             {
                 var arr = (s as IEnumerable);
+                if (arr == null)
+                {
+                    throw new MapperBuildException(From.Type, MapperEndPoint.Source, this.GetPath(), "Type does not implement IEnumerable.");
+                }
                 EnumerableBuffer buffer = new EnumerableBuffer(arr, Children["[]"].GetMap());
                 return buffer.To(To.Type);
             };
