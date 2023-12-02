@@ -71,4 +71,15 @@ public class EnumerableBufferTests
         Assert.Equal(expectedLength, converted.Count());
         Assert.IsType<DateTime[]>(converted);
     }
+
+   [Fact]
+    public void TestTo()
+    {
+        object[] arr = new object[] { 1, 2, 3, 4, 5 };
+        int expectedLength = arr.Length;
+        var buffer = new EnumerableBuffer(arr);
+        var converted = buffer.To<Stack>();
+        Assert.Equal(expectedLength, converted.Count);
+        Assert.IsAssignableFrom<Stack>(converted);
+    }
 }
