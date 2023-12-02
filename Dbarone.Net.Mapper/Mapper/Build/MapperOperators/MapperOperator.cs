@@ -8,11 +8,34 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 public abstract class MapperOperator
 {
+    /// <summary>
+    /// Reference to the current MapperBuilder instance.
+    /// </summary>
     protected MapperBuilder Builder { get; set; }
+    
+    /// <summary>
+    /// The 'From' <see cref="BuildType"/> object.
+    /// </summary>
     protected BuildType From { get; set; }
+    
+    /// <summary>
+    /// The 'To' <see cref="BuildType"/> object.
+    /// </summary>
     protected BuildType To { get; set; }
-    protected MapperOperator Parent { get; set; }
-    public MapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null)
+
+    /// <summary>
+    /// Optional parent <see cref="MapperOperator"/> reference.
+    /// </summary>
+    protected MapperOperator? Parent { get; set; }
+
+    /// <summary>
+    /// Create a new <see cref="MapperOperator"/> instance.
+    /// </summary>
+    /// <param name="builder">A <see cref="MapperBuilder"/> instance.</param>
+    /// <param name="from">The 'From' <see cref="BuildType"/>.</param>
+    /// <param name="to">The 'To' <see cref="BuildType"/>.</param>
+    /// <param name="parent">Optional parent <see cref="MapperOperator"/> instance.</param>
+    public MapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null)
     {
         this.Parent = parent;
         this.Builder = builder;
@@ -28,9 +51,7 @@ public abstract class MapperOperator
     /// <summary>
     /// Returns true if the current class can map the from / to types.
     /// </summary>
-    /// <param name="from">The from type.</param>
-    /// <param name="to">The to type.</param>
-    /// <returns>Returns true if the current mapper can map the types.</returns>
+    /// <returns>Returns true if the current mapper can map the from / to types.</returns>
     public abstract bool CanMap();
 
     /// <summary>
@@ -41,12 +62,20 @@ public abstract class MapperOperator
     /// <returns></returns>
     public abstract MapperDelegate GetMap();
 
+    /// <summary>
+    /// Function to get the children of the current operation. Must be implemented in subclasses. This function is called by the Children property.
+    /// </summary>
+    /// <returns>Returns the children operations. If no children for the operation, call the base implementation.</returns>
     protected virtual IDictionary<string, MapperOperator> GetChildren()
     {
         return new Dictionary<string, MapperOperator>();
     }
 
-    private IDictionary<string, MapperOperator> _children = null;
+    private IDictionary<string, MapperOperator> _children = default!;
+    
+    /// <summary>
+    /// Returns the children of the current operation.
+    /// </summary>
     public IDictionary<string, MapperOperator> Children
     {
         get
@@ -65,15 +94,21 @@ public abstract class MapperOperator
     /// <param name="builder">The current <see cref="MapperBuilder"/> instance.</param>
     /// <param name="from">The from type.</param>
     /// <param name="to">The to type.</param>
+    /// <param name="parent">An optional parent operator.</param>
+    /// <param name="onCreateOperator">An optional <see cref="CreateOperatorDelegate"/> callback function. This callback function is executed each time an operator is created within the mapping operator graph.</param>
     /// <returns>A <see cref="MapperOperator"/> instance that can map from / to types.</returns>
     /// <exception cref="MapperBuildException">Throws an exception if no suitable mapper found.</exception>
-    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null, CreateOperatorDelegate onCreateOperator = null)
+    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null, CreateOperatorDelegate? onCreateOperator = null)
     {
         var operatorTypes = AppDomain.CurrentDomain.GetTypesAssignableFrom(typeof(MapperOperator)).Where(t => !t.IsAbstract);
         List<MapperOperator> mapperOperators = new List<MapperOperator>();
         foreach (var type in operatorTypes)
         {
-            var mapperOperator = (MapperOperator)Activator.CreateInstance(type, builder, from, to, parent);
+            var mapperOperator = (MapperOperator?)Activator.CreateInstance(type, builder, from, to, parent);
+            if (mapperOperator == null)
+            {
+                throw new MapperBuildException(from.Type, MapperEndPoint.Source, "", $"Unable to create mapper operator for mapper type: {type.Name}.");
+            }
             mapperOperators.Add(mapperOperator);
             mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
         }
