@@ -121,7 +121,7 @@ public abstract class MapperOperator
                 // Throw event
                 if (onCreateOperator != null)
                 {
-                    onCreateOperator(mapperOperator.ToExecutionPlanNode());
+                    onCreateOperator(mapperOperator.ToMapperOperatorInfo());
                 }
                 return mapperOperator;
             }
@@ -132,28 +132,27 @@ public abstract class MapperOperator
     }
 
     /// <summary>
-    /// Returns an <see cref="ExecutionPlanNode"/> object that contains key information for the operation. Used to output a graph of the mapping execution plan.
+    /// Returns a <see cref="MapperOperatorInfo"/> object that contains key information for the operator.
     /// </summary>
-    /// <returns>An <see cref="ExecutionPlanNode"/> object representing the mapping execution plan.</returns>
-    public ExecutionPlanNode ToExecutionPlanNode(ExecutionPlanNode parent = null)
+    /// <returns>Returns a <see cref="MapperOperatorInfo"/> object representing the mapping operator.</returns>
+    public MapperOperatorInfo ToMapperOperatorInfo()
     {
-        ExecutionPlanNode node = new ExecutionPlanNode(
+        MapperOperatorInfo info = new MapperOperatorInfo(
             this.GetPath(),
             this.GetType().Name,
             this.From.Type.Name,
             this.From.MemberResolver.GetType().Name,
             this.To.Type.Name,
-            this.To.MemberResolver.GetType().Name,
-            parent
+            this.To.MemberResolver.GetType().Name
         );
-        var children = this.Children;
-        foreach (var key in children.Keys)
-        {
-            node.AddChild(key, children[key].ToExecutionPlanNode(node));
-        }
-        return node;
+        return info;
     }
 
+    /// <summary>
+    /// Gets the path of the current <see cref="MapperOperator"/>.
+    /// </summary>
+    /// <returns>Returns a string value representing the path of the current operator.</returns>
+    /// <exception cref="Exception">Throws an exception if an invalid child.</exception>
     public string GetPath()
     {
         if (this.Parent == null)

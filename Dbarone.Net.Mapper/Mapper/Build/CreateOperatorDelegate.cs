@@ -1,3 +1,3 @@
 using Dbarone.Net.Mapper;
 
-public delegate void CreateOperatorDelegate(ExecutionPlanNode node);
+public delegate void CreateOperatorDelegate(MapperOperatorInfo operatorInfo);

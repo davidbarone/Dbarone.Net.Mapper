@@ -61,7 +61,7 @@ public class MapperOperatorTests
 
         var mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
         var op = mapper.GetOperator<Company, CompanyDto>();
-        var executionPlan = op.ToExecutionPlanNode();
+        var executionPlan = op.ToMapperOperatorInfo();
         Assert.NotNull(executionPlan);
 
         // Also do map
