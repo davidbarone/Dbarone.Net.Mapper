@@ -59,9 +59,9 @@ public class EnumerableBuffer
         }
         else if (type.IsAssignableToGenericType(typeof(IEnumerable<>)))
         {
-            return ToGenericIEnumerable(elementType);
+            return ToGenericEnumerable(elementType);
         }
-        throw new MapperRuntimeException($"Cannot conver EnumerableBuffer to type: {type.Name}.");
+        throw new MapperRuntimeException($"Cannot convert EnumerableBuffer to type: {type.Name}.");
     }
 
     /// <summary>
@@ -152,21 +152,40 @@ public class EnumerableBuffer
         return results;
     }
 
-    public IEnumerable ToArray<T>()
+    /// <summary>
+    /// Converts the <see cref="EnumerableBuffer"/> instance to a generic <see cref="Array"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the generic Array elements.</typeparam>
+    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as a generic <see cref="Array"/>.</returns>
+    public T[] ToArray<T>()
     {
         return this.Buffer.Cast<T>().ToArray<T>();
     }
 
-    public IEnumerable ToArray(Type elementType)
+    /// <summary>
+    /// Converts the <see cref="EnumerableBuffer"/> instance to a generic <see cref="Array"/>.
+    /// </summary>
+    /// <param name="elementType">The type of the Array elements.</param>
+    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as a generic <see cref="Array"/>.</returns>
+    public Array ToArray(Type elementType)
     {
         var list = this.ToGenericList(elementType);
 
         var castMethod = typeof(IEnumerable<>).GetExtensionMethods().First(m => m.Name == "ToArray");
         // Get the cast method for the element type parameter, and invoke;
-        var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { list });
-        return results as IEnumerable;
+        var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { list }) as Array;
+        if (results == null)
+        {
+            throw new MapperRuntimeException("Null return value for ToArray().");
+        }
+        return results;
     }
 
+    /// <summary>
+    /// Constructor to create a new <see cref="EnumerableBuffer"/> instance.
+    /// </summary>
+    /// <param name="source">The source IEnumerable object.</param>
+    /// <param name="mapper">An optional mapper function. If provided, this function will be applied on the source.</param>
     public EnumerableBuffer(IEnumerable source, MapperDelegate? mapper = null)
     {
         object[] buffer = null;
