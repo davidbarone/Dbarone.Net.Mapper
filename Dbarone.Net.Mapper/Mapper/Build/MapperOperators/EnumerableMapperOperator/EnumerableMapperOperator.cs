@@ -12,7 +12,14 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 public class EnumerableMapperOperator : MapperOperator
 {
-    public EnumerableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent)
+    /// <summary>
+    /// Creates a new <see cref="EnumerableMapperOperator"/> instance. 
+    /// </summary>
+    /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
+    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
+    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
+    public EnumerableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent)
     {
     }
 
@@ -27,14 +34,25 @@ public class EnumerableMapperOperator : MapperOperator
         return children;
     }
 
+    /// <summary>
+    /// Overrides the priority of the <see cref="EnumerableMapperOperator"/> instance.
+    /// </summary>
     public override int Priority => 50;
 
+    /// <summary>
+    /// The <see cref="EnumerableMapperOperator"/> type is able to map when both From and To types are enumerable types. 
+    /// </summary>
+    /// <returns>Returns true when From and To types are enumerable types.</returns>
     public override bool CanMap()
     {
         return To.Type.IsEnumerableType() && From.Type.IsEnumerableType();
     }
 
-     public override MapperDelegate GetMap()
+    /// <summary>
+    /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
+    /// </summary>
+    /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
+    public override MapperDelegate GetMap()
     {
         MapperDelegate mapping = (s, d) =>
             {
