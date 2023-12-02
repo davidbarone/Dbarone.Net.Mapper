@@ -125,17 +125,31 @@ public class EnumerableBuffer
         return returnValue;
     }
 
-    public IEnumerable<T> ToGenericIEnumerable<T>()
+    /// <summary>
+    /// Converts the <see cref="EnumerableBuffer"/> instance to a generic IEnumerable.
+    /// </summary>
+    /// <typeparam name="T">The type of the generic IEnumerable elements.</typeparam>
+    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as a generic IEnumerable.</returns>
+    public IEnumerable<T> ToGenericEnumerable<T>()
     {
         return this.Buffer.Cast<T>();
     }
 
-    public IEnumerable ToGenericIEnumerable(Type elementType)
+    /// <summary>
+    /// Converts the <see cref="EnumerableBuffer"/> instance to an IEnumerable.
+    /// </summary>
+    /// <param name="elementType">The type of the IEnumerable elements.</param>
+    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as an IEnumerable.</returns>
+    public IEnumerable ToGenericEnumerable(Type elementType)
     {
         var castMethod = typeof(IEnumerable).GetExtensionMethods().First(m => m.Name == "Cast");
         // Get the cast method for the element type parameter, and invoke;
-        var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { this.Buffer });
-        return results as IEnumerable;
+        var results = castMethod.MakeGenericMethod(elementType).Invoke(null, new object[] { this.Buffer }) as IEnumerable;
+        if (results == null)
+        {
+            throw new MapperRuntimeException("Null return value for ToGenericEnumerable().");
+        }
+        return results;
     }
 
     public IEnumerable ToArray<T>()
