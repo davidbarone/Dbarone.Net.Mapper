@@ -11,7 +11,7 @@ namespace Dbarone.Net.Extensions;
 public class EnumerableBuffer
 {
     private int Count { get; init; }
-    private object[] Buffer { get; init; }
+    private object?[] Buffer { get; init; }
 
     /// <summary>
     /// Generic convert-to method.
@@ -102,10 +102,10 @@ public class EnumerableBuffer
     }
 
     /// <summary>
-    /// Converts the <see cref="EnumerableBuffer"/> instance to a list.
+    /// Converts the <see cref="EnumerableBuffer"/> instance to a generic list.
     /// </summary>
-    /// <param name="elementType">The type of the list elements.</param>
-    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as a list.</returns>
+    /// <param name="elementType">The type of the generic list elements.</param>
+    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as a generic list.</returns>
     public IList ToGenericList(Type elementType)
     {
         // Get the cast method
@@ -136,10 +136,10 @@ public class EnumerableBuffer
     }
 
     /// <summary>
-    /// Converts the <see cref="EnumerableBuffer"/> instance to an IEnumerable.
+    /// Converts the <see cref="EnumerableBuffer"/> instance to a generic IEnumerable.
     /// </summary>
-    /// <param name="elementType">The type of the IEnumerable elements.</param>
-    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as an IEnumerable.</returns>
+    /// <param name="elementType">The type of the generic IEnumerable elements.</param>
+    /// <returns>Returns the <see cref="EnumerableBuffer"/> instance as a generic IEnumerable.</returns>
     public IEnumerable ToGenericEnumerable(Type elementType)
     {
         var castMethod = typeof(IEnumerable).GetExtensionMethods().First(m => m.Name == "Cast");
@@ -188,9 +188,9 @@ public class EnumerableBuffer
     /// <param name="mapper">An optional mapper function. If provided, this function will be applied on the source.</param>
     public EnumerableBuffer(IEnumerable source, MapperDelegate? mapper = null)
     {
-        object[] buffer = null;
+        object?[] buffer = default!;
         int count = 0;
-        ICollection collection = source as ICollection;
+        ICollection? collection = source as ICollection;
         bool isGeneric = source.GetType().IsGenericType;
 
         if (collection != null && mapper == null)
