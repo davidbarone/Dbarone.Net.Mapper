@@ -35,6 +35,7 @@ public class MapperConfiguration
     /// <summary>
     /// Registers an IMemberResolver using a generic type.
     /// </summary>
+    /// <typeparam name="TResolver">The resolver type.</typeparam>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterResolvers<TResolver>() where TResolver : IMemberResolver
     {

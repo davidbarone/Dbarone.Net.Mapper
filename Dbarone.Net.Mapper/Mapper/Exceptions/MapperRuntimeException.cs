@@ -8,8 +8,9 @@ namespace Dbarone.Net.Mapper;
 public class MapperRuntimeException : MapperException
 {
     /// <summary>
-    /// Exception constructor.
+    /// Creates a new <see cref="MapperRuntimeException"/> instance.
     /// </summary>
+    /// <param name="message">The error message.</param>
     public MapperRuntimeException(string message) : base(message)
     {
     }

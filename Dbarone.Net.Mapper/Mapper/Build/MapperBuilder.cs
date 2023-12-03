@@ -44,10 +44,11 @@ public class MapperBuilder
     /// <summary>
     /// Gets a mapper delegate which is able to map the SourceDestination pairing.
     /// </summary>
-    /// <param name="sourceDestination"></param>
+    /// <param name="sourceDestination">The source and destination types.</param>
+    /// <param name="parent">An optional parent operator.</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public MapperOperator GetMapper(SourceDestination sourceDestination, MapperOperator parent = null)
+    public MapperOperator GetMapper(SourceDestination sourceDestination, MapperOperator? parent = null)
     {
         MapperOperator? mapperOperator = null;
 
@@ -176,8 +177,9 @@ public class MapperBuilder
     /// <param name="type"></param>
     /// <param name="path"></param>
     /// <param name="obj"></param>
-    internal void AddDynamicMembers(Type type, string path, object? obj, List<MapperBuildError> errors)
+    internal void AddDynamicMembers(Type type, string path, object? obj)
     {
+        List<MapperBuildError> errors = new List<MapperBuildError>();
         var buildType = this.GetBuildTypeFor(type);
 
         var members = buildType.MemberResolver.GetInstanceMembers(obj);
@@ -217,6 +219,10 @@ public class MapperBuilder
                     InternalMemberName = internalName
                 });
             }
+        }
+        if (errors.Any())
+        {
+            throw new MapperBuildException(errors);
         }
         buildType.Members = buildMembers;
     }

@@ -13,24 +13,31 @@ public class MapperBuildException : MapperException
     public List<MapperBuildError> Errors { get; set; } = new List<MapperBuildError>();
 
     /// <summary>
-    /// Exception constructor.
+    /// Creates a new <see cref="MapperBuildException"/>.
     /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="errors">The build errors.</param>
     public MapperBuildException(string message, List<MapperBuildError> errors) : base(message)
     {
         this.Errors = errors;
     }
 
     /// <summary>
-    /// Exception constructor.
+    /// Creates a new <see cref="MapperBuildException"/>.
     /// </summary>
+    /// <param name="errors">The build errors.</param>
     public MapperBuildException(List<MapperBuildError> errors) : base("An error has occurred during the build phase. Refer to the inner Errors property for details.")
     {
         this.Errors = errors;
     }
 
     /// <summary>
-    /// Exception constructor.
+    /// Creates a new <see cref="MapperBuildException"/>.
     /// </summary>
+    /// <param name="type">The type generating the error(s).</param>
+    /// <param name="endPoint">Signifies whether the type is a source or destination type.</param>
+    /// <param name="memberName">Optional member name.</param>
+    /// <param name="message">The error message.</param>
     public MapperBuildException(Type type, MapperEndPoint endPoint, string memberName, string message) : base("An error has occurred during the build phase. Refer to the inner Errors property for details.")
     {
         this.Errors = new List<MapperBuildError>{

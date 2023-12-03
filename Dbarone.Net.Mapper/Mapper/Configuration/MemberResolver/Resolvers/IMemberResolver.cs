@@ -37,6 +37,9 @@ public interface IMemberResolver
     /// <summary>
     /// Returns the member names for a type.
     /// </summary>
+    /// <param name="type">The type to get the members for.</param>
+    /// <param name="options">The options.</param>
+    /// <returns></returns>
     string[] GetTypeMembers(Type type, MapperOptions options);
 
     /// <summary>

@@ -487,7 +487,7 @@ internal static string CreateSignature(string id, IList<XElement> typeParameters
 
     if (idParts.TypeArguments != methodTypeParameterNames.Count())
     {
-        throw new Exception("Supplied type parameter names do not match the type parameter count");
+        throw new Exception($"Supplied type parameter names do not match the type parameter count. Id: {id}.");
     }
 
     var memberTypeArguments = "";
