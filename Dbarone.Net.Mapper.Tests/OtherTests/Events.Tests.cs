@@ -15,7 +15,7 @@ public class EventsTests
 
         int a = 1;
         var buildCount = 0;
-        CreateOperatorDelegate onCreateOperator = (MapperOperatorInfo info) => { buildCount++; };
+        CreateOperatorDelegate onCreateOperator = (MapperOperatorDiagnostics diag) => { buildCount++; };
         mapper.OnCreateOperator = onCreateOperator;
         var b = mapper.Map<int, float>(a);  // Will automatically register necessary types here
         Assert.Equal((float)1, b);

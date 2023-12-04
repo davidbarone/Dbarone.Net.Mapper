@@ -2,10 +2,15 @@ using System.Text.Json;
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
-/// Represents a mapping execution plan. Each execution plan node represents a mapper operation.
+/// Used by debugging and logging to represent a single mapper operation.
 /// </summary>
-public class MapperOperatorInfo
+public class MapperOperatorDiagnostics
 {
+    /// <summary>
+    /// Determines whether the diagnostic event relates to build time or run time.
+    /// </summary>
+    public MapperOperatorDiagnosticMode Mode { get; set; }
+
     /// <summary>
     /// The path of the mapper operator.
     /// </summary>
@@ -37,7 +42,22 @@ public class MapperOperatorInfo
     public string ToMemberResolver { get; set; }
 
     /// <summary>
-    /// Creates a new <see cref="MapperOperatorInfo"/>.
+    /// The number of iterations that the operator has executed.
+    /// </summary>
+    public int Iterations { get; set; }
+
+    /// <summary>
+    /// The total duration of the operation.
+    /// </summary>
+    public TimeSpan Duration { get; set; }
+
+    /// <summary>
+    /// The number of iterations per second.
+    /// </summary>
+    public int IterationsPerSecond => Iterations * 1000 / Duration.Milliseconds;
+
+    /// <summary>
+    /// Creates a new <see cref="MapperOperatorDiagnostics"/>.
     /// </summary>
     /// <param name="path">The mapping operator path.</param>
     /// <param name="mapperOperator">The mapping operator used.</param>
@@ -45,7 +65,7 @@ public class MapperOperatorInfo
     /// <param name="fromMemberResolver">The from member resolver.</param>
     /// <param name="toType">The to type.</param>
     /// <param name="toMemberResolver">The to member resolver.</param>
-    public MapperOperatorInfo(string path, string mapperOperator, string fromType, string fromMemberResolver, string toType, string toMemberResolver)
+    public MapperOperatorDiagnostics(string path, string mapperOperator, string fromType, string fromMemberResolver, string toType, string toMemberResolver)
     {
         this.Path = path;
         this.MapperOperator = mapperOperator;

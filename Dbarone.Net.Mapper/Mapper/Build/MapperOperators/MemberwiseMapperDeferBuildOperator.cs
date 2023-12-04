@@ -2,9 +2,20 @@ using Dbarone.Net.Mapper;
 
 namespace Dbarone.Net.Mapper;
 
+/// <summary>
+/// Mapper operator that is able to map class and struct types on a member level, where the source type has a DeferBuild set to True (i.e. Dictionary and Dynamic types).
+/// The operator build occurs when the first object is mapped. It is assumed that all subsequent objects have the same schema as the first object.
+/// </summary>
 public class MemberwiseMapperDeferBuildOperator : MapperOperator
 {
-    public MemberwiseMapperDeferBuildOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent)
+    /// <summary>
+    /// Creates a new <see cref="MemberwiseMapperDeferBuildOperator"/> instance.
+    /// </summary>
+    /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
+    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
+    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
+    public MemberwiseMapperDeferBuildOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent)
     {
     }
 

@@ -135,9 +135,9 @@ public abstract class MapperOperator
     /// Returns a <see cref="MapperOperatorInfo"/> object that contains key information for the operator.
     /// </summary>
     /// <returns>Returns a <see cref="MapperOperatorInfo"/> object representing the mapping operator.</returns>
-    public MapperOperatorInfo ToMapperOperatorInfo()
+    public MapperOperatorDiagnostics ToMapperOperatorInfo()
     {
-        MapperOperatorInfo info = new MapperOperatorInfo(
+        MapperOperatorDiagnostics diag = new MapperOperatorDiagnostics(
             this.GetPath(),
             this.GetType().Name,
             this.From.Type.Name,
@@ -145,7 +145,7 @@ public abstract class MapperOperator
             this.To.Type.Name,
             this.To.MemberResolver.GetType().Name
         );
-        return info;
+        return diag;
     }
 
     /// <summary>
