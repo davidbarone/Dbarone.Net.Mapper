@@ -132,9 +132,9 @@ public abstract class MapperOperator
     }
 
     /// <summary>
-    /// Returns a <see cref="MapperOperatorInfo"/> object that contains key information for the operator.
+    /// Returns a <see cref="MapperOperatorDiagnostics"/> object that contains key information for the operator.
     /// </summary>
-    /// <returns>Returns a <see cref="MapperOperatorInfo"/> object representing the mapping operator.</returns>
+    /// <returns>Returns a <see cref="MapperOperatorDiagnostics"/> object representing the mapping operator.</returns>
     public MapperOperatorDiagnostics ToMapperOperatorInfo()
     {
         MapperOperatorDiagnostics diag = new MapperOperatorDiagnostics(

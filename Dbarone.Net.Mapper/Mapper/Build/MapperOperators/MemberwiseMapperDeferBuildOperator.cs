@@ -19,6 +19,11 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     {
     }
 
+    /// <summary>
+    /// GetChildren implementation for <see cref="MemberwiseMapperDeferBuildOperator"/>.
+    /// </summary>
+    /// <returns>Returns the children operators.</returns>
+    /// <exception cref="MapperBuildException"></exception>
     protected override IDictionary<string, MapperOperator> GetChildren()
     {
         Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
@@ -45,6 +50,9 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
         return children;
     }
 
+    /// <summary>
+    /// Overrides the priority of the <see cref="MemberwiseMapperDeferBuildOperator"/> instance.
+    /// </summary>
     public override int Priority => 60;
 
     public override bool CanMap()
