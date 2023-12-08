@@ -50,8 +50,8 @@ public class ObjectMapper
     public object? Map(Type fromType, Type toType, object? obj)
     {
         SourceDestination sourceDestination = new SourceDestination(fromType, toType);
-        var mapper = Builder.GetMapper(sourceDestination);
-        var to = mapper.GetMap()(obj, null);
+        var mapperOperator = Builder.GetMapperOperator(sourceDestination);
+        var to = mapperOperator.Map(obj, null);
         return to;
     }
 
@@ -73,11 +73,11 @@ public class ObjectMapper
     /// <param name="from">The from type.</param>
     /// <param name="to">The to type.</param>
     /// <returns>Returns the mapping execution plan.</returns>
-    public MapperOperator GetOperator(Type from, Type to)
+    public MapperOperator GetMapperOperator(Type from, Type to)
     {
         SourceDestination sourceDestination = new SourceDestination(from, to);
-        var mapper = Builder.GetMapper(sourceDestination);
-        return mapper;
+        var mapperOperator = Builder.GetMapperOperator(sourceDestination);
+        return mapperOperator;
     }
 
     /// <summary>
@@ -86,8 +86,8 @@ public class ObjectMapper
     /// <typeparam name="TSource">The from type.</typeparam>
     /// <typeparam name="TDestination">The to type.</typeparam>
     /// <returns>Returns the mapping execution plan.</returns>
-    public MapperOperator GetOperator<TSource, TDestination>()
+    public MapperOperator GetMapperOperator<TSource, TDestination>()
     {
-        return GetOperator(typeof(TSource), typeof(TDestination));
+        return GetMapperOperator(typeof(TSource), typeof(TDestination));
     }
 }

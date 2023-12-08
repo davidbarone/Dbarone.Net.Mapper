@@ -36,17 +36,13 @@ public class ConverterMapperOperator : MapperOperator
     /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
     /// </summary>
     /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
-    public override MapperDelegate GetMap()
+    protected override object? MapInternal(object? source, object? target)
     {
         SourceDestination sourceDestination = new SourceDestination(From.Type, To.Type);
         var converter = Builder.Configuration.Config.Converters[sourceDestination];
 
         // Member types differ, but converter exists - convert then assign value to destination object.
-        MapperDelegate mapping = (s, d) =>
-        {
-            var converted = converter.Convert(s);
-            return converted;
-        };
-        return mapping;
+        var converted = converter.Convert(source);
+        return converted;
     }
 }

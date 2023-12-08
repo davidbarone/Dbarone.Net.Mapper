@@ -44,8 +44,8 @@ public class EnumerableMapperOperator : MapperOperator
             throw new MapperBuildException(To.Type, MapperEndPoint.Destination, "", "Element type is null.");
         }
 
-        var elementMapping = Builder.GetMapper(new SourceDestination(fromElementType, toElementType), this);
-        children["[]"] = elementMapping;
+        var elementMappingOperator = Builder.GetMapperOperator(new SourceDestination(fromElementType, toElementType), this);
+        children["[]"] = elementMappingOperator;
         return children;
     }
 
@@ -67,19 +67,14 @@ public class EnumerableMapperOperator : MapperOperator
     /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
     /// </summary>
     /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
-    public override MapperDelegate GetMap()
+    protected override object? MapInternal(object? source, object? target)
     {
-        MapperDelegate mapping = (s, d) =>
-            {
-                var arr = (s as IEnumerable);
-                if (arr == null)
-                {
-                    throw new MapperBuildException(From.Type, MapperEndPoint.Source, this.GetPath(), "Type does not implement IEnumerable.");
-                }
-                EnumerableBuffer buffer = new EnumerableBuffer(arr, Children["[]"].GetMap());
-                return buffer.To(To.Type);
-            };
-
-        return mapping;
+        var arr = (source as IEnumerable);
+        if (arr == null)
+        {
+            throw new MapperBuildException(From.Type, MapperEndPoint.Source, this.GetPath(), "Type does not implement IEnumerable.");
+        }
+        EnumerableBuffer buffer = new EnumerableBuffer(arr, Children["[]"].Map);
+        return buffer.To(To.Type);
     }
 }

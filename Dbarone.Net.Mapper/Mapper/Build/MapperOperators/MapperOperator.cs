@@ -55,12 +55,22 @@ public abstract class MapperOperator
     public abstract bool CanMap();
 
     /// <summary>
-    /// When implemented in a class, should return a <see cref="MapperDelegate"/> object that
-    /// can map an object of 'from' type to 'to' type. This method should also perform any
-    /// build-time validation, and add any errors to the errors collection.
+    /// Maps a source object, returning a mapped object.
     /// </summary>
-    /// <returns></returns>
-    public abstract MapperDelegate GetMap();
+    /// <param name="source">The source object</param>
+    /// <param name="target">Optional target object</param>
+    /// <returns>A mapped object.</returns>
+    public object? Map(object? source, object? target) {
+        return MapInternal(source, target);
+    }
+
+    /// <summary>
+    /// Sub type specific implementation of mapping operator.
+    /// </summary>
+    /// <param name="source">The source object</param>
+    /// <param name="target">Optional target object</param>
+    /// <returns>A mapped object.</returns>
+    protected abstract object? MapInternal(object? source, object? target);
 
     /// <summary>
     /// Function to get the children of the current operation. Must be implemented in subclasses. This function is called by the Children property.

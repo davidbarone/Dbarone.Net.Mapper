@@ -52,19 +52,15 @@ public class ConvertibleMapperOperator : MapperOperator
     /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
     /// </summary>
     /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
-    public override MapperDelegate GetMap()
+    protected override object? MapInternal(object? source, object? target)
     {
         // Member types differ, but converter exists - convert then assign value to destination object.
-        MapperDelegate mapping = (s, d) =>
+        var iconv = source as IConvertible;
+        if (iconv == null)
         {
-            var iconv = s as IConvertible;
-            if (iconv == null)
-            {
-                throw new MapperRuntimeException("Object does not support IConvertible interface.");
-            }
-            var converted = iconv.ToType(To.Type, null);
-            return converted;
-        };
-        return mapping;
+            throw new MapperRuntimeException("Object does not support IConvertible interface.");
+        }
+        var converted = iconv.ToType(To.Type, null);
+        return converted;
     }
 }

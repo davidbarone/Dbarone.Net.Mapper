@@ -41,7 +41,7 @@ public class MapperOperatorTests
             .RegisterType<float>()
         );
 
-        var op = mapper.GetOperator<int, float>();
+        var op = mapper.GetMapperOperator<int, float>();
         Assert.NotNull(op);
     }
 
@@ -60,7 +60,7 @@ public class MapperOperatorTests
         };
 
         var mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
-        var op = mapper.GetOperator<Company, CompanyDto>();
+        var op = mapper.GetMapperOperator<Company, CompanyDto>();
         var executionPlan = op.ToMapperOperatorInfo();
         Assert.NotNull(executionPlan);
 

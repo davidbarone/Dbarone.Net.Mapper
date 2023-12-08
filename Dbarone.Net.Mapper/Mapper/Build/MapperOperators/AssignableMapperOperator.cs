@@ -41,14 +41,9 @@ public class AssignableMapperOperator : MapperOperator
     /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
     /// </summary>
     /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
-    public override MapperDelegate GetMap()
+    protected override object? MapInternal(object? source, object? target)
     {
-        MapperDelegate mapping = (s, d) =>
-            {
-                d = s;
-                return d;
-            };
-
-        return mapping;
+        target = source;
+        return target;
     }
 }

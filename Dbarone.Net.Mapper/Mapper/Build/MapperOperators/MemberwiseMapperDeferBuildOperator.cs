@@ -44,8 +44,8 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
         {
             var mSourceType = From.Members.First(m => m.MemberName == member).DataType;
             var mDestinationType = To.Members.First(m => m.MemberName == member).DataType;
-            var memberMapper = Builder.GetMapper(new SourceDestination(mSourceType, mDestinationType), this);
-            children[member] = memberMapper;
+            var memberMapperOperator = Builder.GetMapperOperator(new SourceDestination(mSourceType, mDestinationType), this);
+            children[member] = memberMapperOperator;
         }
         return children;
     }
@@ -98,25 +98,21 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
         }
     }
 
-    public override MapperDelegate GetMap()
+    protected override object? MapInternal(object? source, object? target)
     {
         EndPointValidation();
 
-        MapperDelegate mapping = (s, d) =>
-            {
-                var creator = To.MemberResolver.CreateInstance(To.Type, null);
-                var instance = creator();
+        var creator = To.MemberResolver.CreateInstance(To.Type, null);
+        var instance = creator();
 
-                foreach (var member in Children.Keys)
-                {
-                    var memberFrom = From.MemberResolver.GetGetter(From.Type, member, From.Options)(s);
-                    var memberTo = To.MemberResolver.GetGetter(To.Type, member, From.Options)(instance);
-                    var memberMapper = this.Children[member].GetMap();
-                    var memberMapped = memberMapper(memberFrom, memberTo);
-                    To.MemberResolver.GetSetter(To.Type, member, From.Options)(instance, memberMapped);
-                }
-                return instance;
-            };
-        return mapping;
+        foreach (var member in Children.Keys)
+        {
+            var memberFrom = From.MemberResolver.GetGetter(From.Type, member, From.Options)(source);
+            var memberTo = To.MemberResolver.GetGetter(To.Type, member, From.Options)(instance);
+            var memberOperator = this.Children[member];
+            var memberMapped = memberOperator.Map(memberFrom, memberTo);
+            To.MemberResolver.GetSetter(To.Type, member, From.Options)(instance, memberMapped);
+        }
+        return instance;
     }
 }

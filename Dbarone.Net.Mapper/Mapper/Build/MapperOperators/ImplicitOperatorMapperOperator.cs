@@ -57,18 +57,14 @@ public class ImplicitOperatorMapperOperator : MapperOperator
     /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
     /// </summary>
     /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
-    public override MapperDelegate GetMap()
+    protected override object? MapInternal(object? source, object? target)
     {
         var implicitOperator = GetImplicitCast();
         if (implicitOperator == null)
         {
             throw new MapperBuildException(From.Type, MapperEndPoint.Source, "", $"No implicit cast exists to {To.Type}.");
         }
-        MapperDelegate mapping = (s, d) =>
-        {
-            d = implicitOperator.Invoke(null, new object?[] { s })!;
-            return d;
-        };
-        return mapping;
+        target = implicitOperator.Invoke(null, new object?[] { source })!;
+        return target;
     }
 }

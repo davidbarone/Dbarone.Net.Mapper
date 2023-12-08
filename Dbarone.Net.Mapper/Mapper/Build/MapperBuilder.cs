@@ -42,13 +42,13 @@ public class MapperBuilder
     #region Public Methods
 
     /// <summary>
-    /// Gets a mapper delegate which is able to map the SourceDestination pairing.
+    /// Gets a mapper operator based on source and destination types.
     /// </summary>
     /// <param name="sourceDestination">The source and destination types.</param>
     /// <param name="parent">An optional parent operator.</param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public MapperOperator GetMapper(SourceDestination sourceDestination, MapperOperator? parent = null)
+    /// <returns>A mapper operator able to map source and destination types.</returns>
+    /// <exception cref="Exception">Throws an exception if no valid operator found.</exception>
+    public MapperOperator GetMapperOperator(SourceDestination sourceDestination, MapperOperator? parent = null)
     {
         MapperOperator? mapperOperator = null;
 
