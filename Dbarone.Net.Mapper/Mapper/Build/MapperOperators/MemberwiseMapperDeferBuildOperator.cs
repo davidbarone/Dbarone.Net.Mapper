@@ -55,6 +55,10 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     /// </summary>
     public override int Priority => 60;
 
+    /// <summary>
+    /// The <see cref="MemberwiseMapperDeferBuildOperator"/> operator is able to map when the source and target types have members, and the source type is a defer build type. 
+    /// </summary>
+    /// <returns>Returns true when the source and target types have members, and the source type is a defer build type.</returns>
     public override bool CanMap()
     {
         return From.MemberResolver.HasMembers && To.MemberResolver.HasMembers && From.MemberResolver.DeferBuild;
@@ -114,11 +118,15 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
 
         foreach (var member in Children.Keys)
         {
-            var memberFrom = From.MemberResolver.GetGetter(From.Type, member, From.Options)(source);
-            var memberTo = To.MemberResolver.GetGetter(To.Type, member, From.Options)(instance);
+            var sourceGetter = From.MemberResolver.GetGetter(From.Type, member, From.Options);
+            var targetGetter = To.MemberResolver.GetGetter(To.Type, member, To.Options);
+            var targetSetter = To.MemberResolver.GetSetter(To.Type, member, To.Options);
+
+            var memberFrom = sourceGetter(source);
+            var memberTo = targetGetter(instance);
             var memberOperator = this.Children[member];
             var memberMapped = memberOperator.Map(memberFrom, memberTo);
-            To.MemberResolver.GetSetter(To.Type, member, From.Options)(instance, memberMapped);
+            targetSetter(instance, memberMapped);
         }
         return instance;
     }

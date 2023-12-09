@@ -5,4 +5,4 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 /// <param name="args">Optional args to pass into the constructor.</param>
 /// <returns>Returns an instance of an object.</returns>
-public delegate object CreateInstance(params object[] args);
+public delegate object CreateInstance(params object?[]? args);

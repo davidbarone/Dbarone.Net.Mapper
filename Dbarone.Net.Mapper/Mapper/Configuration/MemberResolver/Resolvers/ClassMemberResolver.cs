@@ -62,7 +62,7 @@ public class ClassMemberResolver : IMemberResolver
     /// <param name="options">The mapper options provided for the type.</param>
     /// <returns>Returns a getter object which, when invoked, will get a member value from an object.
     /// Returns a null reference if getter does not exist.</returns>
-    public Getter? GetGetter(Type type, string memberName, MapperOptions options)
+    public Getter GetGetter(Type type, string memberName, MapperOptions options)
     {
         if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException(nameof(memberName));
 
@@ -98,7 +98,7 @@ public class ClassMemberResolver : IMemberResolver
     /// <param name="options">The mapper options provided for the type.</param>
     /// <returns>Returns a setter object which, when invoked, will set a member value for an object.
     /// Returns a null reference if setter does not exist.</returns>
-    public Setter? GetSetter(Type type, string memberName, MapperOptions options)
+    public Setter GetSetter(Type type, string memberName, MapperOptions options)
     {
         if (string.IsNullOrWhiteSpace(memberName)) throw new ArgumentException(nameof(memberName));
 

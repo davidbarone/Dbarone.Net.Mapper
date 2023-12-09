@@ -5,4 +5,4 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 /// <param name="target">The object to set the value in.</param>
 /// <param name="value">The value to set.</param>
-public delegate void Setter(object target, object value);
+public delegate void Setter(object target, object? value);

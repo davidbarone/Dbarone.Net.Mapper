@@ -35,8 +35,15 @@ public class MemberwiseMapperOperator : MapperOperator
         return children;
     }
 
+    /// <summary>
+    /// Overrides the priority of the <see cref="MemberwiseMapperOperator"/> instance.
+    /// </summary>
     public override int Priority => 70;
 
+    /// <summary>
+    /// The <see cref="MemberwiseMapperOperator"/> operator is able to map when the source and target types have members, and the source type is a defer build type. 
+    /// </summary>
+    /// <returns>Returns true when the source and target types have members, and the source type is a defer build type.</returns>
     public override bool CanMap()
     {
         return From.MemberResolver.HasMembers && To.MemberResolver.HasMembers;

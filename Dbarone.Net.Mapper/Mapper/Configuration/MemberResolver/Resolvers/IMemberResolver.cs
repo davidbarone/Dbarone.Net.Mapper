@@ -14,7 +14,7 @@ public interface IMemberResolver
     /// <param name="options">The mapper options provided for the type.</param>
     /// <returns>Returns a getter object which, when invoked, will get a member value from an object.
     /// Returns a null reference if getter does not exist.</returns>
-    Getter? GetGetter(Type type, string memberName, MapperOptions options);
+    Getter GetGetter(Type type, string memberName, MapperOptions options);
 
     /// <summary>
     /// Returns a setter delegate that sets a member value for an object. 
@@ -24,7 +24,7 @@ public interface IMemberResolver
     /// <param name="options">The mapper options provided for the type.</param>
     /// <returns>Returns a setter object which, when invoked, will set a member value for an object.
     /// Returns a null reference if setter does not exist.</returns>
-    Setter? GetSetter(Type type, string memberName, MapperOptions options);
+    Setter GetSetter(Type type, string memberName, MapperOptions options);
 
     /// <summary>
     /// Returns a CreateInstance delegate that can create a new instance of a particular type.
@@ -32,7 +32,7 @@ public interface IMemberResolver
     /// <param name="type">The type to create the CreateInstance delegate for.</param>
     /// <param name="args">The arguments to provide to the constructor function to create the new instance.</param>
     /// <returns>Returns a delegate that, when invoked, will create a new instance of an object.</returns>
-    CreateInstance? CreateInstance(Type type, params object[] args);
+    CreateInstance CreateInstance(Type type, params object?[]? args);
 
     /// <summary>
     /// Returns the member names for a type.
