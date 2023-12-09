@@ -284,25 +284,25 @@ public class MapperConfiguration
 
     /// <summary>
     /// Adds a type converter. Type converters are used to convert simple / native types where the members in the
-    /// source and destinations have different types.
+    /// source and targets have different types.
     /// </summary>
     /// <typeparam name="T">The type of the source member.</typeparam>
-    /// <typeparam name="U">The type of the destination member.</typeparam>
+    /// <typeparam name="U">The type of the target member.</typeparam>
     /// <param name="converter">A converter func.</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
     public MapperConfiguration RegisterConverter<T, U>(Func<T, U> converter)
     {
         var sourceType = typeof(T);
-        var destinationType = typeof(U);
-        var sourceDestination = new SourceDestination(sourceType, destinationType);
+        var targetType = typeof(U);
+        var sourceTarget = new SourceTarget(sourceType, targetType);
 
-        if (this.Config.Converters.ContainsKey(sourceDestination))
+        if (this.Config.Converters.ContainsKey(sourceTarget))
         {
             throw new MapperConfigurationException("A converter between these 2 types has already been defined.");
         }
 
         TypeConverter<T, U> typeConverter = new TypeConverter<T, U>(converter);
-        this.Config.Converters[sourceDestination] = typeConverter;
+        this.Config.Converters[sourceTarget] = typeConverter;
         return this;
     }
 

@@ -1,14 +1,14 @@
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
-/// Mapper rules defined for a particular Source + destination tuple, and path. 
+/// Mapper rules defined for a particular Source + target tuple, and path. 
 /// </summary>
-public class SourceDestinationPathRules {
+public class SourceTargetPathRules {
 
     /// <summary>
-    /// The source and destination types the rule belongs to.
+    /// The source and target types the rule belongs to.
     /// </summary>
-    public SourceDestination SourceDestination { get; set; } = default!;
+    public SourceTarget SourceTarget { get; set; } = default!;
     
     /// <summary>
     /// The path within the mapping graph that the rules belong to.

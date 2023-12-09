@@ -17,7 +17,7 @@ public enum MapperEndPoint
     Source = 1,
 
     /// <summary>
-    /// Destination mapper endpoint.
+    /// Target mapper endpoint.
     /// </summary>
-    Destination = 2,
+    Target = 2,
 }

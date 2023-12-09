@@ -1,9 +1,9 @@
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
-/// Represents a source + destination tuple.
+/// Represents a source + target tuple.
 /// </summary>
-public class SourceDestination
+public class SourceTarget
 {
 
     /// <summary>
@@ -12,19 +12,19 @@ public class SourceDestination
     public Type Source { get; init; }
 
     /// <summary>
-    /// The destination type.
+    /// The target type.
     /// </summary>
-    public Type Destination { get; init; }
+    public Type Target { get; init; }
 
     /// <summary>
-    /// Creates a new <see cref="SourceDestination"/>. 
+    /// Creates a new <see cref="SourceTarget"/>. 
     /// </summary>
     /// <param name="source">The source type.</param>
-    /// <param name="destination">The destination type.</param>
-    public SourceDestination(Type source, Type destination)
+    /// <param name="target">The target type.</param>
+    public SourceTarget(Type source, Type target)
     {
         this.Source = source;
-        this.Destination = destination;
+        this.Target = target;
     }
 
     /// <summary>
@@ -36,9 +36,9 @@ public class SourceDestination
     {
         int hash = 17;
 
-        // Source + Destination cannot be null.
+        // Source + Target cannot be null.
         hash = hash * 23 + Source.GetHashCode();
-        hash = hash * 23 + Destination.GetHashCode();
+        hash = hash * 23 + Target.GetHashCode();
         return hash;
     }
 
@@ -55,14 +55,14 @@ public class SourceDestination
             return false;
         }
 
-        // If parameter cannot be cast to SourceDestination return false.
-        SourceDestination sd = obj as SourceDestination;
+        // If parameter cannot be cast to SourceTarget return false.
+        SourceTarget sd = obj as SourceTarget;
         if ((System.Object?)sd == null)
         {
             return false;
         }
 
         // Return true if the fields match:
-        return (this.Source == sd.Source) && (this.Destination == sd.Destination);
+        return (this.Source == sd.Source) && (this.Target == sd.Target);
     }
 }

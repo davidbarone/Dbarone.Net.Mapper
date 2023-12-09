@@ -3,12 +3,12 @@ using Dbarone.Net.Mapper;
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
-/// Maps source type to destination type if source is assignable to destination. Occurs under following scenarios:
-/// 1. Source and destination are the same type.
-/// 2. Source type is derived directly or indirectly from destination type.
-/// 3. Destination type is an interface which source implements.
-/// 4. Source is a generic type parameter, and destination represents one of the constraints of source.
-/// 5. Source represents a value type, and destination represents a Nullable version of it.
+/// Maps source type to target type if source is assignable to target. Occurs under following scenarios:
+/// 1. Source and target are the same type.
+/// 2. Source type is derived directly or indirectly from target type.
+/// 3. Target type is an interface which source implements.
+/// 4. Source is a generic type parameter, and target represents one of the constraints of source.
+/// 5. Source represents a value type, and target represents a Nullable version of it.
 ///
 /// For more information, refer to: https://learn.microsoft.com/en-us/dotnet/api/system.type.isassignablefrom?view=net-7.0 
 /// </summary>

@@ -1,27 +1,27 @@
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
-/// Represents a particular path within a source + destination ruleset. Used as key to store mapping rules.
+/// Represents a particular path within a source + target ruleset. Used as key to store mapping rules.
 /// </summary>
-public class SourceDestinationPath {
+public class SourceTargetPath {
     
     /// <summary>
-    /// The source and destination types.
+    /// The source and target types.
     /// </summary>
-    public SourceDestination SourceDestination {get; init;}
+    public SourceTarget SourceTarget {get; init;}
 
     /// <summary>
-    /// The path within the source / destination map.
+    /// The path within the source / target map.
     /// </summary>
     public string Path { get; init; }
 
     /// <summary>
-    /// Creates a new SourceDestinationPath instance.
+    /// Creates a new SourceTargetPath instance.
     /// </summary>
-    /// <param name="sourceDestination">The source and destination tuple.</param>
+    /// <param name="sourceTarget">The source and target tuple.</param>
     /// <param name="path">The path.</param>
-    public SourceDestinationPath(SourceDestination sourceDestination, string path) {
-        this.SourceDestination = sourceDestination;
+    public SourceTargetPath(SourceTarget sourceTarget, string path) {
+        this.SourceTarget = sourceTarget;
         this.Path = path;
     }
 
@@ -33,8 +33,8 @@ public class SourceDestinationPath {
     {
         int hash = 17;
 
-        // Source + Destination cannot be null.
-        hash = hash * 23 + SourceDestination.GetHashCode();
+        // Source + Target cannot be null.
+        hash = hash * 23 + SourceTarget.GetHashCode();
         hash = hash * 23 + Path.GetHashCode();
         return hash;        
     }
@@ -52,14 +52,14 @@ public class SourceDestinationPath {
             return false;
         }
 
-        // If parameter cannot be cast to SourceDestination return false.
-        SourceDestinationPath? sdp = obj as SourceDestinationPath;
+        // If parameter cannot be cast to SourceTarget return false.
+        SourceTargetPath? sdp = obj as SourceTargetPath;
         if ((System.Object?)sdp == null)
         {
             return false;
         }
 
         // Return true if the fields match:
-        return (this.SourceDestination.Equals(sdp.SourceDestination)) && (this.Path.Equals(sdp.Path));
+        return (this.SourceTarget.Equals(sdp.SourceTarget)) && (this.Path.Equals(sdp.Path));
     }
 }

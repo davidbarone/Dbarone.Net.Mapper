@@ -4,7 +4,7 @@ namespace Dbarone.Net.Mapper;
 /// Converts an object using a generic lambda function or Func. 
 /// </summary>
 /// <typeparam name="T">The source type.</typeparam>
-/// <typeparam name="U">The destination type.</typeparam>
+/// <typeparam name="U">The target type.</typeparam>
 public class TypeConverter<T, U> : ITypeConverter
 {
     private Func<T?, U?> converter;

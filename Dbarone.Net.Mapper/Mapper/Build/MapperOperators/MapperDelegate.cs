@@ -5,5 +5,5 @@ using Dbarone.Net.Mapper;
 /// </summary>
 /// <param name="source">The source object.</param>
 /// <param name="target">The target object.</param>
-/// <returns>The target value is returned.</returns>
+/// <returns>The target value is also returned.</returns>
 public delegate object? MapperDelegate(object? source, object? target);

@@ -14,7 +14,7 @@ public class MemberwiseMapperOperator : MapperOperator
         Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
 
         // member-wise mapping
-        // Get internal member names matching on source + destination
+        // Get internal member names matching on source + target
         var members = To
                 .Members
                 .Where(mc => mc.Ignore == false)
@@ -28,8 +28,8 @@ public class MemberwiseMapperOperator : MapperOperator
         foreach (var member in members)
         {
             var mSourceType = From.Members.First(m => m.MemberName == member).DataType;
-            var mDestinationType = To.Members.First(m => m.MemberName == member).DataType;
-            var memberMapperOperator = Builder.GetMapperOperator(new SourceDestination(mSourceType, mDestinationType), this);
+            var mTargetType = To.Members.First(m => m.MemberName == member).DataType;
+            var memberMapperOperator = Builder.GetMapperOperator(new SourceTarget(mSourceType, mTargetType), this);
             children[member] = memberMapperOperator;
         }
         return children;
@@ -47,7 +47,7 @@ public class MemberwiseMapperOperator : MapperOperator
         List<MapperBuildError> errors = new List<MapperBuildError>();
         if ((From.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
-            // check all source member rules map to destination rules.
+            // check all source member rules map to target rules.
             var unmappedSourceMembers = From
                 .Members
                 .Where(m => To
@@ -56,22 +56,22 @@ public class MemberwiseMapperOperator : MapperOperator
 
             foreach (var item in unmappedSourceMembers)
             {
-                errors.Add(new MapperBuildError(From.Type, MapperEndPoint.Source, item.MemberName, "Source end point validation enabled, but source member is not mapped to destination."));
+                errors.Add(new MapperBuildError(From.Type, MapperEndPoint.Source, item.MemberName, "Source end point validation enabled, but source member is not mapped to target."));
             }
         }
 
-        if ((To.Options.EndPointValidation & MapperEndPoint.Destination) == MapperEndPoint.Destination)
+        if ((To.Options.EndPointValidation & MapperEndPoint.Target) == MapperEndPoint.Target)
         {
-            // check all source member rules map to destination rules.
-            var unmappedDestinationMembers = To
+            // check all source member rules map to target rules.
+            var unmappedTargetMembers = To
                 .Members
                 .Where(m => From
                     .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
-            foreach (var item in unmappedDestinationMembers)
+            foreach (var item in unmappedTargetMembers)
             {
-                errors.Add(new MapperBuildError(To.Type, MapperEndPoint.Destination, item.MemberName, "Destination end point validation enabled, but destination member is not mapped from source."));
+                errors.Add(new MapperBuildError(To.Type, MapperEndPoint.Target, item.MemberName, "Target end point validation enabled, but target member is not mapped from source."));
             }
         }
         if (errors.Any())

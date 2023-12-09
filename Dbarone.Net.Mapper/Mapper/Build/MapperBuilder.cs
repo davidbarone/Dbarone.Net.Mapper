@@ -42,32 +42,32 @@ public class MapperBuilder
     #region Public Methods
 
     /// <summary>
-    /// Gets a mapper operator based on source and destination types.
+    /// Gets a mapper operator based on source and target types.
     /// </summary>
-    /// <param name="sourceDestination">The source and destination types.</param>
+    /// <param name="sourceTarget">The source and target types.</param>
     /// <param name="parent">An optional parent operator.</param>
-    /// <returns>A mapper operator able to map source and destination types.</returns>
+    /// <returns>A mapper operator able to map source and target types.</returns>
     /// <exception cref="Exception">Throws an exception if no valid operator found.</exception>
-    public MapperOperator GetMapperOperator(SourceDestination sourceDestination, MapperOperator? parent = null)
+    public MapperOperator GetMapperOperator(SourceTarget sourceTarget, MapperOperator? parent = null)
     {
         MapperOperator? mapperOperator = null;
 
         // source
-        if (!this.BuildTypes.ContainsKey(sourceDestination.Source))
+        if (!this.BuildTypes.ContainsKey(sourceTarget.Source))
         {
-            this.BuildType(sourceDestination.Source);
+            this.BuildType(sourceTarget.Source);
         }
-        var sourceBuild = this.BuildTypes[sourceDestination.Source];
+        var sourceBuild = this.BuildTypes[sourceTarget.Source];
 
-        // destination
-        if (!this.BuildTypes.ContainsKey(sourceDestination.Destination))
+        // target
+        if (!this.BuildTypes.ContainsKey(sourceTarget.Target))
         {
-            this.BuildType(sourceDestination.Destination);
+            this.BuildType(sourceTarget.Target);
         }
-        var destinationBuild = this.BuildTypes[sourceDestination.Destination];
+        var targetBuild = this.BuildTypes[sourceTarget.Target];
 
-        // find mapper to handle source-destination
-        return MapperOperator.Create(this, sourceBuild, destinationBuild, parent, this.OnCreateOperator);
+        // find mapper to handle source-target
+        return MapperOperator.Create(this, sourceBuild, targetBuild, parent, this.OnCreateOperator);
     }
 
     /// <summary>

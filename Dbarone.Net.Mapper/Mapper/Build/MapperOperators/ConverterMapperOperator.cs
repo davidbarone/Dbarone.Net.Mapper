@@ -28,8 +28,8 @@ public class ConverterMapperOperator : MapperOperator
     /// <returns>Returns true when the From object is assignable to the To type.</returns>
     public override bool CanMap()
     {
-        SourceDestination sourceDestination = new SourceDestination(From.Type, To.Type);
-        return Builder.Configuration.Config.Converters.ContainsKey(sourceDestination);
+        SourceTarget sourceTarget = new SourceTarget(From.Type, To.Type);
+        return Builder.Configuration.Config.Converters.ContainsKey(sourceTarget);
     }
 
     /// <summary>
@@ -38,10 +38,10 @@ public class ConverterMapperOperator : MapperOperator
     /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
     protected override object? MapInternal(object? source, object? target)
     {
-        SourceDestination sourceDestination = new SourceDestination(From.Type, To.Type);
-        var converter = Builder.Configuration.Config.Converters[sourceDestination];
+        SourceTarget sourceTarget = new SourceTarget(From.Type, To.Type);
+        var converter = Builder.Configuration.Config.Converters[sourceTarget];
 
-        // Member types differ, but converter exists - convert then assign value to destination object.
+        // Member types differ, but converter exists - convert then assign value to target object.
         var converted = converter.Convert(source);
         return converted;
     }

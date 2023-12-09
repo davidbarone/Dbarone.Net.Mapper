@@ -20,7 +20,7 @@ public class BuildMember
     public Type DataType { get; set; } = default!;
 
     /// <summary>
-    /// The internal member name. Mapping from source to destination is done via matching internal names.
+    /// The internal member name. Mapping from source to target is done via matching internal names.
     /// </summary>
     public string InternalMemberName { get; set; } = default!;
 

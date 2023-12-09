@@ -35,7 +35,7 @@ public class MapperBuildException : MapperException
     /// Creates a new <see cref="MapperBuildException"/>.
     /// </summary>
     /// <param name="type">The type generating the error(s).</param>
-    /// <param name="endPoint">Signifies whether the type is a source or destination type.</param>
+    /// <param name="endPoint">Signifies whether the type is a source or target type.</param>
     /// <param name="memberName">Optional member name.</param>
     /// <param name="message">The error message.</param>
     public MapperBuildException(Type type, MapperEndPoint endPoint, string memberName, string message) : base("An error has occurred during the build phase. Refer to the inner Errors property for details.")

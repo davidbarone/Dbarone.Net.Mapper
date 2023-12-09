@@ -49,8 +49,8 @@ public class ObjectMapper
     /// <returns>Returns a mapped object of type `toType`.</returns>
     public object? Map(Type fromType, Type toType, object? obj)
     {
-        SourceDestination sourceDestination = new SourceDestination(fromType, toType);
-        var mapperOperator = Builder.GetMapperOperator(sourceDestination);
+        SourceTarget sourceTarget = new SourceTarget(fromType, toType);
+        var mapperOperator = Builder.GetMapperOperator(sourceTarget);
         var to = mapperOperator.Map(obj, null);
         return to;
     }
@@ -59,12 +59,12 @@ public class ObjectMapper
     /// Maps / transforms an object from one type to another.
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TDestination"></typeparam>
-    /// <param name="obj">Returns an object of the destination type.</param>
+    /// <typeparam name="TTarget"></typeparam>
+    /// <param name="obj">Returns an object of the target type.</param>
     /// <returns></returns>
-    public TDestination? Map<TSource, TDestination>(TSource? obj)
+    public TTarget? Map<TSource, TTarget>(TSource? obj)
     {
-        return (TDestination?)Map(typeof(TSource), typeof(TDestination), obj);
+        return (TTarget?)Map(typeof(TSource), typeof(TTarget), obj);
     }
 
     /// <summary>
@@ -75,8 +75,8 @@ public class ObjectMapper
     /// <returns>Returns the mapping execution plan.</returns>
     public MapperOperator GetMapperOperator(Type from, Type to)
     {
-        SourceDestination sourceDestination = new SourceDestination(from, to);
-        var mapperOperator = Builder.GetMapperOperator(sourceDestination);
+        SourceTarget sourceTarget = new SourceTarget(from, to);
+        var mapperOperator = Builder.GetMapperOperator(sourceTarget);
         return mapperOperator;
     }
 
@@ -84,10 +84,10 @@ public class ObjectMapper
     /// Gets the mapping execution plan.
     /// </summary>
     /// <typeparam name="TSource">The from type.</typeparam>
-    /// <typeparam name="TDestination">The to type.</typeparam>
+    /// <typeparam name="TTarget">The to type.</typeparam>
     /// <returns>Returns the mapping execution plan.</returns>
-    public MapperOperator GetMapperOperator<TSource, TDestination>()
+    public MapperOperator GetMapperOperator<TSource, TTarget>()
     {
-        return GetMapperOperator(typeof(TSource), typeof(TDestination));
+        return GetMapperOperator(typeof(TSource), typeof(TTarget));
     }
 }

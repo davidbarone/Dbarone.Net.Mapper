@@ -41,10 +41,10 @@ public class EnumerableMapperOperator : MapperOperator
         }
         if (toElementType == null)
         {
-            throw new MapperBuildException(To.Type, MapperEndPoint.Destination, "", "Element type is null.");
+            throw new MapperBuildException(To.Type, MapperEndPoint.Target, "", "Element type is null.");
         }
 
-        var elementMappingOperator = Builder.GetMapperOperator(new SourceDestination(fromElementType, toElementType), this);
+        var elementMappingOperator = Builder.GetMapperOperator(new SourceTarget(fromElementType, toElementType), this);
         children["[]"] = elementMappingOperator;
         return children;
     }
@@ -64,9 +64,12 @@ public class EnumerableMapperOperator : MapperOperator
     }
 
     /// <summary>
-    /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
+    /// Mapping implementation for <see cref="EnumerableMapperOperator"/> type. 
     /// </summary>
-    /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
+    /// <param name="source">Source object</param>
+    /// <param name="target">Target object</param>
+    /// <returns></returns>
+    /// <exception cref="MapperBuildException"></exception>
     protected override object? MapInternal(object? source, object? target)
     {
         var arr = (source as IEnumerable);

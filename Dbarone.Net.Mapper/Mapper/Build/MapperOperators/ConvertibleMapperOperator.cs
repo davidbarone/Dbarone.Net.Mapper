@@ -54,7 +54,7 @@ public class ConvertibleMapperOperator : MapperOperator
     /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
     protected override object? MapInternal(object? source, object? target)
     {
-        // Member types differ, but converter exists - convert then assign value to destination object.
+        // Member types differ, but converter exists - convert then assign value to target object.
         var iconv = source as IConvertible;
         if (iconv == null)
         {

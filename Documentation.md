@@ -29,7 +29,7 @@
   - [BuildTypes](#dbaronenetmappermapperbuilderbuildtypes)
   - [OnCreateOperator](#dbaronenetmappermapperbuilderoncreateoperator)
   - [#ctor](#dbaronenetmappermapperbuilder#ctor(dbaronenetmappermapperconfiguration))
-  - [GetMapper](#dbaronenetmappermapperbuildergetmapper(dbaronenetmappersourcedestination,dbaronenetmappermapperoperator))
+  - [GetMapper](#dbaronenetmappermapperbuildergetmapper(dbaronenetmappersourcetarget,dbaronenetmappermapperoperator))
   - [Build](#dbaronenetmappermapperbuilderbuild)
   - [GetBuildTypeFor](#dbaronenetmappermapperbuildergetbuildtypefor(systemtype))
   - [GetCreatorFor](#dbaronenetmappermapperbuildergetcreatorfor(systemtype))
@@ -78,22 +78,22 @@
   - [ToMemberResolver](#dbaronenetmappermapperoperatorinfotomemberresolver)
   - [#ctor](#dbaronenetmappermapperoperatorinfo#ctor(systemstring,systemstring,systemstring,systemstring,systemstring,systemstring))
   - [ToString](#dbaronenetmappermapperoperatorinfotostring)
-- [SourceDestination](#dbaronenetmappersourcedestination)
-  - [Source](#dbaronenetmappersourcedestinationsource)
-  - [Destination](#dbaronenetmappersourcedestinationdestination)
-  - [#ctor](#dbaronenetmappersourcedestination#ctor(systemtype,systemtype))
-  - [GetHashCode](#dbaronenetmappersourcedestinationgethashcode)
-  - [Equals](#dbaronenetmappersourcedestinationequals(systemobject))
-- [SourceDestinationPath](#dbaronenetmappersourcedestinationpath)
-  - [SourceDestination](#dbaronenetmappersourcedestinationpathsourcedestination)
-  - [Path](#dbaronenetmappersourcedestinationpathpath)
-  - [#ctor](#dbaronenetmappersourcedestinationpath#ctor(dbaronenetmappersourcedestination,systemstring))
-  - [GetHashCode](#dbaronenetmappersourcedestinationpathgethashcode)
-  - [Equals](#dbaronenetmappersourcedestinationpathequals(systemobject))
-- [SourceDestinationPathRules](#dbaronenetmappersourcedestinationpathrules)
-  - [SourceDestination](#dbaronenetmappersourcedestinationpathrulessourcedestination)
-  - [Path](#dbaronenetmappersourcedestinationpathrulespath)
-  - [Maps](#dbaronenetmappersourcedestinationpathrulesmaps)
+- [SourceTarget](#dbaronenetmappersourcetarget)
+  - [Source](#dbaronenetmappersourcetargetsource)
+  - [Target](#dbaronenetmappersourcetargettarget)
+  - [#ctor](#dbaronenetmappersourcetarget#ctor(systemtype,systemtype))
+  - [GetHashCode](#dbaronenetmappersourcetargetgethashcode)
+  - [Equals](#dbaronenetmappersourcetargetequals(systemobject))
+- [SourceTargetPath](#dbaronenetmappersourcetargetpath)
+  - [SourceTarget](#dbaronenetmappersourcetargetpathsourcetarget)
+  - [Path](#dbaronenetmappersourcetargetpathpath)
+  - [#ctor](#dbaronenetmappersourcetargetpath#ctor(dbaronenetmappersourcetarget,systemstring))
+  - [GetHashCode](#dbaronenetmappersourcetargetpathgethashcode)
+  - [Equals](#dbaronenetmappersourcetargetpathequals(systemobject))
+- [SourceTargetPathRules](#dbaronenetmappersourcetargetpathrules)
+  - [SourceTarget](#dbaronenetmappersourcetargetpathrulessourcetarget)
+  - [Path](#dbaronenetmappersourcetargetpathrulespath)
+  - [Maps](#dbaronenetmappersourcetargetpathrulesmaps)
 - [Config](#dbaronenetmapperconfig)
   - [AutoRegisterTypes](#dbaronenetmapperconfigautoregistertypes)
   - [Resolvers](#dbaronenetmapperconfigresolvers)
@@ -187,7 +187,7 @@
 - [MapperEndPoint](#dbaronenetmappermapperendpoint)
   - [None](#dbaronenetmappermapperendpointnone)
   - [Source](#dbaronenetmappermapperendpointsource)
-  - [Destination](#dbaronenetmappermapperendpointdestination)
+  - [Target](#dbaronenetmappermapperendpointtarget)
 - [NamingConvention](#dbaronenetmappernamingconvention)
   - [None](#dbaronenetmappernamingconventionnone)
   - [CamelCaseNamingConvention](#dbaronenetmappernamingconventioncamelcasenamingconvention)
@@ -285,7 +285,7 @@ None
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperbuildmemberinternalmembername'></a>property: InternalMemberName
 #### Summary
- The internal member name. Mapping from source to destination is done via matching internal names. 
+ The internal member name. Mapping from source to target is done via matching internal names. 
 
 
 <small>[Back to top](#top)</small>
@@ -469,13 +469,13 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperbuildergetmapper(dbaronenetmappersourcedestination,dbaronenetmappermapperoperator)'></a>method: GetMapper
+>### <a id='dbaronenetmappermapperbuildergetmapper(dbaronenetmappersourcetarget,dbaronenetmappermapperoperator)'></a>method: GetMapper
 #### Signature
 ``` c#
-MapperBuilder.GetMapper(Dbarone.Net.Mapper.SourceDestination sourceDestination, Dbarone.Net.Mapper.MapperOperator parent)
+MapperBuilder.GetMapper(Dbarone.Net.Mapper.SourceTarget sourceTarget, Dbarone.Net.Mapper.MapperOperator parent)
 ```
 #### Summary
- Gets a mapper delegate which is able to map the SourceDestination pairing. 
+ Gets a mapper delegate which is able to map the SourceTarget pairing. 
 
 #### Type Parameters:
 None
@@ -483,7 +483,7 @@ None
 #### Parameters:
 |Name | Description |
 |-----|------|
-|sourceDestination: |The source and destination types.|
+|sourceTarget: |The source and target types.|
 |parent: |An optional parent operator.|
 
 #### Exceptions:
@@ -590,7 +590,7 @@ None
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary
- Maps source type to destination type if source is assignable to destination. Occurs under following scenarios: 1. Source and destination are the same type. 2. Source type is derived directly or indirectly from destination type. 3. Destination type is an interface which source implements. 4. Source is a generic type parameter, and destination represents one of the constraints of source. 5. Source represents a value type, and destination represents a Nullable version of it. For more information, refer to: https://learn.microsoft.com/en-us/dotnet/api/system.type.isassignablefrom?view=net-7.0 
+ Maps source type to target type if source is assignable to target. Occurs under following scenarios: 1. Source and target are the same type. 2. Source type is derived directly or indirectly from target type. 3. Target type is an interface which source implements. 4. Source is a generic type parameter, and target represents one of the constraints of source. 5. Source represents a value type, and target represents a Nullable version of it. For more information, refer to: https://learn.microsoft.com/en-us/dotnet/api/system.type.isassignablefrom?view=net-7.0 
 
 ### Type Parameters:
 None
@@ -1232,34 +1232,34 @@ None
 <small>[Back to top](#top)</small>
 
 ---
->## <a id='dbaronenetmappersourcedestination'></a>type: SourceDestination
+>## <a id='dbaronenetmappersourcetarget'></a>type: SourceTarget
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary
- Represents a source + destination tuple. 
+ Represents a source + target tuple. 
 
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmappersourcedestinationsource'></a>property: Source
+>### <a id='dbaronenetmappersourcetargetsource'></a>property: Source
 #### Summary
  The source type. 
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationdestination'></a>property: Destination
+>### <a id='dbaronenetmappersourcetargettarget'></a>property: Target
 #### Summary
- The destination type. 
+ The target type. 
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestination#ctor(systemtype,systemtype)'></a>method: #ctor
+>### <a id='dbaronenetmappersourcetarget#ctor(systemtype,systemtype)'></a>method: #ctor
 #### Signature
 ``` c#
-SourceDestination.#ctor(System.Type source, System.Type destination)
+SourceTarget.#ctor(System.Type source, System.Type target)
 ```
 #### Summary
- Creates a new [SourceDestination](#dbaronenetmappersourcedestination). 
+ Creates a new [SourceTarget](#dbaronenetmappersourcetarget). 
 
 #### Type Parameters:
 None
@@ -1268,7 +1268,7 @@ None
 |Name | Description |
 |-----|------|
 |source: |The source type.|
-|destination: |The destination type.|
+|target: |The target type.|
 
 #### Exceptions:
 None
@@ -1276,10 +1276,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationgethashcode'></a>method: GetHashCode
+>### <a id='dbaronenetmappersourcetargetgethashcode'></a>method: GetHashCode
 #### Signature
 ``` c#
-SourceDestination.GetHashCode()
+SourceTarget.GetHashCode()
 ```
 #### Summary
  Overrides implementation of GetHashCode. See: https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-overriding-gethashcode 
@@ -1296,10 +1296,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationequals(systemobject)'></a>method: Equals
+>### <a id='dbaronenetmappersourcetargetequals(systemobject)'></a>method: Equals
 #### Signature
 ``` c#
-SourceDestination.Equals(System.Object obj)
+SourceTarget.Equals(System.Object obj)
 ```
 #### Summary
  Overrides implementation of Equals. 
@@ -1320,34 +1320,34 @@ None
 <small>[Back to top](#top)</small>
 
 ---
->## <a id='dbaronenetmappersourcedestinationpath'></a>type: SourceDestinationPath
+>## <a id='dbaronenetmappersourcetargetpath'></a>type: SourceTargetPath
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary
- Represents a particular path within a source + destination ruleset. Used as key to store mapping rules. 
+ Represents a particular path within a source + target ruleset. Used as key to store mapping rules. 
 
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmappersourcedestinationpathsourcedestination'></a>property: SourceDestination
+>### <a id='dbaronenetmappersourcetargetpathsourcetarget'></a>property: SourceTarget
 #### Summary
- The source and destination types. 
+ The source and target types. 
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationpathpath'></a>property: Path
+>### <a id='dbaronenetmappersourcetargetpathpath'></a>property: Path
 #### Summary
- The path within the source / destination map. 
+ The path within the source / target map. 
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationpath#ctor(dbaronenetmappersourcedestination,systemstring)'></a>method: #ctor
+>### <a id='dbaronenetmappersourcetargetpath#ctor(dbaronenetmappersourcetarget,systemstring)'></a>method: #ctor
 #### Signature
 ``` c#
-SourceDestinationPath.#ctor(Dbarone.Net.Mapper.SourceDestination sourceDestination, System.String path)
+SourceTargetPath.#ctor(Dbarone.Net.Mapper.SourceTarget sourceTarget, System.String path)
 ```
 #### Summary
- Creates a new SourceDestinationPath instance. 
+ Creates a new SourceTargetPath instance. 
 
 #### Type Parameters:
 None
@@ -1355,7 +1355,7 @@ None
 #### Parameters:
 |Name | Description |
 |-----|------|
-|sourceDestination: |The source and destination tuple.|
+|sourceTarget: |The source and target tuple.|
 |path: |The path.|
 
 #### Exceptions:
@@ -1364,10 +1364,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationpathgethashcode'></a>method: GetHashCode
+>### <a id='dbaronenetmappersourcetargetpathgethashcode'></a>method: GetHashCode
 #### Signature
 ``` c#
-SourceDestinationPath.GetHashCode()
+SourceTargetPath.GetHashCode()
 ```
 #### Summary
  Overrides implementation of GetHashCode. 
@@ -1384,10 +1384,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationpathequals(systemobject)'></a>method: Equals
+>### <a id='dbaronenetmappersourcetargetpathequals(systemobject)'></a>method: Equals
 #### Signature
 ``` c#
-SourceDestinationPath.Equals(System.Object obj)
+SourceTargetPath.Equals(System.Object obj)
 ```
 #### Summary
  Overrides implementation of Equals. 
@@ -1408,28 +1408,28 @@ None
 <small>[Back to top](#top)</small>
 
 ---
->## <a id='dbaronenetmappersourcedestinationpathrules'></a>type: SourceDestinationPathRules
+>## <a id='dbaronenetmappersourcetargetpathrules'></a>type: SourceTargetPathRules
 ### Namespace:
 `Dbarone.Net.Mapper`
 ### Summary
- Mapper rules defined for a particular Source + destination tuple, and path. 
+ Mapper rules defined for a particular Source + target tuple, and path. 
 
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmappersourcedestinationpathrulessourcedestination'></a>property: SourceDestination
+>### <a id='dbaronenetmappersourcetargetpathrulessourcetarget'></a>property: SourceTarget
 #### Summary
- The source and destination types the rule belongs to. 
+ The source and target types the rule belongs to. 
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationpathrulespath'></a>property: Path
+>### <a id='dbaronenetmappersourcetargetpathrulespath'></a>property: Path
 #### Summary
  The path within the mapping graph that the rules belong to. 
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcedestinationpathrulesmaps'></a>property: Maps
+>### <a id='dbaronenetmappersourcetargetpathrulesmaps'></a>property: Maps
 #### Summary
  The mapper rules. 
 
@@ -1974,13 +1974,13 @@ None
 MapperConfiguration.RegisterConverter<T, U>(System.Func<T,U> converter)
 ```
 #### Summary
- Adds a type converter. Type converters are used to convert simple / native types where the members in the source and destinations have different types. 
+ Adds a type converter. Type converters are used to convert simple / native types where the members in the source and targets have different types. 
 
 #### Type Parameters:
 |Param | Description |
 |-----|-----|
 |T: |The type of the source member.|
-|U: |The type of the destination member.|
+|U: |The type of the target member.|
 
 #### Parameters:
 |Name | Description |
@@ -2832,9 +2832,9 @@ None
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperendpointdestination'></a>field: Destination
+>### <a id='dbaronenetmappermapperendpointtarget'></a>field: Target
 #### Summary
- Destination mapper endpoint. 
+ Target mapper endpoint. 
 
 
 <small>[Back to top](#top)</small>
@@ -3010,7 +3010,7 @@ None
 |Name | Description |
 |-----|------|
 |type: |The type generating the error(s).|
-|endPoint: |Signifies whether the type is a source or destination type.|
+|endPoint: |Signifies whether the type is a source or target type.|
 |memberName: |Optional member name.|
 |message: |The error message.|
 
@@ -3351,7 +3351,7 @@ None
 >### <a id='dbaronenetmapperobjectmappermap``2(``0)'></a>method: Map
 #### Signature
 ``` c#
-ObjectMapper.Map<TSource, TDestination>(TSource obj)
+ObjectMapper.Map<TSource, TTarget>(TSource obj)
 ```
 #### Summary
  Maps / transforms an object from one type to another. 
@@ -3360,12 +3360,12 @@ ObjectMapper.Map<TSource, TDestination>(TSource obj)
 |Param | Description |
 |-----|-----|
 |TSource: ||
-|TDestination: ||
+|TTarget: ||
 
 #### Parameters:
 |Name | Description |
 |-----|------|
-|obj: |Returns an object of the destination type.|
+|obj: |Returns an object of the target type.|
 
 #### Exceptions:
 None
@@ -3399,7 +3399,7 @@ None
 >### <a id='dbaronenetmapperobjectmappergetoperator``2'></a>method: GetOperator
 #### Signature
 ``` c#
-ObjectMapper.GetOperator<TSource, TDestination>()
+ObjectMapper.GetOperator<TSource, TTarget>()
 ```
 #### Summary
  Gets the mapping execution plan. 
@@ -3408,7 +3408,7 @@ ObjectMapper.GetOperator<TSource, TDestination>()
 |Param | Description |
 |-----|-----|
 |TSource: |The from type.|
-|TDestination: |The to type.|
+|TTarget: |The to type.|
 
 #### Parameters:
 None
@@ -3464,7 +3464,7 @@ None
 |Param | Description |
 |-----|-----|
 |T: |The source type.|
-|U: |The destination type.|
+|U: |The target type.|
 
 >### <a id='dbaronenetmappertypeconverter`2#ctor(systemfunc{`0,`1})'></a>method: #ctor
 #### Signature
