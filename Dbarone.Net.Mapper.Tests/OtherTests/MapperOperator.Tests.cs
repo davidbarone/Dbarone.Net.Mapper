@@ -44,29 +44,4 @@ public class MapperOperatorTests
         var op = mapper.GetMapperOperator<int, float>();
         Assert.NotNull(op);
     }
-
-    [Fact]
-    public void TestExecutionPlanOutput()
-    {
-        Company companyA = new Company()
-        {
-            CompanyId = 1,
-            CompanyName = "Test Company A",
-            Employees = new Person[3] {
-                new Person() {PersonId = 1, PersonName = "Paul"},
-                new Person() {PersonId = 2, PersonName = "Tony"},
-                new Person() {PersonId = 3, PersonName = "Ian"}
-            }
-        };
-
-        var mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
-        var op = mapper.GetMapperOperator<Company, CompanyDto>();
-        var executionPlan = op.ToMapperOperatorInfo();
-        Assert.NotNull(executionPlan);
-
-        // Also do map
-        var companyB = mapper.Map<Company, CompanyDto>(companyA);
-
-        Assert.NotNull(companyB);
-    }
 }

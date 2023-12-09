@@ -15,7 +15,8 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     /// <param name="sourceType">The source <see cref="BuildType"/> instance.</param>
     /// <param name="targetType">The target <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public MemberwiseMapperDeferBuildOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null) : base(builder, sourceType, targetType, parent)
+    /// <param name="onLog">Optional logging callback.</param>
+    public MemberwiseMapperDeferBuildOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog)
     {
     }
 

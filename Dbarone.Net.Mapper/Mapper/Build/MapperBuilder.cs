@@ -23,9 +23,9 @@ public class MapperBuilder
     #region Callbacks
 
     /// <summary>
-    /// Callback for when new mapper operator is built.
+    /// Optional logging callback.
     /// </summary>
-    public CreateOperatorDelegate? OnCreateOperator = null;
+    public MapperOperatorLogDelegate? OnLog = null;
 
     #endregion
 
@@ -67,7 +67,7 @@ public class MapperBuilder
         var targetBuild = this.BuildTypes[sourceTarget.Target];
 
         // find mapper to handle source-target
-        return MapperOperator.Create(this, sourceBuild, targetBuild, parent, this.OnCreateOperator);
+        return MapperOperator.Create(this, sourceBuild, targetBuild, parent, this.OnLog);
     }
 
     /// <summary>

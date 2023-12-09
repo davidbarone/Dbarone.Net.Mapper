@@ -2,13 +2,29 @@ using Dbarone.Net.Mapper;
 
 namespace Dbarone.Net.Mapper;
 
+/// <summary>
+/// Operator for mapping classes and structs with members.
+/// </summary>
 public class MemberwiseMapperOperator : MapperOperator
 {
-    public MemberwiseMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator parent = null) : base(builder, from, to, parent)
+    /// <summary>
+    /// Creates a new <see cref="MemberwiseMapperOperator"/> instance.
+    /// </summary>
+    /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
+    /// <param name="sourceType">The source <see cref="BuildType"/> instance.</param>
+    /// <param name="targetType">The target <see cref="BuildType"/> instance.</param>
+    /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
+    /// <param name="onLog">Optional logging callback.</param>
+    public MemberwiseMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog)
     {
 
     }
 
+    /// <summary>
+    /// GetChildren implementation for <see cref="MemberwiseMapperOperator"/>.
+    /// </summary>
+    /// <returns>Returns the children operators.</returns>
+    /// <exception cref="MapperBuildException"></exception>
     protected override IDictionary<string, MapperOperator> GetChildren()
     {
         Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();

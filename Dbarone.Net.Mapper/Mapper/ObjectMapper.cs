@@ -16,18 +16,18 @@ public class ObjectMapper
     /// Event raised whenever a new mapper operator is built.
     /// </summary>
 
-    private CreateOperatorDelegate? _onCreateOperator;
+    private MapperOperatorLogDelegate? _onLog;
 
-    public CreateOperatorDelegate? OnCreateOperator
+    public MapperOperatorLogDelegate? OnLog
     {
         get
         {
-            return _onCreateOperator;
+            return _onLog;
         }
         set
         {
-            _onCreateOperator = value;
-            this.Builder.OnCreateOperator = value;
+            _onLog = value;
+            this.Builder.OnLog = value;
         }
     }
 

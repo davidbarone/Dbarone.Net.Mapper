@@ -19,7 +19,8 @@ public class EnumerableMapperOperator : MapperOperator
     /// <param name="from">The From <see cref="BuildType"/> instance.</param>
     /// <param name="to">The To <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public EnumerableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent)
+    /// <param name="onLog">Optional logging callback.</param>
+    public EnumerableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, from, to, parent, onLog)
     {
     }
 

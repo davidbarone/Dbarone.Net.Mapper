@@ -15,7 +15,8 @@ public class ConvertibleMapperOperator : MapperOperator
     /// <param name="sourceType">The From <see cref="BuildType"/> instance.</param>
     /// <param name="targetType">The To <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public ConvertibleMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null) : base(builder, sourceType, targetType, parent) { }
+    /// <param name="onLog">Optional logging callback.</param>
+    public ConvertibleMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog) { }
 
     /// <summary>
     /// Overrides the priority of the <see cref="ConvertibleMapperOperator"/> instance.
