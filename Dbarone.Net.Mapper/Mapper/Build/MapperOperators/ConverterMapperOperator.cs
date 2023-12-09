@@ -12,10 +12,10 @@ public class ConverterMapperOperator : MapperOperator
     /// Creates a new <see cref="ConvertibleMapperOperator"/> instance. This operator uses a converter function provided in configuration to map. 
     /// </summary>
     /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
-    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
-    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="sourceType">The source <see cref="BuildType"/> instance.</param>
+    /// <param name="targetType">The target <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public ConverterMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent) { }
+    public ConverterMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null) : base(builder, sourceType, targetType, parent) { }
 
     /// <summary>
     /// Overrides the priority of the <see cref="ConverterMapperOperator"/> instance.
@@ -23,12 +23,12 @@ public class ConverterMapperOperator : MapperOperator
     public override int Priority => 30;
 
     /// <summary>
-    /// The <see cref="ConverterMapperOperator"/> operator is able to map when a converter function exists between the from and to types. Note that in this case the operator does not recursively map the members. 
+    /// The <see cref="ConverterMapperOperator"/> operator is able to map when a converter function exists between the source and target types. Note that in this case the operator does not recursively map the members. 
     /// </summary>
-    /// <returns>Returns true when the From object is assignable to the To type.</returns>
+    /// <returns>Returns true when a converter function exists between the source and target types. Note that in this case the operator does not recursively map the members.</returns>
     public override bool CanMap()
     {
-        SourceTarget sourceTarget = new SourceTarget(From.Type, To.Type);
+        SourceTarget sourceTarget = new SourceTarget(SourceType.Type, TargetType.Type);
         return Builder.Configuration.Config.Converters.ContainsKey(sourceTarget);
     }
 
@@ -41,7 +41,7 @@ public class ConverterMapperOperator : MapperOperator
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
     protected override object? MapInternal(object? source, object? target)
     {
-        SourceTarget sourceTarget = new SourceTarget(From.Type, To.Type);
+        SourceTarget sourceTarget = new SourceTarget(SourceType.Type, TargetType.Type);
         var converter = Builder.Configuration.Config.Converters[sourceTarget];
 
         // Member types differ, but converter exists - convert then assign value to target object.

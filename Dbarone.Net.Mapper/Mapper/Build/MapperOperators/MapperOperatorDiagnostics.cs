@@ -22,24 +22,24 @@ public class MapperOperatorDiagnostics
     public string MapperOperator { get; set; }
 
     /// <summary>
-    /// The From type name.
+    /// The source type name.
     /// </summary>
-    public string FromType { get; set; }
+    public string SourceType { get; set; }
 
     /// <summary>
-    /// The From member resolver name.
+    /// The source member resolver name.
     /// </summary>
-    public string FromMemberResolver { get; set; }
+    public string SourceMemberResolver { get; set; }
 
     /// <summary>
-    /// The To type name.
+    /// The target type name.
     /// </summary>
-    public string ToType { get; set; }
+    public string TargetType { get; set; }
 
     /// <summary>
-    /// The To member resolver name.
+    /// The target member resolver name.
     /// </summary>
-    public string ToMemberResolver { get; set; }
+    public string TargetMemberResolver { get; set; }
 
     /// <summary>
     /// The number of iterations that the operator has executed.
@@ -61,18 +61,18 @@ public class MapperOperatorDiagnostics
     /// </summary>
     /// <param name="path">The mapping operator path.</param>
     /// <param name="mapperOperator">The mapping operator used.</param>
-    /// <param name="fromType">The from type.</param>
-    /// <param name="fromMemberResolver">The from member resolver.</param>
-    /// <param name="toType">The to type.</param>
-    /// <param name="toMemberResolver">The to member resolver.</param>
-    public MapperOperatorDiagnostics(string path, string mapperOperator, string fromType, string fromMemberResolver, string toType, string toMemberResolver)
+    /// <param name="sourceType">The from type.</param>
+    /// <param name="sourceMemberResolver">The from member resolver.</param>
+    /// <param name="targetType">The to type.</param>
+    /// <param name="targetMemberResolver">The to member resolver.</param>
+    public MapperOperatorDiagnostics(string path, string mapperOperator, string sourceType, string sourceMemberResolver, string targetType, string targetMemberResolver)
     {
         this.Path = path;
         this.MapperOperator = mapperOperator;
-        this.FromType = fromType;
-        this.FromMemberResolver = fromMemberResolver;
-        this.ToType = toType;
-        this.ToMemberResolver = toMemberResolver;
+        this.SourceType = sourceType;
+        this.SourceMemberResolver = sourceMemberResolver;
+        this.TargetType = targetType;
+        this.TargetMemberResolver = targetMemberResolver;
     }
 
     /// <summary>

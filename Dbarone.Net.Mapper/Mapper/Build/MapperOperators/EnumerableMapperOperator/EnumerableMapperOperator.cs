@@ -32,16 +32,16 @@ public class EnumerableMapperOperator : MapperOperator
     {
         // Children
         Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
-        var fromElementType = From.EnumerableElementType;
-        var toElementType = To.EnumerableElementType;
+        var fromElementType = SourceType.EnumerableElementType;
+        var toElementType = TargetType.EnumerableElementType;
 
         if (fromElementType == null)
         {
-            throw new MapperBuildException(From.Type, MapperEndPoint.Source, "", "Element type is null.");
+            throw new MapperBuildException(SourceType.Type, MapperEndPoint.Source, "", "Element type is null.");
         }
         if (toElementType == null)
         {
-            throw new MapperBuildException(To.Type, MapperEndPoint.Target, "", "Element type is null.");
+            throw new MapperBuildException(TargetType.Type, MapperEndPoint.Target, "", "Element type is null.");
         }
 
         var elementMappingOperator = Builder.GetMapperOperator(new SourceTarget(fromElementType, toElementType), this);
@@ -60,7 +60,7 @@ public class EnumerableMapperOperator : MapperOperator
     /// <returns>Returns true when From and To types are enumerable types.</returns>
     public override bool CanMap()
     {
-        return To.Type.IsEnumerableType() && From.Type.IsEnumerableType();
+        return TargetType.Type.IsEnumerableType() && SourceType.Type.IsEnumerableType();
     }
 
     /// <summary>
@@ -75,9 +75,9 @@ public class EnumerableMapperOperator : MapperOperator
         var arr = (source as IEnumerable);
         if (arr == null)
         {
-            throw new MapperBuildException(From.Type, MapperEndPoint.Source, this.GetPath(), "Type does not implement IEnumerable.");
+            throw new MapperBuildException(SourceType.Type, MapperEndPoint.Source, this.GetPath(), "Type does not implement IEnumerable.");
         }
         EnumerableBuffer buffer = new EnumerableBuffer(arr, Children["[]"].Map);
-        return buffer.To(To.Type);
+        return buffer.To(TargetType.Type);
     }
 }

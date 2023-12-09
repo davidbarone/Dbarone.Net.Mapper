@@ -14,14 +14,14 @@ public abstract class MapperOperator
     protected MapperBuilder Builder { get; set; }
     
     /// <summary>
-    /// The 'From' <see cref="BuildType"/> object.
+    /// The source <see cref="BuildType"/> object.
     /// </summary>
-    protected BuildType From { get; set; }
+    protected BuildType SourceType { get; set; }
     
     /// <summary>
-    /// The 'To' <see cref="BuildType"/> object.
+    /// The target <see cref="BuildType"/> object.
     /// </summary>
-    protected BuildType To { get; set; }
+    protected BuildType TargetType { get; set; }
 
     /// <summary>
     /// Optional parent <see cref="MapperOperator"/> reference.
@@ -32,15 +32,15 @@ public abstract class MapperOperator
     /// Create a new <see cref="MapperOperator"/> instance.
     /// </summary>
     /// <param name="builder">A <see cref="MapperBuilder"/> instance.</param>
-    /// <param name="from">The 'From' <see cref="BuildType"/>.</param>
-    /// <param name="to">The 'To' <see cref="BuildType"/>.</param>
+    /// <param name="sourceType">The source <see cref="BuildType"/>.</param>
+    /// <param name="targetType">The target <see cref="BuildType"/>.</param>
     /// <param name="parent">Optional parent <see cref="MapperOperator"/> instance.</param>
-    public MapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null)
+    public MapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null)
     {
         this.Parent = parent;
         this.Builder = builder;
-        this.From = from;
-        this.To = to;
+        this.SourceType = sourceType;
+        this.TargetType = targetType;
     }
 
     /// <summary>
@@ -49,9 +49,9 @@ public abstract class MapperOperator
     public virtual int Priority => 0;
 
     /// <summary>
-    /// Returns true if the current class can map the from / to types.
+    /// Returns true if the current class can map the source / target types.
     /// </summary>
-    /// <returns>Returns true if the current mapper can map the from / to types.</returns>
+    /// <returns>Returns true if the current mapper can map the source / target types.</returns>
     public abstract bool CanMap();
 
     /// <summary>
@@ -102,22 +102,22 @@ public abstract class MapperOperator
     /// Factory method to create a new MapperOperator instance based on from / to types.
     /// </summary>
     /// <param name="builder">The current <see cref="MapperBuilder"/> instance.</param>
-    /// <param name="from">The from type.</param>
-    /// <param name="to">The to type.</param>
+    /// <param name="sourceType">The source type.</param>
+    /// <param name="targetType">The target type.</param>
     /// <param name="parent">An optional parent operator.</param>
     /// <param name="onCreateOperator">An optional <see cref="CreateOperatorDelegate"/> callback function. This callback function is executed each time an operator is created within the mapping operator graph.</param>
     /// <returns>A <see cref="MapperOperator"/> instance that can map from / to types.</returns>
     /// <exception cref="MapperBuildException">Throws an exception if no suitable mapper found.</exception>
-    public static MapperOperator Create(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null, CreateOperatorDelegate? onCreateOperator = null)
+    public static MapperOperator Create(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, CreateOperatorDelegate? onCreateOperator = null)
     {
         var operatorTypes = AppDomain.CurrentDomain.GetTypesAssignableFrom(typeof(MapperOperator)).Where(t => !t.IsAbstract);
         List<MapperOperator> mapperOperators = new List<MapperOperator>();
         foreach (var type in operatorTypes)
         {
-            var mapperOperator = (MapperOperator?)Activator.CreateInstance(type, builder, from, to, parent);
+            var mapperOperator = (MapperOperator?)Activator.CreateInstance(type, builder, sourceType, targetType, parent);
             if (mapperOperator == null)
             {
-                throw new MapperBuildException(from.Type, MapperEndPoint.Source, "", $"Unable to create mapper operator for mapper type: {type.Name}.");
+                throw new MapperBuildException(sourceType.Type, MapperEndPoint.Source, "", $"Unable to create mapper operator for mapper type: {type.Name}.");
             }
             mapperOperators.Add(mapperOperator);
             mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
@@ -138,7 +138,7 @@ public abstract class MapperOperator
         }
 
         // Shouldn't get here.
-        throw new MapperBuildException(from.Type, MapperEndPoint.Source, "", $"Cannot map to ${to.Type.Name} type.");
+        throw new MapperBuildException(sourceType.Type, MapperEndPoint.Source, "", $"Cannot map to ${targetType.Type.Name} type.");
     }
 
     /// <summary>
@@ -150,10 +150,10 @@ public abstract class MapperOperator
         MapperOperatorDiagnostics diag = new MapperOperatorDiagnostics(
             this.GetPath(),
             this.GetType().Name,
-            this.From.Type.Name,
-            this.From.MemberResolver.GetType().Name,
-            this.To.Type.Name,
-            this.To.MemberResolver.GetType().Name
+            this.SourceType.Type.Name,
+            this.SourceType.MemberResolver.GetType().Name,
+            this.TargetType.Type.Name,
+            this.TargetType.MemberResolver.GetType().Name
         );
         return diag;
     }

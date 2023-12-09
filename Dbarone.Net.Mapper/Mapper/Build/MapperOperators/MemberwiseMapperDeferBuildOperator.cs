@@ -12,10 +12,10 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     /// Creates a new <see cref="MemberwiseMapperDeferBuildOperator"/> instance.
     /// </summary>
     /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
-    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
-    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="sourceType">The source <see cref="BuildType"/> instance.</param>
+    /// <param name="targetType">The target <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public MemberwiseMapperDeferBuildOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent)
+    public MemberwiseMapperDeferBuildOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null) : base(builder, sourceType, targetType, parent)
     {
     }
 
@@ -30,11 +30,11 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
 
         // member-wise mapping
         // Get internal member names matching on source + target
-        var members = To
+        var members = TargetType
                 .Members
                 .Where(mc => mc.Ignore == false)
                 .Select(mc => mc.InternalMemberName).Intersect(
-                    From
+                    SourceType
                     .Members
                     .Where(mc => mc.Ignore == false)
                     .Select(mc => mc.InternalMemberName)
@@ -42,8 +42,8 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
 
         foreach (var member in members)
         {
-            var mSourceType = From.Members.First(m => m.MemberName == member).DataType;
-            var mTargetType = To.Members.First(m => m.MemberName == member).DataType;
+            var mSourceType = SourceType.Members.First(m => m.MemberName == member).DataType;
+            var mTargetType = TargetType.Members.First(m => m.MemberName == member).DataType;
             var memberMapperOperator = Builder.GetMapperOperator(new SourceTarget(mSourceType, mTargetType), this);
             children[member] = memberMapperOperator;
         }
@@ -61,39 +61,39 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     /// <returns>Returns true when the source and target types have members, and the source type is a defer build type.</returns>
     public override bool CanMap()
     {
-        return From.MemberResolver.HasMembers && To.MemberResolver.HasMembers && From.MemberResolver.DeferBuild;
+        return SourceType.MemberResolver.HasMembers && TargetType.MemberResolver.HasMembers && SourceType.MemberResolver.DeferBuild;
     }
 
     private void EndPointValidation()
     {
         List<MapperBuildError> errors = new List<MapperBuildError>();
-        if ((From.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
+        if ((SourceType.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
             // check all source member rules map to target rules.
-            var unmappedSourceMembers = From
+            var unmappedSourceMembers = SourceType
                 .Members
-                .Where(m => To
+                .Where(m => TargetType
                     .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
             foreach (var item in unmappedSourceMembers)
             {
-                errors.Add(new MapperBuildError(From.Type, MapperEndPoint.Source, item.MemberName, "Source end point validation enabled, but source member is not mapped to target."));
+                errors.Add(new MapperBuildError(SourceType.Type, MapperEndPoint.Source, item.MemberName, "Source end point validation enabled, but source member is not mapped to target."));
             }
         }
 
-        if ((To.Options.EndPointValidation & MapperEndPoint.Target) == MapperEndPoint.Target)
+        if ((TargetType.Options.EndPointValidation & MapperEndPoint.Target) == MapperEndPoint.Target)
         {
             // check all source member rules map to target rules.
-            var unmappedTargetMembers = To
+            var unmappedTargetMembers = TargetType
                 .Members
-                .Where(m => From
+                .Where(m => SourceType
                     .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
             foreach (var item in unmappedTargetMembers)
             {
-                errors.Add(new MapperBuildError(To.Type, MapperEndPoint.Target, item.MemberName, "Target end point validation enabled, but target member is not mapped from source."));
+                errors.Add(new MapperBuildError(TargetType.Type, MapperEndPoint.Target, item.MemberName, "Target end point validation enabled, but target member is not mapped from source."));
             }
         }
         if (errors.Any())
@@ -113,14 +113,14 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     {
         EndPointValidation();
 
-        var creator = To.MemberResolver.CreateInstance(To.Type, null);
+        var creator = TargetType.MemberResolver.CreateInstance(TargetType.Type, null);
         var instance = creator();
 
         foreach (var member in Children.Keys)
         {
-            var sourceGetter = From.MemberResolver.GetGetter(From.Type, member, From.Options);
-            var targetGetter = To.MemberResolver.GetGetter(To.Type, member, To.Options);
-            var targetSetter = To.MemberResolver.GetSetter(To.Type, member, To.Options);
+            var sourceGetter = SourceType.MemberResolver.GetGetter(SourceType.Type, member, SourceType.Options);
+            var targetGetter = TargetType.MemberResolver.GetGetter(TargetType.Type, member, TargetType.Options);
+            var targetSetter = TargetType.MemberResolver.GetSetter(TargetType.Type, member, TargetType.Options);
 
             var memberFrom = sourceGetter(source);
             var memberTo = targetGetter(instance);

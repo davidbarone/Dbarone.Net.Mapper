@@ -18,10 +18,10 @@ public class AssignableMapperOperator : MapperOperator
     /// Creates a new <see cref="AssignableMapperOperator"/> instance. 
     /// </summary>
     /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
-    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
-    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="sourceType">The source <see cref="BuildType"/> instance.</param>
+    /// <param name="targetType">The target <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public AssignableMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent) { }
+    public AssignableMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null) : base(builder, sourceType, targetType, parent) { }
 
     /// <summary>
     /// Overrides the priority of the <see cref="AssignableMapperOperator"/> instance.
@@ -29,12 +29,12 @@ public class AssignableMapperOperator : MapperOperator
     public override int Priority => 10;
 
     /// <summary>
-    /// The <see cref="AssignableMapperOperator"/> operator is able to map when the From object is assignable to the To type. 
+    /// The <see cref="AssignableMapperOperator"/> operator is able to map when the source object is assignable to the target type. 
     /// </summary>
-    /// <returns>Returns true when the From object is assignable to the To type.</returns>
+    /// <returns>Returns true when the source object is assignable to the target type.</returns>
     public override bool CanMap()
     {
-        return To.Type.IsAssignableFrom(From.Type);
+        return TargetType.Type.IsAssignableFrom(SourceType.Type);
     }
 
     /// <summary>

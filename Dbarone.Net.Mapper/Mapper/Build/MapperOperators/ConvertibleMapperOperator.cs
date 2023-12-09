@@ -12,10 +12,10 @@ public class ConvertibleMapperOperator : MapperOperator
     /// Creates a new instance of <see cref="ConvertibleMapperOperator"/>.
     /// </summary>
     /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
-    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
-    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="sourceType">The From <see cref="BuildType"/> instance.</param>
+    /// <param name="targetType">The To <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public ConvertibleMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent) { }
+    public ConvertibleMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null) : base(builder, sourceType, targetType, parent) { }
 
     /// <summary>
     /// Overrides the priority of the <see cref="ConvertibleMapperOperator"/> instance.
@@ -40,12 +40,12 @@ public class ConvertibleMapperOperator : MapperOperator
         };
 
     /// <summary>
-    /// The <see cref="ConvertibleMapperOperator"/> operator is able to map when the From type implements the IConvertible interface, and can convert to the To type. 
+    /// The <see cref="ConvertibleMapperOperator"/> operator is able to map when the source type implements the IConvertible interface, and can convert to the target type. 
     /// </summary>
-    /// <returns>Returns true when the From type implements the IConvertible interface, and can convert to the To type.</returns>
+    /// <returns>Returns true when the source type implements the IConvertible interface, and can convert to the target type.</returns>
     public override bool CanMap()
     {
-        return typeof(IConvertible).IsAssignableFrom(From.Type) && this.ValidToTypes.Contains(To.Type);
+        return typeof(IConvertible).IsAssignableFrom(SourceType.Type) && this.ValidToTypes.Contains(TargetType.Type);
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public class ConvertibleMapperOperator : MapperOperator
         {
             throw new MapperRuntimeException("Object does not support IConvertible interface.");
         }
-        var converted = iconv.ToType(To.Type, null);
+        var converted = iconv.ToType(TargetType.Type, null);
         return converted;
     }
 }

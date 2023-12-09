@@ -11,10 +11,10 @@ public class ImplicitOperatorMapperOperator : MapperOperator
     /// Creates a new <see cref="ImplicitOperatorMapperOperator"/> instance.
     /// </summary>
     /// <param name="builder">The <see cref="MapperBuilder"/> instance.</param>
-    /// <param name="from">The From <see cref="BuildType"/> instance.</param>
-    /// <param name="to">The To <see cref="BuildType"/> instance.</param>
+    /// <param name="sourceType">The source <see cref="BuildType"/> instance.</param>
+    /// <param name="targetType">The target <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
-    public ImplicitOperatorMapperOperator(MapperBuilder builder, BuildType from, BuildType to, MapperOperator? parent = null) : base(builder, from, to, parent) { }
+    public ImplicitOperatorMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null) : base(builder, sourceType, targetType, parent) { }
 
     /// <summary>
     /// Overrides the priority of the <see cref="ImplicitOperatorMapperOperator"/> instance.
@@ -23,19 +23,19 @@ public class ImplicitOperatorMapperOperator : MapperOperator
 
     private MethodInfo? GetImplicitCast()
     {
-        var methods = From.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+        var methods = SourceType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
         var method = methods
                         .FirstOrDefault(
-                            m => m.ReturnType == To.Type &&
+                            m => m.ReturnType == TargetType.Type &&
                             m.Name == "op_Implicit"
                         );
         if (method == null)
         {
             // try reverse conversion
-            methods = To.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+            methods = TargetType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
             method = methods
                             .FirstOrDefault(
-                                m => m.ReturnType == To.Type &&
+                                m => m.ReturnType == TargetType.Type &&
                                 m.Name == "op_Implicit"
                             );
         }
@@ -43,9 +43,9 @@ public class ImplicitOperatorMapperOperator : MapperOperator
     }
 
     /// <summary>
-    /// The <see cref="ImplicitOperatorMapperOperator"/> operator is able to map when an implicit operator exists between the From and To types. 
+    /// The <see cref="ImplicitOperatorMapperOperator"/> operator is able to map when an implicit operator exists between the source and target types. 
     /// </summary>
-    /// <returns>Returns true when an implicit operator exists between the From and To types.</returns>
+    /// <returns>Returns true when an implicit operator exists between the source and target types.</returns>
     public override bool CanMap()
     {
         // Check if types map directly via assignment
@@ -65,7 +65,7 @@ public class ImplicitOperatorMapperOperator : MapperOperator
         var implicitOperator = GetImplicitCast();
         if (implicitOperator == null)
         {
-            throw new MapperBuildException(From.Type, MapperEndPoint.Source, "", $"No implicit cast exists to {To.Type}.");
+            throw new MapperBuildException(SourceType.Type, MapperEndPoint.Source, "", $"No implicit cast exists to {TargetType.Type}.");
         }
         target = implicitOperator.Invoke(null, new object?[] { source })!;
         return target;
