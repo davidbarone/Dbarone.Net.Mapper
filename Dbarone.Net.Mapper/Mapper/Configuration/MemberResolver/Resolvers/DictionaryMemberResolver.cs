@@ -50,7 +50,7 @@ public class DictionaryMemberResolver : IMemberResolver
     /// Returns a null reference if setter does not exist.</returns>
     public Setter GetSetter(Type type, string memberName, MapperOptions options)
     {
-        Setter action = delegate (object target, object value)
+        Setter action = delegate (object target, object? value)
         {
             var objDict = target as IDictionary<string, object>;
             if (objDict != null)
@@ -132,6 +132,8 @@ public class DictionaryMemberResolver : IMemberResolver
         return type.IsDictionaryType();
     }
 
+    /// <summary>
+    /// Returns true if types supported by this resolver have members.
+    /// </summary>
     public virtual bool HasMembers => true;
-
 }

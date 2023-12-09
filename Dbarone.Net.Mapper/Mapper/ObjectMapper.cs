@@ -18,6 +18,9 @@ public class ObjectMapper
 
     private MapperOperatorLogDelegate? _onLog;
 
+    /// <summary>
+    /// Provides ability to set a callback function to perform logging of build and runtime mapping.
+    /// </summary>
     public MapperOperatorLogDelegate? OnLog
     {
         get
@@ -34,6 +37,10 @@ public class ObjectMapper
     #endregion
 
 
+    /// <summary>
+    /// Creates a new <see cref="ObjectMapper"/> instance from configuration.
+    /// </summary>
+    /// <param name="configuration">The mapping configuration.</param>
     public ObjectMapper(MapperConfiguration configuration)
     {
         this.Configuration = configuration;
