@@ -49,9 +49,12 @@ public class ConvertibleMapperOperator : MapperOperator
     }
 
     /// <summary>
-    /// Returns the <see cref="MapperDelegate"/> object that performs the mapping. 
+    /// Mapping implementation for <see cref="ConvertibleMapperOperator"/> type. 
     /// </summary>
-    /// <returns>Returns the <see cref="MapperDelegate"/> object that performs the mapping.</returns>
+    /// <param name="source">The source object.</param>
+    /// <param name="target">The optional target object.</param>
+    /// <returns>Returns a mapped object.</returns>
+    /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
     protected override object? MapInternal(object? source, object? target)
     {
         // Member types differ, but converter exists - convert then assign value to target object.

@@ -67,8 +67,8 @@ public abstract class MapperOperator
     /// <summary>
     /// Sub type specific implementation of mapping operator.
     /// </summary>
-    /// <param name="source">The source object</param>
-    /// <param name="target">Optional target object</param>
+    /// <param name="source">The source object.</param>
+    /// <param name="target">Optional target object.</param>
     /// <returns>A mapped object.</returns>
     protected abstract object? MapInternal(object? source, object? target);
 
