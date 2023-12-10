@@ -42,7 +42,7 @@ public abstract class MapperOperator
     /// <summary>
     /// The number of mapper operations per second.
     /// </summary>
-    public int Rate => (int)(Count * 1000 / Stopwatch.ElapsedMilliseconds);
+    public int Rate => Stopwatch.ElapsedMilliseconds == 0 ? 0 : (int)(Count * 1000 / Stopwatch.ElapsedMilliseconds);
 
     /// <summary>
     /// Logging callback function.
@@ -92,7 +92,8 @@ public abstract class MapperOperator
         this.Count++;
 
         // log
-        if (this.OnLog!=null) {
+        if (this.OnLog != null)
+        {
             this.OnLog(this, MapperOperatorLogType.Runtime);
         }
 

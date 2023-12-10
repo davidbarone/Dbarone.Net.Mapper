@@ -31,15 +31,28 @@ public class MemberwiseMapperOperator : MapperOperator
 
         // member-wise mapping
         // Get internal member names matching on source + target
-        var members = TargetType
-                .Members
-                .Where(mc => mc.Ignore == false)
-                .Select(mc => mc.InternalMemberName).Intersect(
-                    SourceType
+        IEnumerable<string> members;
+
+        if (TargetType.MemberResolver.DeferBuild)
+        {
+            members = SourceType
                     .Members
                     .Where(mc => mc.Ignore == false)
-                    .Select(mc => mc.InternalMemberName)
-                );
+                    .Select(mc => mc.InternalMemberName);
+
+        }
+        else
+        {
+            members = TargetType
+                    .Members
+                    .Where(mc => mc.Ignore == false)
+                    .Select(mc => mc.InternalMemberName).Intersect(
+                        SourceType
+                        .Members
+                        .Where(mc => mc.Ignore == false)
+                        .Select(mc => mc.InternalMemberName)
+                    );
+        }
 
         foreach (var member in members)
         {
