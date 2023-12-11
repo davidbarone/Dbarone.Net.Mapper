@@ -57,7 +57,17 @@ public class MemberwiseMapperOperator : MapperOperator
         foreach (var member in members)
         {
             var mSourceType = SourceType.Members.First(m => m.MemberName == member).DataType;
-            var mTargetType = TargetType.Members.First(m => m.MemberName == member).DataType;
+            Type mTargetType;
+
+            if (TargetType.MemberResolver.DeferBuild)
+            {
+                mTargetType = TargetType.MemberResolver.GetMemberType(TargetType.Type, member, TargetType.Options);
+            }
+            else
+            {
+                mTargetType = TargetType.Members.First(m => m.MemberName == member).DataType;
+            }
+            
             var memberMapperOperator = Builder.GetMapperOperator(new SourceTarget(mSourceType, mTargetType), this);
             children[member] = memberMapperOperator;
         }

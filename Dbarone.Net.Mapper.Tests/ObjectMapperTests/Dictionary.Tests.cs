@@ -19,5 +19,6 @@ public class DictionaryTests {
         ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
 
         var dict = mapper.Map<Customer, Dictionary<string, object>>(customer);
+        Assert.Equal(123, dict["CustomerId"]);
     }
 }
