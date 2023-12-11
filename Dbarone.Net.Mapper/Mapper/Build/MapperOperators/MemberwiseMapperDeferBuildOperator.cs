@@ -8,6 +8,8 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 public class MemberwiseMapperDeferBuildOperator : MapperOperator
 {
+    private List<BuildMember> runTimeMembers { get; set; }
+
     /// <summary>
     /// Creates a new <see cref="MemberwiseMapperDeferBuildOperator"/> instance.
     /// </summary>
@@ -35,15 +37,14 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
                 .Members
                 .Where(mc => mc.Ignore == false)
                 .Select(mc => mc.InternalMemberName).Intersect(
-                    SourceType
-                    .Members
+                    this.runTimeMembers
                     .Where(mc => mc.Ignore == false)
                     .Select(mc => mc.InternalMemberName)
                 );
 
         foreach (var member in members)
         {
-            var mSourceType = SourceType.Members.First(m => m.MemberName == member).DataType;
+            var mSourceType = this.runTimeMembers.First(m => m.MemberName == member).DataType;
             var mTargetType = TargetType.Members.First(m => m.MemberName == member).DataType;
             var memberMapperOperator = Builder.GetMapperOperator(new SourceTarget(mSourceType, mTargetType), this);
             children[member] = memberMapperOperator;
@@ -71,8 +72,7 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
         if ((SourceType.Options.EndPointValidation & MapperEndPoint.Source) == MapperEndPoint.Source)
         {
             // check all source member rules map to target rules.
-            var unmappedSourceMembers = SourceType
-                .Members
+            var unmappedSourceMembers = this.runTimeMembers
                 .Where(m => TargetType
                     .Members
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
@@ -88,8 +88,7 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
             // check all source member rules map to target rules.
             var unmappedTargetMembers = TargetType
                 .Members
-                .Where(m => SourceType
-                    .Members
+                .Where(m => this.runTimeMembers
                     .Select(d => d.InternalMemberName).Contains(m.InternalMemberName) == false);
 
             foreach (var item in unmappedTargetMembers)
@@ -103,15 +102,39 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
         }
     }
 
+    private void GetRuntimeMembers(object? source)
+    {
+        if (this.runTimeMembers == null)
+        {
+            this.runTimeMembers = new List<BuildMember>();
+            var members = this.SourceType.MemberResolver.GetInstanceMembers(source);
+            foreach (var member in members)
+            {
+                var buildMember = new BuildMember
+                {
+                    MemberName = member,
+                    InternalMemberName = member,
+                    Ignore = false,
+                    Getter = this.SourceType.MemberResolver.GetGetter(this.SourceType.Type, member, this.SourceType.Options),
+                    Setter = this.SourceType.MemberResolver.GetSetter(this.SourceType.Type, member, this.SourceType.Options),
+                    DataType = this.SourceType.MemberResolver.GetGetter(this.SourceType.Type, member, this.SourceType.Options)(source).GetType(),
+                    Calculation = null
+                };
+                this.runTimeMembers.Add(buildMember);
+            }
+        }
+    }
+
     /// <summary>
     /// Mapping implementation for <see cref="MemberwiseMapperDeferBuildOperator"/> type. 
     /// </summary>
     /// <param name="source">The source object.</param>
-    /// <param name="target">The optional target object.</param>
     /// <returns>Returns a mapped object.</returns>
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
     protected override object? MapInternal(object? source)
     {
+        GetRuntimeMembers(source);
+
         EndPointValidation();
 
         var creator = TargetType.MemberResolver.CreateInstance(TargetType.Type, null);

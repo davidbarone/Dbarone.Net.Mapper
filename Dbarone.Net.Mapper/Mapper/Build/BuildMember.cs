@@ -47,5 +47,5 @@ public class BuildMember
     /// <summary>
     /// Used to create a custom calculation. Must be a <see cref="ITypeConverter" /> type.
     /// </summary>
-    public ITypeConverter Calculation { get; set; } = default!;
+    public ITypeConverter? Calculation { get; set; } = default;
 }
