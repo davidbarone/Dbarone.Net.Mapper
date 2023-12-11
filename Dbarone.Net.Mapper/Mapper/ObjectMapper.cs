@@ -58,7 +58,7 @@ public class ObjectMapper
     {
         SourceTarget sourceTarget = new SourceTarget(fromType, toType);
         var mapperOperator = Builder.GetMapperOperator(sourceTarget);
-        var to = mapperOperator.Map(obj, null);
+        var to = mapperOperator.Map(obj);
         return to;
     }
 

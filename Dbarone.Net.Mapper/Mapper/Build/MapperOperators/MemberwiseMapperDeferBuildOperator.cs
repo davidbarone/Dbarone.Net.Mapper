@@ -110,7 +110,7 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     /// <param name="target">The optional target object.</param>
     /// <returns>Returns a mapped object.</returns>
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
-    protected override object? MapInternal(object? source, object? target)
+    protected override object? MapInternal(object? source)
     {
         EndPointValidation();
 
@@ -120,13 +120,11 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
         foreach (var member in Children.Keys)
         {
             var sourceGetter = SourceType.MemberResolver.GetGetter(SourceType.Type, member, SourceType.Options);
-            var targetGetter = TargetType.MemberResolver.GetGetter(TargetType.Type, member, TargetType.Options);
             var targetSetter = TargetType.MemberResolver.GetSetter(TargetType.Type, member, TargetType.Options);
 
             var memberFrom = sourceGetter(source);
-            var memberTo = targetGetter(instance);
             var memberOperator = this.Children[member];
-            var memberMapped = memberOperator.Map(memberFrom, memberTo);
+            var memberMapped = memberOperator.Map(memberFrom);
             targetSetter(instance, memberMapped);
         }
         return instance;

@@ -82,12 +82,11 @@ public abstract class MapperOperator
     /// Maps a source object, returning a mapped object.
     /// </summary>
     /// <param name="source">The source object</param>
-    /// <param name="target">Optional target object</param>
     /// <returns>A mapped object.</returns>
-    public object? Map(object? source, object? target)
+    public object? Map(object? source)
     {
         this.Stopwatch.Start();
-        var result = MapInternal(source, target);
+        var result = MapInternal(source);
         this.Stopwatch.Stop();
         this.Count++;
 
@@ -104,9 +103,8 @@ public abstract class MapperOperator
     /// Sub type specific implementation of mapping operator.
     /// </summary>
     /// <param name="source">The source object.</param>
-    /// <param name="target">Optional target object.</param>
     /// <returns>A mapped object.</returns>
-    protected abstract object? MapInternal(object? source, object? target);
+    protected abstract object? MapInternal(object? source);
 
     /// <summary>
     /// Function to get the children of the current operation. Must be implemented in subclasses. This function is called by the Children property.

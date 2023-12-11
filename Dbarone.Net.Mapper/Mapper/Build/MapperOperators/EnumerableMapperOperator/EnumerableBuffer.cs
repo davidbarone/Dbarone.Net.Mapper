@@ -221,7 +221,7 @@ public class EnumerableBuffer
                 var item = element;
                 if (mapper != null)
                 {
-                    item = mapper(item, null);
+                    item = mapper(item);
                 }
 
                 buffer[count] = item;

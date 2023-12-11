@@ -64,7 +64,7 @@ public class EnumerableBufferTests
     {
         object[] arr = new object[] { 1, 2, 3, 4, 5 };
         // Mapper converts int to DateTime
-        MapperDelegate mapper = (s, t) => { return DateTime.Now.AddDays((int)s!); };
+        MapperDelegate mapper = (s) => { return DateTime.Now.AddDays((int)s!); };
         int expectedLength = arr.Length;
         var buffer = new EnumerableBuffer(arr, mapper);
         var converted = buffer.ToArray<DateTime>();

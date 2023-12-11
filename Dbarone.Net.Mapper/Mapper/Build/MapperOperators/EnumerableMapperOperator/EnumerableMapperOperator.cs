@@ -71,7 +71,7 @@ public class EnumerableMapperOperator : MapperOperator
     /// <param name="target">The optional target object.</param>
     /// <returns>Returns a mapped object.</returns>
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
-    protected override object? MapInternal(object? source, object? target)
+    protected override object? MapInternal(object? source)
     {
         var arr = (source as IEnumerable);
         if (arr == null)

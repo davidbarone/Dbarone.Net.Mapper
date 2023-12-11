@@ -61,14 +61,14 @@ public class ImplicitOperatorMapperOperator : MapperOperator
     /// <param name="target">The optional target object.</param>
     /// <returns>Returns a mapped object.</returns>
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
-    protected override object? MapInternal(object? source, object? target)
+    protected override object? MapInternal(object? source)
     {
         var implicitOperator = GetImplicitCast();
         if (implicitOperator == null)
         {
             throw new MapperBuildException(SourceType.Type, MapperEndPoint.Source, "", $"No implicit cast exists to {TargetType.Type}.");
         }
-        target = implicitOperator.Invoke(null, new object?[] { source })!;
-        return target;
+        var result = implicitOperator.Invoke(null, new object?[] { source })!;
+        return result;
     }
 }
