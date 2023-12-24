@@ -75,10 +75,5 @@ public class BuildType
     /// </summary>
     public bool isOpenGeneric => this.Type.IsGenericTypeDefinition;
 
-    /// <summary>
-    /// Returns true if the type is a dynamic type.
-    /// </summary>
-    public bool IsDynamicType => typeof(System.Dynamic.IDynamicMetaObjectProvider).IsAssignableFrom(this.Type);
-
     #endregion
 }
