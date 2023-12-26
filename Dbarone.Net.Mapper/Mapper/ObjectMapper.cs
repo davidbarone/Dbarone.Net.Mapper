@@ -36,7 +36,6 @@ public class ObjectMapper
 
     #endregion
 
-
     /// <summary>
     /// Creates a new <see cref="ObjectMapper"/> instance from configuration.
     /// </summary>

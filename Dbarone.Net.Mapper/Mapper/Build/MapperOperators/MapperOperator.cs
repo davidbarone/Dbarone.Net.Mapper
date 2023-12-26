@@ -199,4 +199,29 @@ public abstract class MapperOperator
             throw new Exception("shouldn't get here");
         }
     }
+
+    /// <summary>
+    /// Pretty-prints the current mapper operator
+    /// </summary>
+    /// <returns>String representation of the mapper operator.</returns>
+    public string PrettyPrint(string indent = "", string key = "", bool isLastChild = true)
+    {
+        if (key != "")
+        {
+            key = key + ": ";
+        }
+        var output = $"{indent}+- {key}{this.GetType().Name} ({this.SourceType.Type.Name}->{this.TargetType.Type.Name}){Environment.NewLine}";
+        indent += isLastChild ? "   " : "|  ";
+
+        // print children too
+        List<string> childKeys = this.Children.Keys.ToList();
+
+        for (int i = 0; i < childKeys.Count(); i++)
+        {
+            var childKey = childKeys[i];
+            var child = this.Children[childKey];
+            output += child.PrettyPrint(indent, childKey, i == childKeys.Count() - 1);
+        }
+        return output;
+    }
 }

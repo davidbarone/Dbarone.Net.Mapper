@@ -102,7 +102,7 @@ public class ObjectSourceMapperOperator : MapperOperator
         }
     }
 
-    private void GetRuntimeMembers(object? source)
+    private void GetRuntimeOperator(object? source)
     {
         if (this.runTimeMembers == null)
         {
@@ -133,7 +133,7 @@ public class ObjectSourceMapperOperator : MapperOperator
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
     protected override object? MapInternal(object? source)
     {
-        GetRuntimeMembers(source);
+        GetRuntimeOperator(source);
 
         EndPointValidation();
 
