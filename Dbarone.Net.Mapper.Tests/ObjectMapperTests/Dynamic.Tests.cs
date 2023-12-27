@@ -1,4 +1,4 @@
-
+using Xunit.Abstractions;
 using System.Dynamic;
 using Dbarone.Net.Extensions;
 using Dbarone.Net.Extensions.Object;
@@ -18,6 +18,11 @@ public class EntityWithDynamicProperty {
 
 public class DynamicTests
 {
+    private readonly ITestOutputHelper output;
+
+    public DynamicTests(ITestOutputHelper output) {
+        this.output = output;
+    }
 
     [Fact]
     public void TestClassToDynamic()
@@ -43,7 +48,9 @@ public class DynamicTests
         exp.y = 456;
 
         ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
-        var v = mapper.Map<dynamic, Vector>(exp);
+        var op = mapper.GetMapperOperator< dynamic, Vector>();
+        var v = op.Map(exp);
+        output.WriteLine(op.PrettyPrint());
         Assert.Equal(123, v.x);
     }
 }

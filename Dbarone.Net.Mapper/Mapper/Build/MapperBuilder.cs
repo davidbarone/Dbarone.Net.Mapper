@@ -243,7 +243,12 @@ public class MapperBuilder
     #region Helper Methods
     private void AddCoreResolvers()
     {
-        // Add core resolvers
+        // Add core resolvers - note order is important. Types check member resolvers in order below.
+        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DynamicMemberResolver)))
+        {
+            this.Configuration.Config.Resolvers.Add(new DynamicMemberResolver());
+        }
+
         if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
         {
             this.Configuration.Config.Resolvers.Add(new StructMemberResolver());
