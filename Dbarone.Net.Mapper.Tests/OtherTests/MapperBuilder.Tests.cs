@@ -1,5 +1,6 @@
 using Dbarone.Net.Mapper;
 using System.Collections;
+using System.Dynamic;
 using System.Reflection;
 
 public class MapperBuilderTests
@@ -47,5 +48,14 @@ public class MapperBuilderTests
         builder.Build();
         var buildType = builder.GetBuildTypeFor(type);
         Assert.Equal(expected, buildType.IsNullable);
+    }
+
+    [Theory]
+    [InlineData(typeof(object), typeof(ClassMemberResolver))]
+    [InlineData(typeof(ExpandoObject), typeof(DynamicMemberResolver))]
+    public void Test_GetResolver(Type type, Type expectedResolverType) {
+        MapperBuilder builder = new MapperBuilder(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var actualResolver = builder.GetResolver(type);
+        Assert.Equal<Type>(expectedResolverType, actualResolver.GetType());
     }
 }

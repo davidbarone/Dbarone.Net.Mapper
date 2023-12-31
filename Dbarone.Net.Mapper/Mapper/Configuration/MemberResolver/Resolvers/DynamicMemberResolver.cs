@@ -48,13 +48,18 @@ public class DynamicMemberResolver : IMemberResolver
         // dynamic object here
         var expObj = obj as IDictionary<string, object>;
         var dynObj = obj as DynamicObject;
-        if (expObj !=null) {
+        if (expObj != null)
+        {
             // must be expando object
             return expObj.Keys.ToArray();
-        } else if (dynObj !=null) {
+        }
+        else if (dynObj != null)
+        {
             // dynamic object
             return dynObj.GetDynamicMemberNames().ToArray();
-        } else {
+        }
+        else
+        {
             throw new MapperRuntimeException("Unable to get members for dynamic type.");
         }
     }

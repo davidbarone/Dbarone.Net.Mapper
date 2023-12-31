@@ -48,7 +48,7 @@ public class DynamicTests
         exp.y = 456;
 
         ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
-        var op = mapper.GetMapperOperator< dynamic, Vector>();
+        var op = mapper.GetMapperOperator<dynamic, Vector>();
         var v = op.Map(exp);
         output.WriteLine(op.PrettyPrint());
         Assert.Equal(123, v.x);

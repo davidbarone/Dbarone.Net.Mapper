@@ -96,6 +96,37 @@ public class MapperBuilder
         return BuildTypes[type];
     }
 
+    /// <summary>
+    /// Returns the member resolver for the type given the current configuration.
+    /// </summary>
+    /// <param name="type">The type to get the resolver for.</param>
+    /// <returns>The member resolver for the type.</returns>
+    /// <exception cref="MapperBuildException">Throws an exception if no resolver found for the type.</exception>
+    public IMemberResolver GetResolver(Type type)
+    {
+        if (!this.Configuration.Config.Types.ContainsKey(type) && this.Configuration.Config.AutoRegisterTypes)
+        {
+            this.Configuration.RegisterType(type);
+        }
+
+        var configType = this.Configuration.Config.Types[type];
+
+        if (configType == null)
+        {
+            throw new MapperBuildException(type, MapperEndPoint.None, null, $"Type: {type.Name} not registered in configuration.");
+        }
+
+        // Get resolver
+        foreach (var configResolver in this.Configuration.Config.Resolvers)
+        {
+            if (configResolver.CanResolveMembersForType(configType.Type))
+            {
+                return configResolver;
+            }
+        }
+        throw new MapperBuildException(type, MapperEndPoint.None, string.Empty, $"No resolver found for type: {type.Name}.");
+    }
+
     #endregion
 
     /// <summary>
@@ -116,37 +147,8 @@ public class MapperBuilder
 
     private void BuildType(Type type)
     {
-        List<MapperBuildError> errors = new List<MapperBuildError>();
-
-        if (!this.Configuration.Config.Types.ContainsKey(type) && this.Configuration.Config.AutoRegisterTypes)
-        {
-            this.Configuration.RegisterType(type);
-        }
-
+        IMemberResolver? resolver = this.GetResolver(type);
         var configType = this.Configuration.Config.Types[type];
-
-        if (configType == null)
-        {
-            throw new MapperBuildException(type, MapperEndPoint.None, null, "Type not registered in configuration.");
-        }
-
-        IMemberResolver? resolver = null;
-
-        // Get resolver
-        foreach (var configResolver in this.Configuration.Config.Resolvers)
-        {
-            if (configResolver.CanResolveMembersForType(configType.Type))
-            {
-                resolver = configResolver;
-                break;
-            }
-        }
-
-        if (resolver == null)
-        {
-            throw new MapperBuildException(type, MapperEndPoint.None, null, "No resolver found for type.");
-        }
-
 
         BuildType buildType = new BuildType
         {
@@ -248,22 +250,18 @@ public class MapperBuilder
         {
             this.Configuration.Config.Resolvers.Add(new DynamicMemberResolver());
         }
-
         if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
         {
             this.Configuration.Config.Resolvers.Add(new StructMemberResolver());
         }
-
         if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
         {
             this.Configuration.Config.Resolvers.Add(new DictionaryMemberResolver());
         }
-
         if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
         {
             this.Configuration.Config.Resolvers.Add(new ClassMemberResolver());
         }
-
         if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(InterfaceMemberResolver)))
         {
             this.Configuration.Config.Resolvers.Add(new InterfaceMemberResolver());
