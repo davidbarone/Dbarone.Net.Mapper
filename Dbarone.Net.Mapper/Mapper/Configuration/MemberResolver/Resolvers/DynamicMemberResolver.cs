@@ -2,6 +2,8 @@ using Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions;
 using System.Dynamic;
 using System.Linq.Expressions;
+using Microsoft.CSharp.RuntimeBinder;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Member resolver for dynamic types.
@@ -33,10 +35,15 @@ public class DynamicMemberResolver : IMemberResolver
 
     public Getter GetGetter(Type type, string memberName, MapperOptions options)
     {
+        // https://learn.microsoft.com/en-us/dotnet/api/microsoft.csharp.runtimebinder.binder.getmember?view=net-8.0
+        // https://stackoverflow.com/questions/5306018/how-to-call-dynamicobject-trygetmember-directly
+        // https://stackoverflow.com/questions/12057516/c-sharp-dynamicobject-dynamic-properties
         Getter getter = (obj) =>
         {
-            var dynObj = obj as dynamic;
-            return dynObj.memberName;
+            var binder = Binder.GetMember(CSharpBinderFlags.None, memberName, obj.GetType(),
+                new[] { CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null) });
+            var callsite = CallSite<Func<CallSite, object, object>>.Create(binder);
+            return callsite.Target(callsite, obj);
         };
         return getter;
     }
@@ -71,10 +78,17 @@ public class DynamicMemberResolver : IMemberResolver
 
     public Setter GetSetter(Type type, string memberName, MapperOptions options)
     {
+        // https://learn.microsoft.com/en-us/dotnet/api/microsoft.csharp.runtimebinder.binder.getmember?view=net-8.0
+        // https://stackoverflow.com/questions/5306018/how-to-call-dynamicobject-trygetmember-directly
+        // https://stackoverflow.com/questions/12057516/c-sharp-dynamicobject-dynamic-properties
         Setter setter = (obj, value) =>
         {
-            var dynObj = obj as dynamic;
-            dynObj.memberName = value;
+            var binder = Binder.SetMember(CSharpBinderFlags.None, memberName, obj.GetType(),
+                new[] {
+                    CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null),
+                    CSharpArgumentInfo.Create(CSharpArgumentInfoFlags.None, null) });
+            var callsite = CallSite<Func<CallSite, object, object?, object>>.Create(binder);
+            callsite.Target(callsite, obj, value);
         };
         return setter;
     }
