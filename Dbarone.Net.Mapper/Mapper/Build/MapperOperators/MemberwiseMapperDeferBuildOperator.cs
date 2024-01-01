@@ -33,19 +33,40 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
 
         // member-wise mapping
         // Get internal member names matching on source + target
-        var members = TargetType
-                .Members
-                .Where(mc => mc.Ignore == false)
-                .Select(mc => mc.InternalMemberName).Intersect(
-                    this.runTimeMembers
+        IEnumerable<string> members;
+
+        if (TargetType.MemberResolver.DeferBuild)
+        {
+            members = this.runTimeMembers
                     .Where(mc => mc.Ignore == false)
-                    .Select(mc => mc.InternalMemberName)
-                );
+                    .Select(mc => mc.InternalMemberName);
+        }
+        else
+        {
+            members = TargetType
+                    .Members
+                    .Where(mc => mc.Ignore == false)
+                    .Select(mc => mc.InternalMemberName).Intersect(
+                        this.runTimeMembers
+                        .Where(mc => mc.Ignore == false)
+                        .Select(mc => mc.InternalMemberName)
+                    );
+        }
 
         foreach (var member in members)
         {
             var mSourceType = this.runTimeMembers.First(m => m.MemberName == member).DataType;
-            var mTargetType = TargetType.Members.First(m => m.MemberName == member).DataType;
+
+            Type mTargetType;
+
+            if (TargetType.MemberResolver.DeferBuild)
+            {
+                mTargetType = TargetType.MemberResolver.GetMemberType(TargetType.Type, member, TargetType.Options);
+            }
+            else
+            {
+                mTargetType = TargetType.Members.First(m => m.MemberName == member).DataType;
+            }
             var memberMapperOperator = Builder.GetMapperOperator(new SourceTarget(mSourceType, mTargetType), this);
             children[member] = memberMapperOperator;
         }

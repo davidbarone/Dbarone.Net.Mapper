@@ -62,4 +62,18 @@ public class DynamicTests
         var result = op.Map(builtIn);
         Assert.Equal(123, result);
     }
+
+    [Fact]
+    public void TestDynamicToDictionary()
+    {
+        dynamic exp = new ExpandoObject();
+
+        exp.x = 123;
+        exp.y = 456;
+
+        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var op = mapper.GetMapperOperator<dynamic, Dictionary<string, object>>();
+        var dict = op.Map(exp);
+        Assert.Equal(123, dict["x"]);
+    }
 }

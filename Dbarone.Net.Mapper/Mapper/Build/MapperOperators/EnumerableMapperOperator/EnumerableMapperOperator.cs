@@ -61,7 +61,11 @@ public class EnumerableMapperOperator : MapperOperator
     /// <returns>Returns true when From and To types are enumerable types.</returns>
     public override bool CanMap()
     {
-        return TargetType.Type.IsEnumerableType() && SourceType.Type.IsEnumerableType();
+        return
+            TargetType.Type.IsEnumerableType() &&
+            SourceType.Type.IsEnumerableType() &&
+            !TargetType.Type.IsDictionaryType() &&
+            !SourceType.Type.IsDictionaryType();
     }
 
     /// <summary>
