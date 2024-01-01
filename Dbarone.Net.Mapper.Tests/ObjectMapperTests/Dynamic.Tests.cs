@@ -53,4 +53,13 @@ public class DynamicTests
         output.WriteLine(op.PrettyPrint());
         Assert.Equal(123, v.x);
     }
+
+    [Fact]
+    public void TestDynamicToBuiltInType() {
+        dynamic builtIn = 123;
+        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var op = mapper.GetMapperOperator<dynamic, int>();
+        var result = op.Map(builtIn);
+        Assert.Equal(123, result);
+    }
 }
