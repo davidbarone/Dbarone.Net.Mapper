@@ -154,8 +154,8 @@ public abstract class MapperOperator
                 throw new MapperBuildException(sourceType.Type, MapperEndPoint.Source, "", $"Unable to create mapper operator for mapper type: {type.Name}.");
             }
             mapperOperators.Add(mapperOperator);
-            mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
         }
+        mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
 
         // Find the first mapper operator that can map the types
         foreach (var mapperOperator in mapperOperators)
