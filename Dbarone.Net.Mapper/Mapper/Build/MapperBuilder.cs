@@ -245,27 +245,6 @@ public class MapperBuilder
     #region Helper Methods
     private void AddCoreResolvers()
     {
-        // Add core resolvers - note order is important. Types check member resolvers in order below.
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DynamicMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new DynamicMemberResolver());
-        }
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new StructMemberResolver());
-        }
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new DictionaryMemberResolver());
-        }
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new ClassMemberResolver());
-        }
-        if (!this.Configuration.Config.Resolvers.Select(r => r.GetType()).Contains(typeof(InterfaceMemberResolver)))
-        {
-            this.Configuration.Config.Resolvers.Add(new InterfaceMemberResolver());
-        }
     }
 
     private void ValidateType(BuildType buildType)

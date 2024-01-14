@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic;
+
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
@@ -10,6 +12,40 @@ public class Config
     /// default configuration if not registered in advance
     /// </summary>
     public bool AutoRegisterTypes { get; set; }
+
+    /// <summary>
+    /// List of default resolvers used to provide mapper services for types.
+    /// </summary>
+    public IList<IMemberResolver> DefaultResolvers
+    {
+        get
+        {
+            IList<IMemberResolver> resolvers = new List<IMemberResolver>();
+
+            // Add core resolvers - note order is important. Types check member resolvers in order below.
+            if (!resolvers.Select(r => r.GetType()).Contains(typeof(DynamicMemberResolver)))
+            {
+                resolvers.Add(new DynamicMemberResolver());
+            }
+            if (!resolvers.Select(r => r.GetType()).Contains(typeof(StructMemberResolver)))
+            {
+                resolvers.Add(new StructMemberResolver());
+            }
+            if (!resolvers.Select(r => r.GetType()).Contains(typeof(DictionaryMemberResolver)))
+            {
+                resolvers.Add(new DictionaryMemberResolver());
+            }
+            if (!resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
+            {
+                resolvers.Add(new ClassMemberResolver());
+            }
+            if (!resolvers.Select(r => r.GetType()).Contains(typeof(InterfaceMemberResolver)))
+            {
+                resolvers.Add(new InterfaceMemberResolver());
+            }
+            return resolvers;
+        }
+    }
 
     /// <summary>
     /// List of resolvers used to provide mapper services for types.
@@ -40,7 +76,7 @@ public class Config
     /// Member filter rules provide a function to determine which members to include or exclude from mapping.
     /// </summary>
     public IDictionary<Type, MemberFilterDelegate> MemberFilters { get; set; } = new Dictionary<Type, MemberFilterDelegate>();
- 
+
     /// <summary>
     /// Member renames are functions which rename members.
     /// </summary>
