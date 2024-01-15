@@ -5,6 +5,8 @@ using System.Linq.Expressions;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Runtime.CompilerServices;
 
+namespace Dbarone.Net.Mapper;
+
 /// <summary>
 /// Member resolver for dynamic types.
 /// </summary>

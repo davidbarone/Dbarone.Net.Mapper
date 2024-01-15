@@ -22,18 +22,39 @@ public class ImplicitOperatorMapperOperator : MapperOperator
         var methods = SourceType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
         var method = methods
                         .FirstOrDefault(
-                            m => m.ReturnType == TargetType.Type &&
+                            m => m.GetParameters()[0].ParameterType == SourceType.Type &&
+                            m.ReturnType == TargetType.Type &&
                             m.Name == "op_Implicit"
                         );
         if (method == null)
         {
-            // try reverse conversion
+            method = methods
+                            .FirstOrDefault(
+                                m => m.GetParameters()[0].ParameterType == TargetType.Type &&
+                                m.ReturnType == SourceType.Type &&
+                                m.Name == "op_Implicit"
+                            );
+        }
+        if (method == null)
+        {
             methods = TargetType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
             method = methods
                             .FirstOrDefault(
-                                m => m.ReturnType == TargetType.Type &&
-                                m.Name == "op_Implicit"
+                            m => m.GetParameters()[0].ParameterType == SourceType.Type &&
+                            m.ReturnType == TargetType.Type &&
+                            m.Name == "op_Implicit"
                             );
+        }
+        if (method == null)
+        {
+            methods = TargetType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+            method = methods
+                            .FirstOrDefault(
+                            m => m.GetParameters()[0].ParameterType == TargetType.Type &&
+                            m.ReturnType == SourceType.Type &&
+                            m.Name == "op_Implicit"
+                            );
+
         }
         return method;
     }

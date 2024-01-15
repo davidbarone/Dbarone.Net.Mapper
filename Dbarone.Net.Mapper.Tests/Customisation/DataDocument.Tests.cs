@@ -130,7 +130,7 @@ public class DocumentMemberResolver : IMemberResolver
     /// <returns>Returns true if the current IMemberResolver can resolve members of the specified type.</returns>
     public bool CanResolveMembersForType(Type type)
     {
-        return type == typeof(DocDocument);
+        return type.IsAssignableTo(typeof(DocValue));
     }
 
     /// <summary>
@@ -141,6 +141,13 @@ public class DocumentMemberResolver : IMemberResolver
 
 public class DataDocumentTests
 {
+    [Fact]
+    public void TestIntToDocumentUsesImplicitOperator() {
+        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var mapper = new ObjectMapper(conf);
+        var op = mapper.GetMapperOperator<int, DocValue>();
+        Assert.Equal(typeof(ImplicitOperatorMapperOperator), op.GetType());
+    }
 
     [Fact]
     public void TestIntToDocument()
