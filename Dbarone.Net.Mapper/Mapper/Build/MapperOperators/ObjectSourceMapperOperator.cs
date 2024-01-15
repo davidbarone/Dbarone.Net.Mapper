@@ -35,11 +35,6 @@ public class ObjectSourceMapperOperator : MapperOperator
     }
 
     /// <summary>
-    /// Overrides the priority of the <see cref="ObjectSourceMapperOperator"/> instance.
-    /// </summary>
-    public override int Priority => 10;
-
-    /// <summary>
     /// The <see cref="ObjectSourceMapperOperator"/> operator is used to map objects declared as type 'object' at runtime. 
     /// </summary>
     /// <returns>Returns true when the source declared type is 'object'.</returns>

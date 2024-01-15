@@ -19,11 +19,6 @@ public class ConverterMapperOperator : MapperOperator
     public ConverterMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog) { }
 
     /// <summary>
-    /// Overrides the priority of the <see cref="ConverterMapperOperator"/> instance.
-    /// </summary>
-    public override int Priority => 30;
-
-    /// <summary>
     /// The <see cref="ConverterMapperOperator"/> operator is able to map when a converter function exists between the source and target types. Note that in this case the operator does not recursively map the members. 
     /// </summary>
     /// <returns>Returns true when a converter function exists between the source and target types. Note that in this case the operator does not recursively map the members.</returns>

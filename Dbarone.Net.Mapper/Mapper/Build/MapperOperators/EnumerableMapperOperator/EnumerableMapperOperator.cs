@@ -51,11 +51,6 @@ public class EnumerableMapperOperator : MapperOperator
     }
 
     /// <summary>
-    /// Overrides the priority of the <see cref="EnumerableMapperOperator"/> instance.
-    /// </summary>
-    public override int Priority => 50;
-
-    /// <summary>
     /// The <see cref="EnumerableMapperOperator"/> type is able to map when both From and To types are enumerable types. 
     /// </summary>
     /// <returns>Returns true when From and To types are enumerable types.</returns>

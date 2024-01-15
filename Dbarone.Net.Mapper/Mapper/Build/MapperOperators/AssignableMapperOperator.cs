@@ -25,11 +25,6 @@ public class AssignableMapperOperator : MapperOperator
     public AssignableMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog) { }
 
     /// <summary>
-    /// Overrides the priority of the <see cref="AssignableMapperOperator"/> instance.
-    /// </summary>
-    public override int Priority => 10;
-
-    /// <summary>
     /// The <see cref="AssignableMapperOperator"/> operator is able to map when the source object is assignable to the target type. 
     /// </summary>
     /// <returns>Returns true when the source object is assignable to the target type.</returns>

@@ -68,11 +68,6 @@ public abstract class MapperOperator
     }
 
     /// <summary>
-    /// Sets the priority of the node.
-    /// </summary>
-    public virtual int Priority => 0;
-
-    /// <summary>
     /// Returns true if the current class can map the source / target types.
     /// </summary>
     /// <returns>Returns true if the current mapper can map the source / target types.</returns>
@@ -144,7 +139,9 @@ public abstract class MapperOperator
     /// <exception cref="MapperBuildException">Throws an exception if no suitable mapper found.</exception>
     public static MapperOperator Create(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null)
     {
-        var operatorTypes = AppDomain.CurrentDomain.GetTypesAssignableFrom(typeof(MapperOperator)).Where(t => !t.IsAbstract);
+        // Get all the mapper operator types
+        // Default operators come last.
+        var operatorTypes = builder.Configuration.Config.Operators.Union(builder.Configuration.Config.DefaultOperators);
         List<MapperOperator> mapperOperators = new List<MapperOperator>();
         foreach (var type in operatorTypes)
         {
@@ -155,7 +152,7 @@ public abstract class MapperOperator
             }
             mapperOperators.Add(mapperOperator);
         }
-        mapperOperators = mapperOperators.OrderBy(o => o.Priority).ToList();
+        mapperOperators = mapperOperators.ToList();
 
         // Find the first mapper operator that can map the types
         foreach (var mapperOperator in mapperOperators)

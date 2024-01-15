@@ -1,9 +1,10 @@
-namespace Dbarone.Net.Mapper;
 using System.Linq.Expressions;
 using Dbarone.Net.Extensions;
 using System.Reflection;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+
+namespace Dbarone.Net.Mapper;
 
 /// <summary>
 /// Provides the configuration for an <see cref="ObjectMapper"/> .
@@ -12,7 +13,7 @@ public class MapperConfiguration
 {
     #region Config
 
-    internal Config Config {get; set;} = new Config();
+    internal Config Config { get; set; } = new Config();
 
     #endregion
 
@@ -23,8 +24,45 @@ public class MapperConfiguration
     /// </summary>
     /// <param name="autoRegisterTypes">The auto-register types flag.</param>
     /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
-    public MapperConfiguration SetAutoRegisterTypes(bool autoRegisterTypes) {
+    public MapperConfiguration SetAutoRegisterTypes(bool autoRegisterTypes)
+    {
         this.Config.AutoRegisterTypes = autoRegisterTypes;
+        return this;
+    }
+
+    #endregion
+
+    #region Register Operators
+
+    /// <summary>
+    /// Registers an IMemberResolver using a generic type.
+    /// </summary>
+    /// <typeparam name="TResolver">The resolver type.</typeparam>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration RegisterOperator<TOperator>() where TOperator : MapperOperator
+    {
+        var operatorType = typeof(TOperator);
+        return RegisterOperator(operatorType);
+    }
+
+    /// <summary>
+    /// Registers an IMemberResolver
+    /// </summary>
+    /// <param name="resolver">An IMemberResolver instance.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    /// <exception cref="Exception">Throws an exception if the type of resolver has already been registered.</exception>
+    public MapperConfiguration RegisterOperator(Type operatorType)
+    {
+        if (!operatorType.IsAssignableTo(typeof(MapperOperator)))
+        {
+            throw new MapperConfigurationException($"Operator: {operatorType.Name} does not inherit from MapperOperator.");
+        }
+
+        if (this.Config.Operators.Any(o => o == operatorType))
+        {
+            throw new MapperConfigurationException($"Operator: {operatorType.Name} already registered.");
+        }
+        this.Config.Operators.Add(operatorType);
         return this;
     }
 

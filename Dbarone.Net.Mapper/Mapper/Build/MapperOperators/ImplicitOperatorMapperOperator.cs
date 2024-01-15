@@ -17,11 +17,6 @@ public class ImplicitOperatorMapperOperator : MapperOperator
     /// <param name="onLog">Optional logging callback.</param>
     public ImplicitOperatorMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog) { }
 
-    /// <summary>
-    /// Overrides the priority of the <see cref="ImplicitOperatorMapperOperator"/> instance.
-    /// </summary>
-    public override int Priority => 40;
-
     private MethodInfo? GetImplicitCast()
     {
         var methods = SourceType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);

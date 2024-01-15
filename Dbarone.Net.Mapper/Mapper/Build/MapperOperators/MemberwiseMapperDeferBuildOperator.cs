@@ -74,11 +74,6 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     }
 
     /// <summary>
-    /// Overrides the priority of the <see cref="MemberwiseMapperDeferBuildOperator"/> instance.
-    /// </summary>
-    public override int Priority => 60;
-
-    /// <summary>
     /// The <see cref="MemberwiseMapperDeferBuildOperator"/> operator is able to map when the source and target types have members, and the source type is a defer build type. 
     /// </summary>
     /// <returns>Returns true when the source and target types have members, and the source type is a defer build type.</returns>

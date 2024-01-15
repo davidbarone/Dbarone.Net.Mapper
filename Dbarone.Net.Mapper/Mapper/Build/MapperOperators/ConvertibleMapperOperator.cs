@@ -18,11 +18,6 @@ public class ConvertibleMapperOperator : MapperOperator
     /// <param name="onLog">Optional logging callback.</param>
     public ConvertibleMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog) { }
 
-    /// <summary>
-    /// Overrides the priority of the <see cref="ConvertibleMapperOperator"/> instance.
-    /// </summary>
-    public override int Priority => 20;
-
     private Type[] ValidToTypes = new Type[] {
             typeof(Byte),
             typeof(char),

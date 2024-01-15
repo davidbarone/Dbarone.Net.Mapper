@@ -117,7 +117,8 @@ public class MapperBuilder
         }
 
         // Get resolver
-        foreach (var configResolver in this.Configuration.Config.Resolvers)
+        var resolvers = this.Configuration.Config.Resolvers.Union(this.Configuration.Config.DefaultResolvers);
+        foreach (var configResolver in resolvers)
         {
             if (configResolver.CanResolveMembersForType(configType.Type))
             {
