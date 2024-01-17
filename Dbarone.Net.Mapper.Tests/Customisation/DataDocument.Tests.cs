@@ -3,8 +3,14 @@ using Dbarone.Net.Mapper;
 using System.Reflection;
 using System.Linq.Expressions;
 using Dbarone.Net.Extensions;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Dbarone.Net.Mapper.Tests;
+
+public class Customer {
+    public int CustomerId { get; set; }
+    public string CustomerName { get; set; } = default!;
+}
 
 /// <summary>
 /// Member resolver for documents.
@@ -174,5 +180,22 @@ public class DataDocumentTests
         var doc = new DocValue(123);
         int a = mapper.Map<DocValue, int>(doc);
         Assert.Equal(123, a);
+    }
+
+    [Fact]
+    public void TestClassToDocument() {
+        Customer cust = new Customer()
+        {
+            CustomerId = 123,
+            CustomerName = "Acme Enterprises Ltd"
+        };
+        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var mapper = new ObjectMapper(conf);
+        var doc = mapper.Map<Customer, DocDocument>(cust);
+        Assert.NotNull(doc);
+        if (doc is not null)
+        {
+            Assert.Equal(123, doc["CustomerId"].AsInt32);
+        }
     }
 }
