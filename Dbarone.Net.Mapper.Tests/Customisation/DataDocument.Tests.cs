@@ -198,4 +198,21 @@ public class DataDocumentTests
             Assert.Equal(123, doc["CustomerId"].AsInt32);
         }
     }
+
+    [Fact]
+    public void TestDocumentToClass() {
+        DocDocument doc = new DocDocument();
+        doc.Add("CustomerId", 123);
+        doc.Add("CustomerName", "Acme Enterprises Ltd");
+
+        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var mapper = new ObjectMapper(conf);
+        var cust = mapper.Map<DocDocument, Customer>(doc);
+        Assert.NotNull(cust);
+        if (doc is not null)
+        {
+            Assert.Equal(123, cust.CustomerId);
+        }
+    }
+
 }
