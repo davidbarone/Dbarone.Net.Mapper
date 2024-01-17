@@ -142,7 +142,8 @@ public class DocumentMemberResolver : IMemberResolver
 public class DataDocumentTests
 {
     [Fact]
-    public void TestIntToDocumentUsesImplicitOperator() {
+    public void TestIntToDocumentUsesImplicitOperator()
+    {
         var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
         var mapper = new ObjectMapper(conf);
         var op = mapper.GetMapperOperator<int, DocValue>();
@@ -165,4 +166,13 @@ public class DataDocumentTests
         }
     }
 
+    [Fact]
+    public void TestDocumentToInt()
+    {
+        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var mapper = new ObjectMapper(conf);
+        var doc = new DocValue(123);
+        int a = mapper.Map<DocValue, int>(doc);
+        Assert.Equal(123, a);
+    }
 }
