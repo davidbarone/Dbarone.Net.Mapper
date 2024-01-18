@@ -73,6 +73,7 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
         return children;
     }
 
+
     /// <summary>
     /// The <see cref="MemberwiseMapperDeferBuildOperator"/> operator is able to map when the source and target types have members, and the source type is a defer build type. 
     /// </summary>

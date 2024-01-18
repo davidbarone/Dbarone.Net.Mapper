@@ -7,9 +7,22 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Dbarone.Net.Mapper.Tests;
 
-public class Customer {
+public class Customer
+{
     public int CustomerId { get; set; }
     public string CustomerName { get; set; } = default!;
+}
+
+public class Address
+{
+    public int AddressId { get; set; }
+    public string AddressLine1 { get; set; } = default!;
+    public string AddressLine2 { get; set; } = default!;
+}
+
+public class CustomerWithNestedObject : Customer
+{
+    public Address Address { get; set; }
 }
 
 /// <summary>
@@ -183,7 +196,8 @@ public class DataDocumentTests
     }
 
     [Fact]
-    public void TestClassToDocument() {
+    public void TestClassToDocument()
+    {
         Customer cust = new Customer()
         {
             CustomerId = 123,
@@ -200,7 +214,8 @@ public class DataDocumentTests
     }
 
     [Fact]
-    public void TestDocumentToClass() {
+    public void TestDocumentToClass()
+    {
         DocDocument doc = new DocDocument();
         doc.Add("CustomerId", 123);
         doc.Add("CustomerName", "Acme Enterprises Ltd");
@@ -215,4 +230,28 @@ public class DataDocumentTests
         }
     }
 
+    [Fact]
+    public void TestClassWithNestedClassToDocument()
+    {
+        CustomerWithNestedObject cust = new CustomerWithNestedObject()
+        {
+            CustomerId = 123,
+            CustomerName = "Acme Enterprises Ltd",
+            Address = new Address()
+            {
+                AddressId = 456,
+                AddressLine1 = "123 Acacia Avenue",
+                AddressLine2 = "Somewhere"
+            }
+        };
+
+        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var mapper = new ObjectMapper(conf);
+        var doc = mapper.Map<CustomerWithNestedObject, DocDocument>(cust);
+        if (doc is not null)
+        {
+            Assert.Equal(123, doc["CustomerId"].AsInt32);
+            Assert.Equal("123 Acacia Avenue", doc["CustomerId"]["AddressLine1"]);
+        }
+    }
 }
