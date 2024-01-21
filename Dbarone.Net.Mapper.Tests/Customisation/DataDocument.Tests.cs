@@ -47,7 +47,7 @@ public class DocumentMemberResolver : IMemberResolver
     {
         Getter func = (object obj) =>
         {
-            var objDict = obj as IDictionary<string, DocValue>;
+            var objDict = obj as IDictionary<string, DocumentValue>;
             if (objDict != null)
             {
                 return (object)objDict[memberName];
@@ -72,14 +72,14 @@ public class DocumentMemberResolver : IMemberResolver
     {
         Setter action = delegate (object target, object? value)
         {
-            var objDict = target as IDictionary<string, DocValue>;
+            var objDict = target as IDictionary<string, DocumentValue>;
             if (objDict != null)
             {
-                objDict[memberName] = (DocValue)value;
+                objDict[memberName] = (DocumentValue)value;
             }
             else
             {
-                throw new Exception("Target must implement IDictionary<string, DocValue>.");
+                throw new Exception("Target must implement IDictionary<string, DocumentValue>.");
             }
         };
         return action;
@@ -110,7 +110,7 @@ public class DocumentMemberResolver : IMemberResolver
     /// <returns>Returns the member type.</returns>
     public Type GetMemberType(Type type, string memberName, MapperOptions options)
     {
-        return typeof(DocValue);
+        return typeof(DocumentValue);
     }
 
     /// <summary>
@@ -120,14 +120,14 @@ public class DocumentMemberResolver : IMemberResolver
     /// <returns>A string array of member names.</returns>
     public string[] GetInstanceMembers(object obj)
     {
-        var objDict = obj as IDictionary<string, DocValue>;
+        var objDict = obj as IDictionary<string, DocumentValue>;
         if (objDict != null)
         {
             return objDict.Keys.ToArray();
         }
         else
         {
-            throw new Exception("Object must implement IDictionary<string, DocValue> interface.");
+            throw new Exception("Object must implement IDictionary<string, DocumentValue> interface.");
         }
     }
 
@@ -149,7 +149,7 @@ public class DocumentMemberResolver : IMemberResolver
     /// <returns>Returns true if the current IMemberResolver can resolve members of the specified type.</returns>
     public bool CanResolveMembersForType(Type type)
     {
-        return type.IsAssignableTo(typeof(DocValue));
+        return type.IsAssignableTo(typeof(DocumentValue));
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ public class DataDocumentTests
     {
         var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
         var mapper = new ObjectMapper(conf);
-        var op = mapper.GetMapperOperator<int, DocValue>();
+        var op = mapper.GetMapperOperator<int, DocumentValue>();
         Assert.Equal(typeof(ImplicitOperatorMapperOperator), op.GetType());
     }
 
@@ -176,7 +176,7 @@ public class DataDocumentTests
         var mapper = new ObjectMapper(conf);
 
         int a = 123;
-        DocValue? doc = mapper.Map<int, DocValue>(a);
+        DocumentValue? doc = mapper.Map<int, DocumentValue>(a);
 
         Assert.NotNull(doc);
         if (doc is not null)
@@ -190,8 +190,8 @@ public class DataDocumentTests
     {
         var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
         var mapper = new ObjectMapper(conf);
-        var doc = new DocValue(123);
-        int a = mapper.Map<DocValue, int>(doc);
+        var doc = new DocumentValue(123);
+        int a = mapper.Map<DocumentValue, int>(doc);
         Assert.Equal(123, a);
     }
 
@@ -205,7 +205,7 @@ public class DataDocumentTests
         };
         var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
         var mapper = new ObjectMapper(conf);
-        var doc = mapper.Map<Customer, DocDocument>(cust);
+        var doc = mapper.Map<Customer, DictionaryDocument>(cust);
         Assert.NotNull(doc);
         if (doc is not null)
         {
@@ -216,13 +216,13 @@ public class DataDocumentTests
     [Fact]
     public void TestDocumentToClass()
     {
-        DocDocument doc = new DocDocument();
+        DictionaryDocument doc = new DictionaryDocument();
         doc.Add("CustomerId", 123);
         doc.Add("CustomerName", "Acme Enterprises Ltd");
 
         var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
         var mapper = new ObjectMapper(conf);
-        var cust = mapper.Map<DocDocument, Customer>(doc);
+        var cust = mapper.Map<DictionaryDocument, Customer>(doc);
         Assert.NotNull(cust);
         if (doc is not null)
         {
@@ -247,11 +247,34 @@ public class DataDocumentTests
 
         var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
         var mapper = new ObjectMapper(conf);
-        var doc = mapper.Map<CustomerWithNestedObject, DocDocument>(cust);
+        var doc = mapper.Map<CustomerWithNestedObject, DictionaryDocument>(cust);
         if (doc is not null)
         {
             Assert.Equal(123, doc["CustomerId"].AsInt32);
             Assert.Equal("123 Acacia Avenue", doc["CustomerId"]["AddressLine1"]);
+        }
+    }
+
+    [Fact]
+    public void TestDocumentToClassWithNestedClass()
+    {
+        DictionaryDocument doc = new DictionaryDocument();
+        DictionaryDocument add = new DictionaryDocument();
+
+        doc.Add("CustomerId", 123);
+        doc.Add("CustomerName", "Acme Enterprises Ltd");
+        add.Add("AddressId", 456);
+        add.Add("AddressLine1", "123 Acacia Avenue");
+        add.Add("AddressLine2", "Somewhere");
+        doc.Add("Address", add);
+
+        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var mapper = new ObjectMapper(conf);
+        var cust = mapper.Map<DictionaryDocument, CustomerWithNestedObject>(doc);
+        Assert.NotNull(cust);
+        if (cust is not null)
+        {
+            Assert.Equal(456, cust.Address.AddressId);
         }
     }
 }
