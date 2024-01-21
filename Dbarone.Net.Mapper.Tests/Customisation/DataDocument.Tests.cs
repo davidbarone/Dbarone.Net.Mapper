@@ -224,7 +224,7 @@ public class DataDocumentTests
         var mapper = new ObjectMapper(conf);
         var cust = mapper.Map<DictionaryDocument, Customer>(doc);
         Assert.NotNull(cust);
-        if (doc is not null)
+        if (cust is not null)
         {
             Assert.Equal(123, cust.CustomerId);
         }
@@ -245,7 +245,7 @@ public class DataDocumentTests
             }
         };
 
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>().RegisterOperator<MemberwiseDocumentValueTargetMapperOperator>();
         var mapper = new ObjectMapper(conf);
         var doc = mapper.Map<CustomerWithNestedObject, DictionaryDocument>(cust);
         if (doc is not null)
@@ -268,7 +268,10 @@ public class DataDocumentTests
         add.Add("AddressLine2", "Somewhere");
         doc.Add("Address", add);
 
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>();
+
         var mapper = new ObjectMapper(conf);
         var cust = mapper.Map<DictionaryDocument, CustomerWithNestedObject>(doc);
         Assert.NotNull(cust);
