@@ -41,6 +41,12 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
                     .Where(mc => mc.Ignore == false)
                     .Select(mc => mc.InternalMemberName);
         }
+        else if (this.runTimeMembers==null) {
+            // runTimeMembers only populated when source object instance
+            // provided (e.g. during mapping process). If just getting
+            // the initial mapper operator, then cannot do full check
+            members = new List<string>();
+        }
         else
         {
             members = TargetType

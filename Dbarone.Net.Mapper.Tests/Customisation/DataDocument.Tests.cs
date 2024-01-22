@@ -248,10 +248,12 @@ public class DataDocumentTests
         var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>().RegisterOperator<MemberwiseDocumentValueTargetMapperOperator>();
         var mapper = new ObjectMapper(conf);
         var doc = mapper.Map<CustomerWithNestedObject, DictionaryDocument>(cust);
+        var dict = doc.AsDocument;
+
         if (doc is not null)
         {
-            Assert.Equal(123, doc["CustomerId"].AsInt32);
-            Assert.Equal("123 Acacia Avenue", doc["CustomerId"]["AddressLine1"]);
+            Assert.Equal(123, doc.AsDocument["CustomerId"].AsInt32);
+            Assert.Equal("123 Acacia Avenue", doc.AsDocument["CustomerId"].AsDocument["AddressLine1"]);
         }
     }
 
@@ -273,6 +275,8 @@ public class DataDocumentTests
             .RegisterResolvers<DocumentMemberResolver>();
 
         var mapper = new ObjectMapper(conf);
+        var operation = mapper.GetMapperOperator<DictionaryDocument, CustomerWithNestedObject>();
+        var s = operation.PrettyPrint();
         var cust = mapper.Map<DictionaryDocument, CustomerWithNestedObject>(doc);
         Assert.NotNull(cust);
         if (cust is not null)

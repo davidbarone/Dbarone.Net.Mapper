@@ -42,7 +42,9 @@ public class MapperBuilder
     #region Public Methods
 
     /// <summary>
-    /// Gets a mapper operator based on source and target types.
+    /// Gets a mapper operator based on source and target types. Note this ONLY gets the basic operator that can
+    /// be identified during build time. Operators that use dynamic / defer logic will get complete mapping
+    /// information only during run (map) time.
     /// </summary>
     /// <param name="sourceTarget">The source and target types.</param>
     /// <param name="parent">An optional parent operator.</param>
