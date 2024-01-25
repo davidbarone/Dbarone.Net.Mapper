@@ -1,5 +1,6 @@
 using Dbarone.Net.Document;
 using Dbarone.Net.Mapper;
+using Dbarone.Net.Extensions;
 
 namespace Dbarone.Net.Mapper;
 
@@ -41,7 +42,9 @@ public class MemberwiseDocumentValueTargetMapperOperator : MapperOperator
     /// <returns>Returns true when the source declared type is 'object'.</returns>
     public override bool CanMap()
     {
-        return SourceType.MemberResolver.HasMembers && SourceType.Type != typeof(String) && TargetType.Type == typeof(DocumentValue);
+        return SourceType.MemberResolver.HasMembers
+            && !SourceType.Type.IsBuiltInType()
+            && TargetType.Type == typeof(DocumentValue);
     }
 
     private void GetRuntimeOperator(object? source)
