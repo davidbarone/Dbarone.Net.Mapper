@@ -81,7 +81,7 @@ public class MemberwiseMapperOperator : MapperOperator
     /// <returns>Returns true when the source and target types have members, and the source type is a defer build type.</returns>
     public override bool CanMap()
     {
-        return SourceType.MemberResolver.HasMembers && !SourceType.Type.IsBuiltInType() && TargetType.MemberResolver.HasMembers;
+        return SourceType.MemberResolver.HasMembers && TargetType.MemberResolver.HasMembers;
     }
 
     private void EndPointValidation()

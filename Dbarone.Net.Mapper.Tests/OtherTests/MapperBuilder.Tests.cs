@@ -51,7 +51,7 @@ public class MapperBuilderTests
     }
 
     [Theory]
-    [InlineData(typeof(object), typeof(ClassMemberResolver))]
+    [InlineData(typeof(object), typeof(BuiltinMemberResolver))]
     [InlineData(typeof(ExpandoObject), typeof(DynamicMemberResolver))]
     public void Test_GetResolver(Type type, Type expectedResolverType) {
         MapperBuilder builder = new MapperBuilder(new MapperConfiguration().SetAutoRegisterTypes(true));

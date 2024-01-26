@@ -89,7 +89,6 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
     {
         // Note that dynamic types generally behave like object types.
         return SourceType.MemberResolver.HasMembers
-        && !SourceType.Type.IsBuiltInType()
         && TargetType.MemberResolver.HasMembers
         && (SourceType.MemberResolver.DeferBuild/* || SourceType.Type == typeof(object)*/);
     }

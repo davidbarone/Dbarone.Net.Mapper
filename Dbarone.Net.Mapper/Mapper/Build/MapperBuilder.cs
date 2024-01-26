@@ -166,7 +166,10 @@ public class MapperBuilder
         if (!buildType.isOpenGeneric)
         {
             // Add members
-            AddMembers(type);
+            if (resolver.HasMembers)
+            {
+                AddMembers(type);
+            }
 
             // Add calculations
             AddCalculations(type);

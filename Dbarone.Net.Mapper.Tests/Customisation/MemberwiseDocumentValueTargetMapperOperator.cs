@@ -43,7 +43,6 @@ public class MemberwiseDocumentValueTargetMapperOperator : MapperOperator
     public override bool CanMap()
     {
         return SourceType.MemberResolver.HasMembers
-            && !SourceType.Type.IsBuiltInType()
             && TargetType.Type == typeof(DocumentValue);
     }
 

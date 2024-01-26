@@ -286,4 +286,20 @@ public class DataDocumentTests
             Assert.Equal(456, cust.Address.AddressId);
         }
     }
+
+    [Fact]
+    public void TestArrayIntsToDocument()
+    {
+        var intArray = new int[] { 1, 2, 3, 4, 5 };
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>();
+        var mapper = new ObjectMapper(conf);
+        var doc = mapper.Map<int[], DocumentValue>(intArray);
+        Assert.NotNull(doc);
+        if (doc is not null)
+        {
+            Assert.Equal(DocumentType.Array, doc.Type);
+        }
+    }
 }
