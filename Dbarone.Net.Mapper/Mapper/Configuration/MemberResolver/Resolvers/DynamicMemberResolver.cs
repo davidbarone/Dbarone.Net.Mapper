@@ -10,32 +10,13 @@ namespace Dbarone.Net.Mapper;
 /// <summary>
 /// Member resolver for dynamic types.
 /// </summary>
-public class DynamicMemberResolver : IMemberResolver
+public class DynamicMemberResolver : AbstractMemberResolver, IMemberResolver
 {
     public DynamicMemberResolver()
     {
     }
 
-    public bool DeferBuild => true;
-
-    public bool HasMembers => true;
-
-    public bool CanResolveMembersForType(Type type)
-    {
-        return type.IsDynamicType();
-    }
-
-    public CreateInstance CreateInstance(Type type, params object?[]? args)
-    {
-        List<ParameterExpression> parameters = new List<ParameterExpression>();
-
-        // args array (optional)
-        parameters.Add(Expression.Parameter(typeof(object[]), "args"));
-
-        return Expression.Lambda<CreateInstance>(Expression.New(type), parameters).Compile();
-    }
-
-    public Getter GetGetter(Type type, string memberName, MapperOptions options)
+    public override Getter GetGetter(Type type, string memberName, MapperOptions options)
     {
         // https://learn.microsoft.com/en-us/dotnet/api/microsoft.csharp.runtimebinder.binder.getmember?view=net-8.0
         // https://stackoverflow.com/questions/5306018/how-to-call-dynamicobject-trygetmember-directly
@@ -50,7 +31,7 @@ public class DynamicMemberResolver : IMemberResolver
         return getter;
     }
 
-    public string[] GetInstanceMembers(object obj)
+    public override string[] GetInstanceMembers(object obj)
     {
         // dynamic types are not forced to expose their properties.
         // Cannot use reflection. We only deal with common types of
@@ -73,12 +54,7 @@ public class DynamicMemberResolver : IMemberResolver
         }
     }
 
-    public Type GetMemberType(Type type, string memberName, MapperOptions options)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Setter GetSetter(Type type, string memberName, MapperOptions options)
+    public override Setter GetSetter(Type type, string memberName, MapperOptions options)
     {
         // https://learn.microsoft.com/en-us/dotnet/api/microsoft.csharp.runtimebinder.binder.getmember?view=net-8.0
         // https://stackoverflow.com/questions/5306018/how-to-call-dynamicobject-trygetmember-directly
@@ -95,8 +71,14 @@ public class DynamicMemberResolver : IMemberResolver
         return setter;
     }
 
-    public string[] GetTypeMembers(Type type, MapperOptions options)
+    public override bool DeferBuild => true;
+
+    public override bool HasMembers => true;
+
+    public override bool CanResolveMembersForType(Type type)
     {
-        throw new MapperBuildException(type, MapperEndPoint.None, string.Empty, $"Type {type.Name} is dynamic - cannot get members at build time.");
+        return type.IsDynamicType();
     }
+
+    public override bool IsEnumerable => false;
 }

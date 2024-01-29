@@ -71,6 +71,11 @@ public interface IMemberResolver
     bool HasMembers { get; }
 
     /// <summary>
+    /// Returns true if the resolver can return an IEnumerable.
+    /// </summary>
+    bool IsEnumerable { get; }
+    
+    /// <summary>
     /// Set to true if the current IMemberResolver can resolve members of the specified type.
     /// </summary>
     /// <param name="type">The type to resolve members for.</param>

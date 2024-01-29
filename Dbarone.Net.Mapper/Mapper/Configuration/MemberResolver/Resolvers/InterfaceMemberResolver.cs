@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 /// <summary>
 /// General resolver for interfaces.
 /// </summary>
-public class InterfaceMemberResolver : ClassMemberResolver
+public class InterfaceMemberResolver : ClassMemberResolver, IMemberResolver
 {
     /// <summary>
     /// Returns a CreateInstance delegate that can create a new instance of a particular type.

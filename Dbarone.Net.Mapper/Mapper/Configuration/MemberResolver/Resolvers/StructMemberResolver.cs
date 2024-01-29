@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 /// <summary>
 /// General resolver for structs.
 /// </summary>
-public class StructMemberResolver : ClassMemberResolver
+public class StructMemberResolver : ClassMemberResolver, IMemberResolver
 {
     /// <summary>
     /// Returns a CreateInstance delegate that can create a new instance of a particular type.

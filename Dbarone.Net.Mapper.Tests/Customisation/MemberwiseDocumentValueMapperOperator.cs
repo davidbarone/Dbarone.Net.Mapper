@@ -8,7 +8,7 @@ namespace Dbarone.Net.Mapper;
 /// Mapper for when the source is a memberwise source, and the target is DocumentValue
 /// In this case, we actually need to use a DictionaryDocument type.
 /// </summary>
-public class MemberwiseDocumentValueTargetMapperOperator : MapperOperator
+public class MemberwiseDocumentValueMapperOperator : MapperOperator
 {
     private MapperOperator? runtimeOperator = null;
 
@@ -20,7 +20,7 @@ public class MemberwiseDocumentValueTargetMapperOperator : MapperOperator
     /// <param name="targetType">The target <see cref="BuildType"/> instance.</param>
     /// <param name="parent">An optional parent <see cref="MapperOperator"/> instance.</param>
     /// <param name="onLog">Optional logging callback.</param>
-    public MemberwiseDocumentValueTargetMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog)
+    public MemberwiseDocumentValueMapperOperator(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null) : base(builder, sourceType, targetType, parent, onLog)
     {
     }
 
