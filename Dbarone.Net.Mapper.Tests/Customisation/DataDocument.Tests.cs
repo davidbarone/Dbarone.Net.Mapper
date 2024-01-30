@@ -281,4 +281,31 @@ public class DataDocumentTests
             Assert.Equal(1, doc.AsArray.RawValue.First().AsInt32);
         }
     }
+
+    [Fact]
+    public void TestArrayOfObjectsToDocument() {
+        Customer cust = new Customer()
+        {
+            CustomerId = 123,
+            CustomerName = "Acme Ltd"
+        };
+        List<Customer> customers = new List<Customer>();
+        customers.Add(cust);
+
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<EnumerableDocumentValueMapperOperator>()
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+        var doc = mapper.Map<List<Customer>, DocumentValue>(customers);
+        Assert.NotNull(doc);
+        if (doc is not null)
+        {
+            Assert.Equal(DocumentType.Array, doc.Type);
+            Assert.Single(doc.AsArray);
+            Assert.Equal(123, doc.AsArray.RawValue.First().AsDocument["CustomerId"].AsInt32);
+        }
+    }
 }
