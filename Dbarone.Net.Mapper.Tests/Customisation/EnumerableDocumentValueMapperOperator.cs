@@ -1,16 +1,15 @@
 using Dbarone.Net.Document;
 using Dbarone.Net.Mapper;
 using Dbarone.Net.Extensions;
+using System.Collections;
 
 namespace Dbarone.Net.Mapper;
 
 /// <summary>
 /// Maps IEnumerable types to a <see cref="DocumentValue"/> type.
 /// </summary>
-public class EnumerableDocumentValueMapperOperator : MapperOperator
+public class EnumerableDocumentValueMapperOperator : EnumerableMapperOperator
 {
-    private MapperOperator? runtimeOperator = null;
-
     /// <summary>
     /// Creates a new <see cref="EnumerableToDocumentValueMapperOperator"/> instance.
     /// </summary>
@@ -24,15 +23,25 @@ public class EnumerableDocumentValueMapperOperator : MapperOperator
     }
 
     /// <summary>
-    /// GetChildren implementation for <see cref="ObjectSourceMapperOperator"/>.
+    /// GetChildren implementation for <see cref="EnumerableMapperOperator"/>.
     /// </summary>
     /// <returns>Returns the children operators.</returns>
     /// <exception cref="MapperBuildException"></exception>
     protected override IDictionary<string, MapperOperator> GetChildren()
     {
-        return new Dictionary<string, MapperOperator>{
-            {"*", this.runtimeOperator!}
-        };
+        // Children
+        Dictionary<string, MapperOperator> children = new Dictionary<string, MapperOperator>();
+        var fromElementType = SourceType.EnumerableElementType;
+        var toElementType = typeof(DocumentValue);
+
+        if (fromElementType == null)
+        {
+            throw new MapperBuildException(SourceType.Type, MapperEndPoint.Source, "", "Element type is null.");
+        }
+
+        var elementMappingOperator = Builder.GetMapperOperator(new SourceTarget(fromElementType, toElementType), this);
+        children["[]"] = elementMappingOperator;
+        return children;
     }
 
     /// <summary>
@@ -41,33 +50,25 @@ public class EnumerableDocumentValueMapperOperator : MapperOperator
     /// <returns>Returns true when the source declared type is 'object'.</returns>
     public override bool CanMap()
     {
-        return SourceType.MemberResolver.HasMembers
+        return SourceType.MemberResolver.IsEnumerable
             && TargetType.Type == typeof(DocumentValue);
     }
 
-    private void GetRuntimeOperator(object? source)
-    {
-        if (source == null)
-        {
-            throw new Exception("null value invalid.");
-        }
-        var sourceRunTimeType = source.GetType();
-        if (this.runtimeOperator == null)
-        {
-            // Switch target type to use DictionaryDocument
-            this.runtimeOperator = Builder.GetMapperOperator(new SourceTarget(sourceRunTimeType, typeof(DictionaryDocument)), this);
-        }
-    }
-
     /// <summary>
-    /// Mapping implementation for <see cref="ObjectSourceMapperOperator"/> type. 
+    /// Mapping implementation for <see cref="EnumerableMapperOperator"/> type. 
     /// </summary>
     /// <param name="source">The source object.</param>
+    /// <param name="target">The optional target object.</param>
     /// <returns>Returns a mapped object.</returns>
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
     protected override object? MapInternal(object? source)
     {
-        GetRuntimeOperator(source);
-        return this.Children["*"].Map(source);
+        var arr = source as IEnumerable;
+        if (arr == null)
+        {
+            throw new MapperBuildException(SourceType.Type, MapperEndPoint.Source, this.GetPath(), "Type does not implement IEnumerable.");
+        }
+        EnumerableBuffer buffer = new EnumerableBuffer(arr, Children["[]"].Map);
+        return new DocumentArray((DocumentValue[])buffer.ToArray(typeof(DocumentValue)));
     }
 }

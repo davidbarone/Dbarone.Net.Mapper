@@ -268,13 +268,17 @@ public class DataDocumentTests
         var intArray = new int[] { 1, 2, 3, 4, 5 };
         var conf = new MapperConfiguration()
             .SetAutoRegisterTypes(true)
-            .RegisterResolvers<DocumentMemberResolver>();
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<EnumerableDocumentValueMapperOperator>()
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+
         var mapper = new ObjectMapper(conf);
         var doc = mapper.Map<int[], DocumentValue>(intArray);
         Assert.NotNull(doc);
         if (doc is not null)
         {
             Assert.Equal(DocumentType.Array, doc.Type);
+            Assert.Equal(1, doc.AsArray.RawValue.First().AsInt32);
         }
     }
 }

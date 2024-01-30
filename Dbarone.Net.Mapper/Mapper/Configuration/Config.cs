@@ -39,6 +39,10 @@ public class Config
             {
                 resolvers.Add(new DictionaryMemberResolver());
             }
+            if (!resolvers.Select(r => r.GetType()).Contains(typeof(EnumerableMemberResolver)))
+            {
+                resolvers.Add(new EnumerableMemberResolver());
+            }
             if (!resolvers.Select(r => r.GetType()).Contains(typeof(ClassMemberResolver)))
             {
                 resolvers.Add(new ClassMemberResolver());
