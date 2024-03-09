@@ -27,75 +27,81 @@
 - [MapperBuilder](#dbaronenetmappermapperbuilder)
   - [Configuration](#dbaronenetmappermapperbuilderconfiguration)
   - [BuildTypes](#dbaronenetmappermapperbuilderbuildtypes)
-  - [OnCreateOperator](#dbaronenetmappermapperbuilderoncreateoperator)
+  - [OnLog](#dbaronenetmappermapperbuilderonlog)
   - [#ctor](#dbaronenetmappermapperbuilder#ctor(dbaronenetmappermapperconfiguration))
-  - [GetMapper](#dbaronenetmappermapperbuildergetmapper(dbaronenetmappersourcetarget,dbaronenetmappermapperoperator))
+  - [GetMapperOperator](#dbaronenetmappermapperbuildergetmapperoperator(dbaronenetmappersourcetarget,dbaronenetmappermapperoperator))
   - [Build](#dbaronenetmappermapperbuilderbuild)
   - [GetBuildTypeFor](#dbaronenetmappermapperbuildergetbuildtypefor(systemtype))
+  - [GetResolver](#dbaronenetmappermapperbuildergetresolver(systemtype))
   - [GetCreatorFor](#dbaronenetmappermapperbuildergetcreatorfor(systemtype))
   - [AddDynamicMembers](#dbaronenetmappermapperbuilderadddynamicmembers(systemtype,systemstring,systemobject))
+- [MapperOperatorLogType](#dbaronenetmappermapperoperatorlogtype)
+  - [Build](#dbaronenetmappermapperoperatorlogtypebuild)
+  - [Runtime](#dbaronenetmappermapperoperatorlogtyperuntime)
 - [AssignableMapperOperator](#dbaronenetmapperassignablemapperoperator)
-  - [#ctor](#dbaronenetmapperassignablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator))
-  - [Priority](#dbaronenetmapperassignablemapperoperatorpriority)
+  - [#ctor](#dbaronenetmapperassignablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
   - [CanMap](#dbaronenetmapperassignablemapperoperatorcanmap)
-  - [GetMap](#dbaronenetmapperassignablemapperoperatorgetmap)
+  - [MapInternal](#dbaronenetmapperassignablemapperoperatormapinternal(systemobject))
 - [ConverterMapperOperator](#dbaronenetmapperconvertermapperoperator)
-  - [#ctor](#dbaronenetmapperconvertermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator))
-  - [Priority](#dbaronenetmapperconvertermapperoperatorpriority)
+  - [#ctor](#dbaronenetmapperconvertermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
   - [CanMap](#dbaronenetmapperconvertermapperoperatorcanmap)
-  - [GetMap](#dbaronenetmapperconvertermapperoperatorgetmap)
+  - [MapInternal](#dbaronenetmapperconvertermapperoperatormapinternal(systemobject))
 - [ConvertibleMapperOperator](#dbaronenetmapperconvertiblemapperoperator)
-  - [#ctor](#dbaronenetmapperconvertiblemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator))
-  - [Priority](#dbaronenetmapperconvertiblemapperoperatorpriority)
+  - [#ctor](#dbaronenetmapperconvertiblemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
   - [CanMap](#dbaronenetmapperconvertiblemapperoperatorcanmap)
-  - [GetMap](#dbaronenetmapperconvertiblemapperoperatorgetmap)
+  - [MapInternal](#dbaronenetmapperconvertiblemapperoperatormapinternal(systemobject))
 - [EnumerableMapperOperator](#dbaronenetmapperenumerablemapperoperator)
-  - [#ctor](#dbaronenetmapperenumerablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator))
+  - [#ctor](#dbaronenetmapperenumerablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
   - [GetChildren](#dbaronenetmapperenumerablemapperoperatorgetchildren)
-  - [Priority](#dbaronenetmapperenumerablemapperoperatorpriority)
   - [CanMap](#dbaronenetmapperenumerablemapperoperatorcanmap)
-  - [GetMap](#dbaronenetmapperenumerablemapperoperatorgetmap)
+  - [MapInternal](#dbaronenetmapperenumerablemapperoperatormapinternal(systemobject))
+- [ImplicitOperatorMapperOperator](#dbaronenetmapperimplicitoperatormapperoperator)
+  - [#ctor](#dbaronenetmapperimplicitoperatormapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
+  - [CanMap](#dbaronenetmapperimplicitoperatormapperoperatorcanmap)
+  - [MapInternal](#dbaronenetmapperimplicitoperatormapperoperatormapinternal(systemobject))
 - [MapperOperator](#dbaronenetmappermapperoperator)
   - [Builder](#dbaronenetmappermapperoperatorbuilder)
-  - [From](#dbaronenetmappermapperoperatorfrom)
-  - [To](#dbaronenetmappermapperoperatorto)
+  - [SourceType](#dbaronenetmappermapperoperatorsourcetype)
+  - [TargetType](#dbaronenetmappermapperoperatortargettype)
   - [Parent](#dbaronenetmappermapperoperatorparent)
-  - [#ctor](#dbaronenetmappermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator))
-  - [Priority](#dbaronenetmappermapperoperatorpriority)
+  - [Stopwatch](#dbaronenetmappermapperoperatorstopwatch)
+  - [Count](#dbaronenetmappermapperoperatorcount)
+  - [Rate](#dbaronenetmappermapperoperatorrate)
+  - [OnLog](#dbaronenetmappermapperoperatoronlog)
+  - [#ctor](#dbaronenetmappermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
   - [CanMap](#dbaronenetmappermapperoperatorcanmap)
-  - [GetMap](#dbaronenetmappermapperoperatorgetmap)
+  - [Map](#dbaronenetmappermapperoperatormap(systemobject))
+  - [MapInternal](#dbaronenetmappermapperoperatormapinternal(systemobject))
   - [GetChildren](#dbaronenetmappermapperoperatorgetchildren)
   - [Children](#dbaronenetmappermapperoperatorchildren)
-  - [Create](#dbaronenetmappermapperoperatorcreate(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,createoperatordelegate))
-  - [ToMapperOperatorInfo](#dbaronenetmappermapperoperatortomapperoperatorinfo)
+  - [Create](#dbaronenetmappermapperoperatorcreate(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
   - [GetPath](#dbaronenetmappermapperoperatorgetpath)
-- [MapperOperatorInfo](#dbaronenetmappermapperoperatorinfo)
-  - [Path](#dbaronenetmappermapperoperatorinfopath)
-  - [MapperOperator](#dbaronenetmappermapperoperatorinfomapperoperator)
-  - [FromType](#dbaronenetmappermapperoperatorinfofromtype)
-  - [FromMemberResolver](#dbaronenetmappermapperoperatorinfofrommemberresolver)
-  - [ToType](#dbaronenetmappermapperoperatorinfototype)
-  - [ToMemberResolver](#dbaronenetmappermapperoperatorinfotomemberresolver)
-  - [#ctor](#dbaronenetmappermapperoperatorinfo#ctor(systemstring,systemstring,systemstring,systemstring,systemstring,systemstring))
-  - [ToString](#dbaronenetmappermapperoperatorinfotostring)
+  - [PrettyPrint](#dbaronenetmappermapperoperatorprettyprint(systemstring,systemstring,systemboolean))
+- [MemberwiseMapperDeferBuildOperator](#dbaronenetmappermemberwisemapperdeferbuildoperator)
+  - [#ctor](#dbaronenetmappermemberwisemapperdeferbuildoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
+  - [GetChildren](#dbaronenetmappermemberwisemapperdeferbuildoperatorgetchildren)
+  - [CanMap](#dbaronenetmappermemberwisemapperdeferbuildoperatorcanmap)
+  - [MapInternal](#dbaronenetmappermemberwisemapperdeferbuildoperatormapinternal(systemobject))
+- [MemberwiseMapperOperator](#dbaronenetmappermemberwisemapperoperator)
+  - [#ctor](#dbaronenetmappermemberwisemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
+  - [GetChildren](#dbaronenetmappermemberwisemapperoperatorgetchildren)
+  - [CanMap](#dbaronenetmappermemberwisemapperoperatorcanmap)
+  - [MapInternal](#dbaronenetmappermemberwisemapperoperatormapinternal(systemobject))
+- [ObjectSourceMapperOperator](#dbaronenetmapperobjectsourcemapperoperator)
+  - [#ctor](#dbaronenetmapperobjectsourcemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate))
+  - [GetChildren](#dbaronenetmapperobjectsourcemapperoperatorgetchildren)
+  - [CanMap](#dbaronenetmapperobjectsourcemapperoperatorcanmap)
+  - [MapInternal](#dbaronenetmapperobjectsourcemapperoperatormapinternal(systemobject))
 - [SourceTarget](#dbaronenetmappersourcetarget)
   - [Source](#dbaronenetmappersourcetargetsource)
   - [Target](#dbaronenetmappersourcetargettarget)
   - [#ctor](#dbaronenetmappersourcetarget#ctor(systemtype,systemtype))
   - [GetHashCode](#dbaronenetmappersourcetargetgethashcode)
   - [Equals](#dbaronenetmappersourcetargetequals(systemobject))
-- [SourceTargetPath](#dbaronenetmappersourcetargetpath)
-  - [SourceTarget](#dbaronenetmappersourcetargetpathsourcetarget)
-  - [Path](#dbaronenetmappersourcetargetpathpath)
-  - [#ctor](#dbaronenetmappersourcetargetpath#ctor(dbaronenetmappersourcetarget,systemstring))
-  - [GetHashCode](#dbaronenetmappersourcetargetpathgethashcode)
-  - [Equals](#dbaronenetmappersourcetargetpathequals(systemobject))
-- [SourceTargetPathRules](#dbaronenetmappersourcetargetpathrules)
-  - [SourceTarget](#dbaronenetmappersourcetargetpathrulessourcetarget)
-  - [Path](#dbaronenetmappersourcetargetpathrulespath)
-  - [Maps](#dbaronenetmappersourcetargetpathrulesmaps)
 - [Config](#dbaronenetmapperconfig)
   - [AutoRegisterTypes](#dbaronenetmapperconfigautoregistertypes)
+  - [DefaultResolvers](#dbaronenetmapperconfigdefaultresolvers)
+  - [DefaultOperators](#dbaronenetmapperconfigdefaultoperators)
   - [Resolvers](#dbaronenetmapperconfigresolvers)
   - [Types](#dbaronenetmapperconfigtypes)
   - [Calculations](#dbaronenetmapperconfigcalculations)
@@ -121,6 +127,8 @@
   - [Options](#dbaronenetmapperconfigtypeoptions)
 - [MapperConfiguration](#dbaronenetmappermapperconfiguration)
   - [SetAutoRegisterTypes](#dbaronenetmappermapperconfigurationsetautoregistertypes(systemboolean))
+  - [RegisterOperator](#dbaronenetmappermapperconfigurationregisteroperator``1)
+  - [RegisterOperator](#dbaronenetmappermapperconfigurationregisteroperator(systemtype))
   - [RegisterResolvers](#dbaronenetmappermapperconfigurationregisterresolvers``1)
   - [RegisterResolver](#dbaronenetmappermapperconfigurationregisterresolver(systemtype))
   - [RegisterResolver](#dbaronenetmappermapperconfigurationregisterresolver(dbaronenetmapperimemberresolver))
@@ -147,24 +155,47 @@
 - [CreateInstance](#dbaronenetmappercreateinstance)
 - [Getter](#dbaronenetmappergetter)
 - [Setter](#dbaronenetmappersetter)
+- [AbstractMemberResolver](#dbaronenetmapperabstractmemberresolver)
+  - [GetTypeMembers](#dbaronenetmapperabstractmemberresolvergettypemembers(systemtype,dbaronenetmappermapperoptions))
+  - [CreateInstance](#dbaronenetmapperabstractmemberresolvercreateinstance(systemtype,systemobject[]))
+  - [GetGetter](#dbaronenetmapperabstractmemberresolvergetgetter(systemtype,systemstring,dbaronenetmappermapperoptions))
+  - [GetSetter](#dbaronenetmapperabstractmemberresolvergetsetter(systemtype,systemstring,dbaronenetmappermapperoptions))
+  - [GetMemberType](#dbaronenetmapperabstractmemberresolvergetmembertype(systemtype,systemstring,dbaronenetmappermapperoptions))
+  - [GetInstanceMembers](#dbaronenetmapperabstractmemberresolvergetinstancemembers(systemobject))
+  - [CanResolveMembersForType](#dbaronenetmapperabstractmemberresolvercanresolvemembersfortype(systemtype))
+  - [HasMembers](#dbaronenetmapperabstractmemberresolverhasmembers)
+  - [IsEnumerable](#dbaronenetmapperabstractmemberresolverisenumerable)
+  - [DeferBuild](#dbaronenetmapperabstractmemberresolverdeferbuild)
+- [BuiltinMemberResolver](#dbaronenetmapperbuiltinmemberresolver)
+  - [DeferBuild](#dbaronenetmapperbuiltinmemberresolverdeferbuild)
+  - [CanResolveMembersForType](#dbaronenetmapperbuiltinmemberresolvercanresolvemembersfortype(systemtype))
+  - [HasMembers](#dbaronenetmapperbuiltinmemberresolverhasmembers)
+  - [IsEnumerable](#dbaronenetmapperbuiltinmemberresolverisenumerable)
 - [ClassMemberResolver](#dbaronenetmapperclassmemberresolver)
   - [GetTypeMembers](#dbaronenetmapperclassmemberresolvergettypemembers(systemtype,dbaronenetmappermapperoptions))
-  - [DeferBuild](#dbaronenetmapperclassmemberresolverdeferbuild)
-  - [CreateInstance](#dbaronenetmapperclassmemberresolvercreateinstance(systemtype,systemobject[]))
   - [GetGetter](#dbaronenetmapperclassmemberresolvergetgetter(systemtype,systemstring,dbaronenetmappermapperoptions))
   - [GetSetter](#dbaronenetmapperclassmemberresolvergetsetter(systemtype,systemstring,dbaronenetmappermapperoptions))
   - [GetMemberType](#dbaronenetmapperclassmemberresolvergetmembertype(systemtype,systemstring,dbaronenetmappermapperoptions))
-  - [GetInstanceMembers](#dbaronenetmapperclassmemberresolvergetinstancemembers(systemobject))
   - [CanResolveMembersForType](#dbaronenetmapperclassmemberresolvercanresolvemembersfortype(systemtype))
+  - [HasMembers](#dbaronenetmapperclassmemberresolverhasmembers)
+  - [DeferBuild](#dbaronenetmapperclassmemberresolverdeferbuild)
+  - [IsEnumerable](#dbaronenetmapperclassmemberresolverisenumerable)
 - [DictionaryMemberResolver](#dbaronenetmapperdictionarymemberresolver)
-  - [DeferBuild](#dbaronenetmapperdictionarymemberresolverdeferbuild)
   - [GetGetter](#dbaronenetmapperdictionarymemberresolvergetgetter(systemtype,systemstring,dbaronenetmappermapperoptions))
   - [GetSetter](#dbaronenetmapperdictionarymemberresolvergetsetter(systemtype,systemstring,dbaronenetmappermapperoptions))
-  - [CreateInstance](#dbaronenetmapperdictionarymemberresolvercreateinstance(systemtype,systemobject[]))
   - [GetMemberType](#dbaronenetmapperdictionarymemberresolvergetmembertype(systemtype,systemstring,dbaronenetmappermapperoptions))
   - [GetInstanceMembers](#dbaronenetmapperdictionarymemberresolvergetinstancemembers(systemobject))
   - [GetTypeMembers](#dbaronenetmapperdictionarymemberresolvergettypemembers(systemtype,dbaronenetmappermapperoptions))
   - [CanResolveMembersForType](#dbaronenetmapperdictionarymemberresolvercanresolvemembersfortype(systemtype))
+  - [HasMembers](#dbaronenetmapperdictionarymemberresolverhasmembers)
+  - [DeferBuild](#dbaronenetmapperdictionarymemberresolverdeferbuild)
+  - [IsEnumerable](#dbaronenetmapperdictionarymemberresolverisenumerable)
+- [DynamicMemberResolver](#dbaronenetmapperdynamicmemberresolver)
+- [EnumerableMemberResolver](#dbaronenetmapperenumerablememberresolver)
+  - [CanResolveMembersForType](#dbaronenetmapperenumerablememberresolvercanresolvemembersfortype(systemtype))
+  - [HasMembers](#dbaronenetmapperenumerablememberresolverhasmembers)
+  - [IsEnumerable](#dbaronenetmapperenumerablememberresolverisenumerable)
+  - [DeferBuild](#dbaronenetmapperenumerablememberresolverdeferbuild)
 - [IMemberResolver](#dbaronenetmapperimemberresolver)
   - [GetGetter](#dbaronenetmapperimemberresolvergetgetter(systemtype,systemstring,dbaronenetmappermapperoptions))
   - [GetSetter](#dbaronenetmapperimemberresolvergetsetter(systemtype,systemstring,dbaronenetmappermapperoptions))
@@ -174,6 +205,7 @@
   - [GetMemberType](#dbaronenetmapperimemberresolvergetmembertype(systemtype,systemstring,dbaronenetmappermapperoptions))
   - [DeferBuild](#dbaronenetmapperimemberresolverdeferbuild)
   - [HasMembers](#dbaronenetmapperimemberresolverhasmembers)
+  - [IsEnumerable](#dbaronenetmapperimemberresolverisenumerable)
   - [CanResolveMembersForType](#dbaronenetmapperimemberresolvercanresolvemembersfortype(systemtype))
 - [InterfaceMemberResolver](#dbaronenetmapperinterfacememberresolver)
   - [CreateInstance](#dbaronenetmapperinterfacememberresolvercreateinstance(systemtype,systemobject[]))
@@ -223,11 +255,14 @@
   - [#ctor](#dbaronenetmapperprefixsuffixmemberrenamestrategy#ctor(dbaronenetmapperprefixsuffix,systemstring))
   - [RenameMember](#dbaronenetmapperprefixsuffixmemberrenamestrategyrenamemember(systemstring))
 - [ObjectMapper](#dbaronenetmapperobjectmapper)
-  - [_onCreateOperator](#dbaronenetmapperobjectmapper_oncreateoperator)
+  - [_onLog](#dbaronenetmapperobjectmapper_onlog)
+  - [OnLog](#dbaronenetmapperobjectmapperonlog)
+  - [#ctor](#dbaronenetmapperobjectmapper#ctor(dbaronenetmappermapperconfiguration))
   - [Map](#dbaronenetmapperobjectmappermap(systemtype,systemtype,systemobject))
+  - [Map](#dbaronenetmapperobjectmappermap(systemtype,systemobject))
   - [Map](#dbaronenetmapperobjectmappermap``2(``0))
-  - [GetOperator](#dbaronenetmapperobjectmappergetoperator(systemtype,systemtype))
-  - [GetOperator](#dbaronenetmapperobjectmappergetoperator``2)
+  - [GetMapperOperator](#dbaronenetmapperobjectmappergetmapperoperator(systemtype,systemtype))
+  - [GetMapperOperator](#dbaronenetmapperobjectmappergetmapperoperator``2)
 - [ITypeConverter](#dbaronenetmapperitypeconverter)
   - [Convert](#dbaronenetmapperitypeconverterconvert(systemobject))
 - [TypeConverter](#dbaronenetmappertypeconverter`2)
@@ -247,6 +282,10 @@
   - [ToArray](#dbaronenetextensionsenumerablebuffertoarray(systemtype))
   - [#ctor](#dbaronenetextensionsenumerablebuffer#ctor(systemcollectionsienumerable,mapperdelegate))
 - [MapperDelegate](#mapperdelegate)
+- [MapperOperatorLogDelegate](#mapperoperatorlogdelegate)
+- [MapperExtensions](#mapperextensions)
+  - [MapTo](#mapperextensionsmapto``1(systemobject))
+  - [MapTo](#mapperextensionsmapto(systemobject,systemtype))
 
 
 
@@ -441,9 +480,9 @@ None
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperbuilderoncreateoperator'></a>field: OnCreateOperator
+>### <a id='dbaronenetmappermapperbuilderonlog'></a>field: OnLog
 #### Summary
- Callback for when new mapper operator is built. 
+ Optional logging callback. 
 
 
 <small>[Back to top](#top)</small>
@@ -469,13 +508,13 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperbuildergetmapper(dbaronenetmappersourcetarget,dbaronenetmappermapperoperator)'></a>method: GetMapper
+>### <a id='dbaronenetmappermapperbuildergetmapperoperator(dbaronenetmappersourcetarget,dbaronenetmappermapperoperator)'></a>method: GetMapperOperator
 #### Signature
 ``` c#
-MapperBuilder.GetMapper(Dbarone.Net.Mapper.SourceTarget sourceTarget, Dbarone.Net.Mapper.MapperOperator parent)
+MapperBuilder.GetMapperOperator(Dbarone.Net.Mapper.SourceTarget sourceTarget, Dbarone.Net.Mapper.MapperOperator parent)
 ```
 #### Summary
- Gets a mapper delegate which is able to map the SourceTarget pairing. 
+ Gets a mapper operator based on source and target types. Note this ONLY gets the basic operator that can be identified during build time. Operators that use dynamic / defer logic will get complete mapping information only during run (map) time. 
 
 #### Type Parameters:
 None
@@ -488,7 +527,7 @@ None
 
 #### Exceptions:
 
-Exception thrown: [T:System.Exception](#T:System.Exception): 
+Exception thrown: [T:System.Exception](#T:System.Exception): Throws an exception if no valid operator found.
 
 #### Examples:
 None
@@ -533,6 +572,30 @@ None
 #### Exceptions:
 
 Exception thrown: [T:System.Exception](#T:System.Exception): Throws an exception if the build type is not found.
+
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperbuildergetresolver(systemtype)'></a>method: GetResolver
+#### Signature
+``` c#
+MapperBuilder.GetResolver(System.Type type)
+```
+#### Summary
+ Returns the member resolver for the type given the current configuration. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to get the resolver for.|
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Throws an exception if no resolver found for the type.
 
 #### Examples:
 None
@@ -586,6 +649,29 @@ None
 <small>[Back to top](#top)</small>
 
 ---
+>## <a id='dbaronenetmappermapperoperatorlogtype'></a>type: MapperOperatorLogType
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Specifies the log type of a mapper operator. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmappermapperoperatorlogtypebuild'></a>field: Build
+#### Summary
+ Build time log type. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperoperatorlogtyperuntime'></a>field: Runtime
+#### Summary
+ Run time log type. 
+
+
+<small>[Back to top](#top)</small>
+
+---
 >## <a id='dbaronenetmapperassignablemapperoperator'></a>type: AssignableMapperOperator
 ### Namespace:
 `Dbarone.Net.Mapper`
@@ -595,10 +681,10 @@ None
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmapperassignablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator)'></a>method: #ctor
+>### <a id='dbaronenetmapperassignablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
 #### Signature
 ``` c#
-AssignableMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType from, Dbarone.Net.Mapper.BuildType to, Dbarone.Net.Mapper.MapperOperator parent)
+AssignableMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
 ```
 #### Summary
  Creates a new [AssignableMapperOperator](#dbaronenetmapperassignablemapperoperator) instance. 
@@ -610,20 +696,15 @@ None
 |Name | Description |
 |-----|------|
 |builder: |The [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
-|from: |The From [BuildType](#dbaronenetmapperbuildtype) instance.|
-|to: |The To [BuildType](#dbaronenetmapperbuildtype) instance.|
+|sourceType: |The source [BuildType](#dbaronenetmapperbuildtype) instance.|
+|targetType: |The target [BuildType](#dbaronenetmapperbuildtype) instance.|
 |parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
 
 #### Exceptions:
 None
 #### Examples:
 None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperassignablemapperoperatorpriority'></a>property: Priority
-#### Summary
- Overrides the priority of the [AssignableMapperOperator](#dbaronenetmapperassignablemapperoperator) instance. 
-
 
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperassignablemapperoperatorcanmap'></a>method: CanMap
@@ -632,7 +713,7 @@ None
 AssignableMapperOperator.CanMap()
 ```
 #### Summary
- The [AssignableMapperOperator](#dbaronenetmapperassignablemapperoperator) operator is able to map when the From object is assignable to the To type. 
+ The [AssignableMapperOperator](#dbaronenetmapperassignablemapperoperator) operator is able to map when the source object is assignable to the target type. 
 
 #### Type Parameters:
 None
@@ -646,22 +727,26 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperassignablemapperoperatorgetmap'></a>method: GetMap
+>### <a id='dbaronenetmapperassignablemapperoperatormapinternal(systemobject)'></a>method: MapInternal
 #### Signature
 ``` c#
-AssignableMapperOperator.GetMap()
+AssignableMapperOperator.MapInternal(System.Object source)
 ```
 #### Summary
- Returns the [MapperDelegate](#mapperdelegate) object that performs the mapping. 
+ Mapping implementation for [AssignableMapperOperator](#dbaronenetmapperassignablemapperoperator) type. 
 
 #### Type Parameters:
 None
 
 #### Parameters:
-None
+|Name | Description |
+|-----|------|
+|source: |The source object.|
 
 #### Exceptions:
-None
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
 #### Examples:
 None
 
@@ -677,10 +762,10 @@ None
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmapperconvertermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator)'></a>method: #ctor
+>### <a id='dbaronenetmapperconvertermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
 #### Signature
 ``` c#
-ConverterMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType from, Dbarone.Net.Mapper.BuildType to, Dbarone.Net.Mapper.MapperOperator parent)
+ConverterMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
 ```
 #### Summary
  Creates a new [ConvertibleMapperOperator](#dbaronenetmapperconvertiblemapperoperator) instance. This operator uses a converter function provided in configuration to map. 
@@ -692,20 +777,15 @@ None
 |Name | Description |
 |-----|------|
 |builder: |The [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
-|from: |The From [BuildType](#dbaronenetmapperbuildtype) instance.|
-|to: |The To [BuildType](#dbaronenetmapperbuildtype) instance.|
+|sourceType: |The source [BuildType](#dbaronenetmapperbuildtype) instance.|
+|targetType: |The target [BuildType](#dbaronenetmapperbuildtype) instance.|
 |parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
 
 #### Exceptions:
 None
 #### Examples:
 None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperconvertermapperoperatorpriority'></a>property: Priority
-#### Summary
- Overrides the priority of the [ConverterMapperOperator](#dbaronenetmapperconvertermapperoperator) instance. 
-
 
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperconvertermapperoperatorcanmap'></a>method: CanMap
@@ -714,7 +794,7 @@ None
 ConverterMapperOperator.CanMap()
 ```
 #### Summary
- The [ConverterMapperOperator](#dbaronenetmapperconvertermapperoperator) operator is able to map when a converter function exists between the from and to types. Note that in this case the operator does not recursively map the members. 
+ The [ConverterMapperOperator](#dbaronenetmapperconvertermapperoperator) operator is able to map when a converter function exists between the source and target types. Note that in this case the operator does not recursively map the members. 
 
 #### Type Parameters:
 None
@@ -728,22 +808,26 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperconvertermapperoperatorgetmap'></a>method: GetMap
+>### <a id='dbaronenetmapperconvertermapperoperatormapinternal(systemobject)'></a>method: MapInternal
 #### Signature
 ``` c#
-ConverterMapperOperator.GetMap()
+ConverterMapperOperator.MapInternal(System.Object source)
 ```
 #### Summary
- Returns the [MapperDelegate](#mapperdelegate) object that performs the mapping. 
+ Mapping implementation for [ConverterMapperOperator](#dbaronenetmapperconvertermapperoperator) type. 
 
 #### Type Parameters:
 None
 
 #### Parameters:
-None
+|Name | Description |
+|-----|------|
+|source: |The source object.|
 
 #### Exceptions:
-None
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
 #### Examples:
 None
 
@@ -759,10 +843,10 @@ None
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmapperconvertiblemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator)'></a>method: #ctor
+>### <a id='dbaronenetmapperconvertiblemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
 #### Signature
 ``` c#
-ConvertibleMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType from, Dbarone.Net.Mapper.BuildType to, Dbarone.Net.Mapper.MapperOperator parent)
+ConvertibleMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
 ```
 #### Summary
  Creates a new instance of [ConvertibleMapperOperator](#dbaronenetmapperconvertiblemapperoperator). 
@@ -774,20 +858,15 @@ None
 |Name | Description |
 |-----|------|
 |builder: |The [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
-|from: |The From [BuildType](#dbaronenetmapperbuildtype) instance.|
-|to: |The To [BuildType](#dbaronenetmapperbuildtype) instance.|
+|sourceType: |The From [BuildType](#dbaronenetmapperbuildtype) instance.|
+|targetType: |The To [BuildType](#dbaronenetmapperbuildtype) instance.|
 |parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
 
 #### Exceptions:
 None
 #### Examples:
 None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperconvertiblemapperoperatorpriority'></a>property: Priority
-#### Summary
- Overrides the priority of the [ConvertibleMapperOperator](#dbaronenetmapperconvertiblemapperoperator) instance. 
-
 
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperconvertiblemapperoperatorcanmap'></a>method: CanMap
@@ -796,7 +875,7 @@ None
 ConvertibleMapperOperator.CanMap()
 ```
 #### Summary
- The [ConvertibleMapperOperator](#dbaronenetmapperconvertiblemapperoperator) operator is able to map when the From type implements the IConvertible interface, and can convert to the To type. 
+ The [ConvertibleMapperOperator](#dbaronenetmapperconvertiblemapperoperator) operator is able to map when the source type implements the IConvertible interface, and can convert to the target type. 
 
 #### Type Parameters:
 None
@@ -810,22 +889,26 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperconvertiblemapperoperatorgetmap'></a>method: GetMap
+>### <a id='dbaronenetmapperconvertiblemapperoperatormapinternal(systemobject)'></a>method: MapInternal
 #### Signature
 ``` c#
-ConvertibleMapperOperator.GetMap()
+ConvertibleMapperOperator.MapInternal(System.Object source)
 ```
 #### Summary
- Returns the [MapperDelegate](#mapperdelegate) object that performs the mapping. 
+ Mapping implementation for [ConvertibleMapperOperator](#dbaronenetmapperconvertiblemapperoperator) type. 
 
 #### Type Parameters:
 None
 
 #### Parameters:
-None
+|Name | Description |
+|-----|------|
+|source: |The source object.|
 
 #### Exceptions:
-None
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
 #### Examples:
 None
 
@@ -841,10 +924,10 @@ None
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmapperenumerablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator)'></a>method: #ctor
+>### <a id='dbaronenetmapperenumerablemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
 #### Signature
 ``` c#
-EnumerableMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType from, Dbarone.Net.Mapper.BuildType to, Dbarone.Net.Mapper.MapperOperator parent)
+EnumerableMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType from, Dbarone.Net.Mapper.BuildType to, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
 ```
 #### Summary
  Creates a new [EnumerableMapperOperator](#dbaronenetmapperenumerablemapperoperator) instance. 
@@ -859,6 +942,7 @@ None
 |from: |The From [BuildType](#dbaronenetmapperbuildtype) instance.|
 |to: |The To [BuildType](#dbaronenetmapperbuildtype) instance.|
 |parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
 
 #### Exceptions:
 None
@@ -888,12 +972,6 @@ Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Map
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperenumerablemapperoperatorpriority'></a>property: Priority
-#### Summary
- Overrides the priority of the [EnumerableMapperOperator](#dbaronenetmapperenumerablemapperoperator) instance. 
-
-
-<small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperenumerablemapperoperatorcanmap'></a>method: CanMap
 #### Signature
 ``` c#
@@ -914,13 +992,74 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperenumerablemapperoperatorgetmap'></a>method: GetMap
+>### <a id='dbaronenetmapperenumerablemapperoperatormapinternal(systemobject)'></a>method: MapInternal
 #### Signature
 ``` c#
-EnumerableMapperOperator.GetMap()
+EnumerableMapperOperator.MapInternal(System.Object source)
 ```
 #### Summary
- Returns the [MapperDelegate](#mapperdelegate) object that performs the mapping. 
+ Mapping implementation for [EnumerableMapperOperator](#dbaronenetmapperenumerablemapperoperator) type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|source: |The source object.|
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+
+---
+>## <a id='dbaronenetmapperimplicitoperatormapperoperator'></a>type: ImplicitOperatorMapperOperator
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Maps types where an implicit cast operator has been defined on either From or To type. Implicit types always succeed and never throw an exception. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmapperimplicitoperatormapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
+#### Signature
+``` c#
+ImplicitOperatorMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
+```
+#### Summary
+ Creates a new [ImplicitOperatorMapperOperator](#dbaronenetmapperimplicitoperatormapperoperator) instance. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|builder: |The [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
+|sourceType: |The source [BuildType](#dbaronenetmapperbuildtype) instance.|
+|targetType: |The target [BuildType](#dbaronenetmapperbuildtype) instance.|
+|parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperimplicitoperatormapperoperatorcanmap'></a>method: CanMap
+#### Signature
+``` c#
+ImplicitOperatorMapperOperator.CanMap()
+```
+#### Summary
+ The [ImplicitOperatorMapperOperator](#dbaronenetmapperimplicitoperatormapperoperator) operator is able to map when an implicit operator exists between the source and target types. 
 
 #### Type Parameters:
 None
@@ -930,6 +1069,30 @@ None
 
 #### Exceptions:
 None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperimplicitoperatormapperoperatormapinternal(systemobject)'></a>method: MapInternal
+#### Signature
+``` c#
+ImplicitOperatorMapperOperator.MapInternal(System.Object source)
+```
+#### Summary
+ Mapping implementation for [ImplicitOperatorMapperOperator](#dbaronenetmapperimplicitoperatormapperoperator) type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|source: |The source object.|
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
 #### Examples:
 None
 
@@ -951,15 +1114,15 @@ None
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorfrom'></a>property: From
+>### <a id='dbaronenetmappermapperoperatorsourcetype'></a>property: SourceType
 #### Summary
- The 'From' [BuildType](#dbaronenetmapperbuildtype) object. 
+ The source [BuildType](#dbaronenetmapperbuildtype) object. 
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorto'></a>property: To
+>### <a id='dbaronenetmappermapperoperatortargettype'></a>property: TargetType
 #### Summary
- The 'To' [BuildType](#dbaronenetmapperbuildtype) object. 
+ The target [BuildType](#dbaronenetmapperbuildtype) object. 
 
 
 <small>[Back to top](#top)</small>
@@ -969,10 +1132,34 @@ None
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator)'></a>method: #ctor
+>### <a id='dbaronenetmappermapperoperatorstopwatch'></a>property: Stopwatch
+#### Summary
+ Total duration of the mapper operator. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperoperatorcount'></a>property: Count
+#### Summary
+ Number of iterations of the current mapper operator. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperoperatorrate'></a>property: Rate
+#### Summary
+ The number of mapper operations per second. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperoperatoronlog'></a>property: OnLog
+#### Summary
+ Logging callback function. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
 #### Signature
 ``` c#
-MapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType from, Dbarone.Net.Mapper.BuildType to, Dbarone.Net.Mapper.MapperOperator parent)
+MapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
 ```
 #### Summary
  Create a new [MapperOperator](#dbaronenetmappermapperoperator) instance. 
@@ -984,20 +1171,15 @@ None
 |Name | Description |
 |-----|------|
 |builder: |A [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
-|from: |The 'From' [BuildType](#dbaronenetmapperbuildtype).|
-|to: |The 'To' [BuildType](#dbaronenetmapperbuildtype).|
+|sourceType: |The source [BuildType](#dbaronenetmapperbuildtype).|
+|targetType: |The target [BuildType](#dbaronenetmapperbuildtype).|
 |parent: |Optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
 
 #### Exceptions:
 None
 #### Examples:
 None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorpriority'></a>property: Priority
-#### Summary
- Sets the priority of the node. 
-
 
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmappermapperoperatorcanmap'></a>method: CanMap
@@ -1006,7 +1188,7 @@ None
 MapperOperator.CanMap()
 ```
 #### Summary
- Returns true if the current class can map the from / to types. 
+ Returns true if the current class can map the source / target types. 
 
 #### Type Parameters:
 None
@@ -1020,19 +1202,43 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorgetmap'></a>method: GetMap
+>### <a id='dbaronenetmappermapperoperatormap(systemobject)'></a>method: Map
 #### Signature
 ``` c#
-MapperOperator.GetMap()
+MapperOperator.Map(System.Object source)
 ```
 #### Summary
- When implemented in a class, should return a [MapperDelegate](#mapperdelegate) object that can map an object of 'from' type to 'to' type. This method should also perform any build-time validation, and add any errors to the errors collection. 
+ Maps a source object, returning a mapped object. 
 
 #### Type Parameters:
 None
 
 #### Parameters:
+|Name | Description |
+|-----|------|
+|source: |The source object|
+
+#### Exceptions:
 None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperoperatormapinternal(systemobject)'></a>method: MapInternal
+#### Signature
+``` c#
+MapperOperator.MapInternal(System.Object source)
+```
+#### Summary
+ Sub type specific implementation of mapping operator. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|source: |The source object.|
 
 #### Exceptions:
 None
@@ -1066,10 +1272,10 @@ None
 
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorcreate(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,createoperatordelegate)'></a>method: Create
+>### <a id='dbaronenetmappermapperoperatorcreate(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: Create
 #### Signature
 ``` c#
-MapperOperator.Create(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType from, Dbarone.Net.Mapper.BuildType to, Dbarone.Net.Mapper.MapperOperator parent, CreateOperatorDelegate onCreateOperator)
+MapperOperator.Create(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
 ```
 #### Summary
  Factory method to create a new MapperOperator instance based on from / to types. 
@@ -1081,35 +1287,15 @@ None
 |Name | Description |
 |-----|------|
 |builder: |The current [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
-|from: |The from type.|
-|to: |The to type.|
+|sourceType: |The source type.|
+|targetType: |The target type.|
 |parent: |An optional parent operator.|
-|onCreateOperator: |An optional [CreateOperatorDelegate](#createoperatordelegate) callback function. This callback function is executed each time an operator is created within the mapping operator graph.|
+|onLog: |An optional [MapperOperatorLogDelegate](#mapperoperatorlogdelegate) callback function. This callback function called by the logging subsystem.|
 
 #### Exceptions:
 
 Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Throws an exception if no suitable mapper found.
 
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatortomapperoperatorinfo'></a>method: ToMapperOperatorInfo
-#### Signature
-``` c#
-MapperOperator.ToMapperOperatorInfo()
-```
-#### Summary
- Returns a [MapperOperatorInfo](#dbaronenetmappermapperoperatorinfo) object that contains key information for the operator. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-None
-
-#### Exceptions:
-None
 #### Examples:
 None
 
@@ -1136,60 +1322,13 @@ Exception thrown: [T:System.Exception](#T:System.Exception): Throws an exception
 None
 
 <small>[Back to top](#top)</small>
-
----
->## <a id='dbaronenetmappermapperoperatorinfo'></a>type: MapperOperatorInfo
-### Namespace:
-`Dbarone.Net.Mapper`
-### Summary
- Represents a mapping execution plan. Each execution plan node represents a mapper operation. 
-
-### Type Parameters:
-None
-
->### <a id='dbaronenetmappermapperoperatorinfopath'></a>property: Path
-#### Summary
- The path of the mapper operator. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorinfomapperoperator'></a>property: MapperOperator
-#### Summary
- Text name of the [MapperOperator](#dbaronenetmappermapperoperatorinfomapperoperator). 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorinfofromtype'></a>property: FromType
-#### Summary
- The From type name. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorinfofrommemberresolver'></a>property: FromMemberResolver
-#### Summary
- The From member resolver name. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorinfototype'></a>property: ToType
-#### Summary
- The To type name. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorinfotomemberresolver'></a>property: ToMemberResolver
-#### Summary
- The To member resolver name. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorinfo#ctor(systemstring,systemstring,systemstring,systemstring,systemstring,systemstring)'></a>method: #ctor
+>### <a id='dbaronenetmappermapperoperatorprettyprint(systemstring,systemstring,systemboolean)'></a>method: PrettyPrint
 #### Signature
 ``` c#
-MapperOperatorInfo.#ctor(System.String path, System.String mapperOperator, System.String fromType, System.String fromMemberResolver, System.String toType, System.String toMemberResolver)
+MapperOperator.PrettyPrint(System.String indent, System.String key, System.Boolean isLastChild)
 ```
 #### Summary
- Creates a new [MapperOperatorInfo](#dbaronenetmappermapperoperatorinfo). 
+ Pretty-prints the current mapper operator 
 
 #### Type Parameters:
 None
@@ -1197,12 +1336,9 @@ None
 #### Parameters:
 |Name | Description |
 |-----|------|
-|path: |The mapping operator path.|
-|mapperOperator: |The mapping operator used.|
-|fromType: |The from type.|
-|fromMemberResolver: |The from member resolver.|
-|toType: |The to type.|
-|toMemberResolver: |The to member resolver.|
+|indent: |The current indentation level.|
+|key: |The key|
+|isLastChild: |Optional - set to true if the last child. Used to change the indentation characters.|
 
 #### Exceptions:
 None
@@ -1210,13 +1346,72 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmappermapperoperatorinfotostring'></a>method: ToString
+
+---
+>## <a id='dbaronenetmappermemberwisemapperdeferbuildoperator'></a>type: MemberwiseMapperDeferBuildOperator
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Mapper operator that is able to map class and struct types on a member level, where the source type has a DeferBuild set to True (i.e. Dictionary and Dynamic types). The operator build occurs when the first object is mapped. It is assumed that all subsequent objects have the same schema as the first object. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmappermemberwisemapperdeferbuildoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
 #### Signature
 ``` c#
-MapperOperatorInfo.ToString()
+MemberwiseMapperDeferBuildOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
 ```
 #### Summary
- Implementation of ToString(). Returns a JSON string. 
+ Creates a new [MemberwiseMapperDeferBuildOperator](#dbaronenetmappermemberwisemapperdeferbuildoperator) instance. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|builder: |The [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
+|sourceType: |The source [BuildType](#dbaronenetmapperbuildtype) instance.|
+|targetType: |The target [BuildType](#dbaronenetmapperbuildtype) instance.|
+|parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermemberwisemapperdeferbuildoperatorgetchildren'></a>method: GetChildren
+#### Signature
+``` c#
+MemberwiseMapperDeferBuildOperator.GetChildren()
+```
+#### Summary
+ GetChildren implementation for [MemberwiseMapperDeferBuildOperator](#dbaronenetmappermemberwisemapperdeferbuildoperator). 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+None
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): 
+
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermemberwisemapperdeferbuildoperatorcanmap'></a>method: CanMap
+#### Signature
+``` c#
+MemberwiseMapperDeferBuildOperator.CanMap()
+```
+#### Summary
+ The [MemberwiseMapperDeferBuildOperator](#dbaronenetmappermemberwisemapperdeferbuildoperator) operator is able to map when the source and target types have members, and the source type is a defer build type. 
 
 #### Type Parameters:
 None
@@ -1226,6 +1421,236 @@ None
 
 #### Exceptions:
 None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermemberwisemapperdeferbuildoperatormapinternal(systemobject)'></a>method: MapInternal
+#### Signature
+``` c#
+MemberwiseMapperDeferBuildOperator.MapInternal(System.Object source)
+```
+#### Summary
+ Mapping implementation for [MemberwiseMapperDeferBuildOperator](#dbaronenetmappermemberwisemapperdeferbuildoperator) type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|source: |The source object.|
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+
+---
+>## <a id='dbaronenetmappermemberwisemapperoperator'></a>type: MemberwiseMapperOperator
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Operator for mapping classes and structs with members. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmappermemberwisemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
+#### Signature
+``` c#
+MemberwiseMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
+```
+#### Summary
+ Creates a new [MemberwiseMapperOperator](#dbaronenetmappermemberwisemapperoperator) instance. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|builder: |The [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
+|sourceType: |The source [BuildType](#dbaronenetmapperbuildtype) instance.|
+|targetType: |The target [BuildType](#dbaronenetmapperbuildtype) instance.|
+|parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermemberwisemapperoperatorgetchildren'></a>method: GetChildren
+#### Signature
+``` c#
+MemberwiseMapperOperator.GetChildren()
+```
+#### Summary
+ GetChildren implementation for [MemberwiseMapperOperator](#dbaronenetmappermemberwisemapperoperator). 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+None
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): 
+
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermemberwisemapperoperatorcanmap'></a>method: CanMap
+#### Signature
+``` c#
+MemberwiseMapperOperator.CanMap()
+```
+#### Summary
+ The [MemberwiseMapperOperator](#dbaronenetmappermemberwisemapperoperator) operator is able to map when the source and target types have members, and the source type is a defer build type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+None
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermemberwisemapperoperatormapinternal(systemobject)'></a>method: MapInternal
+#### Signature
+``` c#
+MemberwiseMapperOperator.MapInternal(System.Object source)
+```
+#### Summary
+ Mapping implementation for [MemberwiseMapperOperator](#dbaronenetmappermemberwisemapperoperator) type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|source: |The source object.|
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+
+---
+>## <a id='dbaronenetmapperobjectsourcemapperoperator'></a>type: ObjectSourceMapperOperator
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Operator for when the source type is object. This includes dynamic property types (which are generally represented as Object data type). For these types, we defer the actual mapping until runtime. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmapperobjectsourcemapperoperator#ctor(dbaronenetmappermapperbuilder,dbaronenetmapperbuildtype,dbaronenetmapperbuildtype,dbaronenetmappermapperoperator,mapperoperatorlogdelegate)'></a>method: #ctor
+#### Signature
+``` c#
+ObjectSourceMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)
+```
+#### Summary
+ Creates a new [ObjectSourceMapperOperator](#dbaronenetmapperobjectsourcemapperoperator) instance. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|builder: |The [MapperBuilder](#dbaronenetmappermapperbuilder) instance.|
+|sourceType: |The source [BuildType](#dbaronenetmapperbuildtype) instance.|
+|targetType: |The target [BuildType](#dbaronenetmapperbuildtype) instance.|
+|parent: |An optional parent [MapperOperator](#dbaronenetmappermapperoperator) instance.|
+|onLog: |Optional logging callback.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperobjectsourcemapperoperatorgetchildren'></a>method: GetChildren
+#### Signature
+``` c#
+ObjectSourceMapperOperator.GetChildren()
+```
+#### Summary
+ GetChildren implementation for [ObjectSourceMapperOperator](#dbaronenetmapperobjectsourcemapperoperator). 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+None
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): 
+
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperobjectsourcemapperoperatorcanmap'></a>method: CanMap
+#### Signature
+``` c#
+ObjectSourceMapperOperator.CanMap()
+```
+#### Summary
+ The [ObjectSourceMapperOperator](#dbaronenetmapperobjectsourcemapperoperator) operator is used to map objects declared as type 'object' at runtime. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+None
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperobjectsourcemapperoperatormapinternal(systemobject)'></a>method: MapInternal
+#### Signature
+``` c#
+ObjectSourceMapperOperator.MapInternal(System.Object source)
+```
+#### Summary
+ Mapping implementation for [ObjectSourceMapperOperator](#dbaronenetmapperobjectsourcemapperoperator) type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|source: |The source object.|
+
+#### Exceptions:
+
+Exception thrown: [T:Dbarone.Net.Mapper.MapperBuildException](#T:Dbarone.Net.Mapper.MapperBuildException): Returns a [MapperBuildException](#dbaronenetmappermapperbuildexception) in the event of any failure to map the object.
+
 #### Examples:
 None
 
@@ -1320,123 +1745,6 @@ None
 <small>[Back to top](#top)</small>
 
 ---
->## <a id='dbaronenetmappersourcetargetpath'></a>type: SourceTargetPath
-### Namespace:
-`Dbarone.Net.Mapper`
-### Summary
- Represents a particular path within a source + target ruleset. Used as key to store mapping rules. 
-
-### Type Parameters:
-None
-
->### <a id='dbaronenetmappersourcetargetpathsourcetarget'></a>property: SourceTarget
-#### Summary
- The source and target types. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcetargetpathpath'></a>property: Path
-#### Summary
- The path within the source / target map. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcetargetpath#ctor(dbaronenetmappersourcetarget,systemstring)'></a>method: #ctor
-#### Signature
-``` c#
-SourceTargetPath.#ctor(Dbarone.Net.Mapper.SourceTarget sourceTarget, System.String path)
-```
-#### Summary
- Creates a new SourceTargetPath instance. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|sourceTarget: |The source and target tuple.|
-|path: |The path.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcetargetpathgethashcode'></a>method: GetHashCode
-#### Signature
-``` c#
-SourceTargetPath.GetHashCode()
-```
-#### Summary
- Overrides implementation of GetHashCode. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-None
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcetargetpathequals(systemobject)'></a>method: Equals
-#### Signature
-``` c#
-SourceTargetPath.Equals(System.Object obj)
-```
-#### Summary
- Overrides implementation of Equals. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|obj: ||
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
-
----
->## <a id='dbaronenetmappersourcetargetpathrules'></a>type: SourceTargetPathRules
-### Namespace:
-`Dbarone.Net.Mapper`
-### Summary
- Mapper rules defined for a particular Source + target tuple, and path. 
-
-### Type Parameters:
-None
-
->### <a id='dbaronenetmappersourcetargetpathrulessourcetarget'></a>property: SourceTarget
-#### Summary
- The source and target types the rule belongs to. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcetargetpathrulespath'></a>property: Path
-#### Summary
- The path within the mapping graph that the rules belong to. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmappersourcetargetpathrulesmaps'></a>property: Maps
-#### Summary
- The mapper rules. 
-
-
-<small>[Back to top](#top)</small>
-
----
 >## <a id='dbaronenetmapperconfig'></a>type: Config
 ### Namespace:
 `Dbarone.Net.Mapper`
@@ -1449,6 +1757,18 @@ None
 >### <a id='dbaronenetmapperconfigautoregistertypes'></a>property: AutoRegisterTypes
 #### Summary
  If set to true, types will be automatically registered on demand with default configuration if not registered in advance 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperconfigdefaultresolvers'></a>property: DefaultResolvers
+#### Summary
+ List of default resolvers used to provide mapper services for types. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperconfigdefaultoperators'></a>property: DefaultOperators
+#### Summary
+ Returns the default operators. 
 
 
 <small>[Back to top](#top)</small>
@@ -1639,6 +1959,52 @@ None
 
 #### Exceptions:
 None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperconfigurationregisteroperator``1'></a>method: RegisterOperator
+#### Signature
+``` c#
+MapperConfiguration.RegisterOperator<TResolver>()
+```
+#### Summary
+ Registers an IMemberResolver using a generic type. 
+
+#### Type Parameters:
+|Param | Description |
+|-----|-----|
+|TResolver: |The resolver type.|
+
+#### Parameters:
+None
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmappermapperconfigurationregisteroperator(systemtype)'></a>method: RegisterOperator
+#### Signature
+``` c#
+MapperConfiguration.RegisterOperator(System.Type resolver)
+```
+#### Summary
+ Registers an IMemberResolver 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|resolver: |An IMemberResolver instance.|
+
+#### Exceptions:
+
+Exception thrown: [T:System.Exception](#T:System.Exception): Throws an exception if the type of resolver has already been registered.
+
 #### Examples:
 None
 
@@ -2133,6 +2499,248 @@ None
 
 
 ---
+>## <a id='dbaronenetmapperabstractmemberresolver'></a>type: AbstractMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Base resolver class. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmapperabstractmemberresolvergettypemembers(systemtype,dbaronenetmappermapperoptions)'></a>method: GetTypeMembers
+#### Signature
+``` c#
+AbstractMemberResolver.GetTypeMembers(System.Type type, Dbarone.Net.Mapper.MapperOptions options)
+```
+#### Summary
+ Gets the type members for reference types. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to get the members for.|
+|options: |The options.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolvercreateinstance(systemtype,systemobject[])'></a>method: CreateInstance
+#### Signature
+``` c#
+AbstractMemberResolver.CreateInstance(System.Type type, System.Object[] args)
+```
+#### Summary
+ Returns a delete that creates instances for reference types. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to create the delegate for.|
+|args: |The arguments provides to the constructor.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolvergetgetter(systemtype,systemstring,dbaronenetmappermapperoptions)'></a>method: GetGetter
+#### Signature
+``` c#
+AbstractMemberResolver.GetGetter(System.Type type, System.String memberName, Dbarone.Net.Mapper.MapperOptions options)
+```
+#### Summary
+ Returns a getter delegate that gets a member value for an object. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to get the getter for.|
+|memberName: |The member name.|
+|options: |The mapper options provided for the type.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolvergetsetter(systemtype,systemstring,dbaronenetmappermapperoptions)'></a>method: GetSetter
+#### Signature
+``` c#
+AbstractMemberResolver.GetSetter(System.Type type, System.String memberName, Dbarone.Net.Mapper.MapperOptions options)
+```
+#### Summary
+ Returns a setter delegate that sets a member value for an object. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to get the setter for.|
+|memberName: |The member name|
+|options: |The mapper options provided for the type.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolvergetmembertype(systemtype,systemstring,dbaronenetmappermapperoptions)'></a>method: GetMemberType
+#### Signature
+``` c#
+AbstractMemberResolver.GetMemberType(System.Type type, System.String memberName, Dbarone.Net.Mapper.MapperOptions options)
+```
+#### Summary
+ Gets a member type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type containing the member.|
+|memberName: |The member name.|
+|options: |The mapper options provided for the type.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolvergetinstancemembers(systemobject)'></a>method: GetInstanceMembers
+#### Signature
+``` c#
+AbstractMemberResolver.GetInstanceMembers(System.Object obj)
+```
+#### Summary
+ Gets members on an instance. This method is normally implemented only if DeferMemberResolution is set to true. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|obj: |The object instance.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolvercanresolvemembersfortype(systemtype)'></a>method: CanResolveMembersForType
+#### Signature
+``` c#
+AbstractMemberResolver.CanResolveMembersForType(System.Type type)
+```
+#### Summary
+ Set to true if the current IMemberResolver can resolve members of the specified type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to resolve members for.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolverhasmembers'></a>property: HasMembers
+#### Summary
+ Returns true if types supported by this resolver have members. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolverisenumerable'></a>property: IsEnumerable
+#### Summary
+ Returns true if types supported by this resolver can be enumerated against. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperabstractmemberresolverdeferbuild'></a>property: DeferBuild
+#### Summary
+ Set to true for dictionary and dynamic types, where the member information must be deferred until mapping time. If set to false, the member information is obtained at build time. 
+
+
+<small>[Back to top](#top)</small>
+
+---
+>## <a id='dbaronenetmapperbuiltinmemberresolver'></a>type: BuiltinMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ General resolver for builtin types. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmapperbuiltinmemberresolverdeferbuild'></a>property: DeferBuild
+#### Summary
+ Set to true for dictionary and dynamic types, where the member information must be deferred until mapping time. If set to false, the member information is obtained at build time. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperbuiltinmemberresolvercanresolvemembersfortype(systemtype)'></a>method: CanResolveMembersForType
+#### Signature
+``` c#
+BuiltinMemberResolver.CanResolveMembersForType(System.Type type)
+```
+#### Summary
+ Set to true if the current IMemberResolver can resolve members of the specified type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to resolve members for.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperbuiltinmemberresolverhasmembers'></a>property: HasMembers
+#### Summary
+ Returns true if types supported by this resolver have members. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperbuiltinmemberresolverisenumerable'></a>property: IsEnumerable
+#### Summary
+ Builtin types are not enumerable. 
+
+
+<small>[Back to top](#top)</small>
+
+---
 >## <a id='dbaronenetmapperclassmemberresolver'></a>type: ClassMemberResolver
 ### Namespace:
 `Dbarone.Net.Mapper`
@@ -2158,35 +2766,6 @@ None
 |-----|------|
 |type: |The type to get the members for.|
 |options: |The options.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperclassmemberresolverdeferbuild'></a>property: DeferBuild
-#### Summary
- Set to true for dictionary and dynamic types, where the member information must be deferred until mapping time. If set to false, the member information is obtained at build time. 
-
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperclassmemberresolvercreateinstance(systemtype,systemobject[])'></a>method: CreateInstance
-#### Signature
-``` c#
-ClassMemberResolver.CreateInstance(System.Type type, System.Object[] args)
-```
-#### Summary
- Returns a delete that creates instances for reference types. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|type: |The type to create the delegate for.|
-|args: |The arguments provides to the constructor.|
 
 #### Exceptions:
 None
@@ -2266,28 +2845,6 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperclassmemberresolvergetinstancemembers(systemobject)'></a>method: GetInstanceMembers
-#### Signature
-``` c#
-ClassMemberResolver.GetInstanceMembers(System.Object obj)
-```
-#### Summary
- Gets members on an instance. This method is normally implemented only if DeferMemberResolution is set to true. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|obj: |The object instance.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperclassmemberresolvercanresolvemembersfortype(systemtype)'></a>method: CanResolveMembersForType
 #### Signature
 ``` c#
@@ -2310,6 +2867,24 @@ None
 None
 
 <small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperclassmemberresolverhasmembers'></a>property: HasMembers
+#### Summary
+ Returns true if types supported by this resolver have members. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperclassmemberresolverdeferbuild'></a>property: DeferBuild
+#### Summary
+ Set to true for dictionary and dynamic types, where the member information must be deferred until mapping time. If set to false, the member information is obtained at build time. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperclassmemberresolverisenumerable'></a>property: IsEnumerable
+#### Summary
+ ClassMemberResolver does not support IEnumerable interfaces. 
+
+
+<small>[Back to top](#top)</small>
 
 ---
 >## <a id='dbaronenetmapperdictionarymemberresolver'></a>type: DictionaryMemberResolver
@@ -2321,12 +2896,6 @@ None
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmapperdictionarymemberresolverdeferbuild'></a>property: DeferBuild
-#### Summary
- Set to true for dictionary and dynamic types, where the member information must be deferred until mapping time. If set to false, the member information is obtained at build time. 
-
-
-<small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperdictionarymemberresolvergetgetter(systemtype,systemstring,dbaronenetmappermapperoptions)'></a>method: GetGetter
 #### Signature
 ``` c#
@@ -2368,29 +2937,6 @@ None
 |type: |The type to get the setter for.|
 |memberName: |The member name|
 |options: |The mapper options provided for the type.|
-
-#### Exceptions:
-None
-#### Examples:
-None
-
-<small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperdictionarymemberresolvercreateinstance(systemtype,systemobject[])'></a>method: CreateInstance
-#### Signature
-``` c#
-DictionaryMemberResolver.CreateInstance(System.Type type, System.Object[] args)
-```
-#### Summary
- Returns a CreateInstance delegate that can create a new instance of a particular type. 
-
-#### Type Parameters:
-None
-
-#### Parameters:
-|Name | Description |
-|-----|------|
-|type: |The type to create the CreateInstance delegate for.|
-|args: |The arguments to provide to the constructor function to create the new instance.|
 
 #### Exceptions:
 None
@@ -2487,6 +3033,86 @@ None
 None
 #### Examples:
 None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperdictionarymemberresolverhasmembers'></a>property: HasMembers
+#### Summary
+ Returns true if types supported by this resolver have members. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperdictionarymemberresolverdeferbuild'></a>property: DeferBuild
+#### Summary
+ Set to true for dictionary and dynamic types, where the member information must be deferred until mapping time. If set to false, the member information is obtained at build time. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperdictionarymemberresolverisenumerable'></a>property: IsEnumerable
+#### Summary
+ DictionaryMemberResolver does not support Enumerable types. 
+
+
+<small>[Back to top](#top)</small>
+
+---
+>## <a id='dbaronenetmapperdynamicmemberresolver'></a>type: DynamicMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Member resolver for dynamic types. 
+
+### Type Parameters:
+None
+
+
+---
+>## <a id='dbaronenetmapperenumerablememberresolver'></a>type: EnumerableMemberResolver
+### Namespace:
+`Dbarone.Net.Mapper`
+### Summary
+ Member resolver for Enumerable types. 
+
+### Type Parameters:
+None
+
+>### <a id='dbaronenetmapperenumerablememberresolvercanresolvemembersfortype(systemtype)'></a>method: CanResolveMembersForType
+#### Signature
+``` c#
+EnumerableMemberResolver.CanResolveMembersForType(System.Type type)
+```
+#### Summary
+ Set to true if the current IMemberResolver can resolve members of the specified type. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|type: |The type to resolve members for.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperenumerablememberresolverhasmembers'></a>property: HasMembers
+#### Summary
+ Returns true if types supported by this resolver have members. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperenumerablememberresolverisenumerable'></a>property: IsEnumerable
+#### Summary
+ Returns true if types supported by this resolver can iterate 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperenumerablememberresolverdeferbuild'></a>property: DeferBuild
+#### Summary
+ Set to true for dictionary and dynamic types, where the member information must be deferred until mapping time. If set to false, the member information is obtained at build time. 
+
 
 <small>[Back to top](#top)</small>
 
@@ -2649,6 +3275,12 @@ None
 >### <a id='dbaronenetmapperimemberresolverhasmembers'></a>property: HasMembers
 #### Summary
  Returns true if this resolver can return members on a type. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperimemberresolverisenumerable'></a>property: IsEnumerable
+#### Summary
+ Returns true if the resolver can return an IEnumerable. 
 
 
 <small>[Back to top](#top)</small>
@@ -3318,10 +3950,38 @@ None
 ### Type Parameters:
 None
 
->### <a id='dbaronenetmapperobjectmapper_oncreateoperator'></a>field: _onCreateOperator
+>### <a id='dbaronenetmapperobjectmapper_onlog'></a>field: _onLog
 #### Summary
  Event raised whenever a new mapper operator is built. 
 
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperobjectmapperonlog'></a>property: OnLog
+#### Summary
+ Provides ability to set a callback function to perform logging of build and runtime mapping. 
+
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperobjectmapper#ctor(dbaronenetmappermapperconfiguration)'></a>method: #ctor
+#### Signature
+``` c#
+ObjectMapper.#ctor(Dbarone.Net.Mapper.MapperConfiguration configuration)
+```
+#### Summary
+ Creates a new [ObjectMapper](#dbaronenetmapperobjectmapper) instance from configuration. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|configuration: |The mapping configuration.|
+
+#### Exceptions:
+None
+#### Examples:
+None
 
 <small>[Back to top](#top)</small>
 >### <a id='dbaronenetmapperobjectmappermap(systemtype,systemtype,systemobject)'></a>method: Map
@@ -3339,6 +3999,29 @@ None
 |Name | Description |
 |-----|------|
 |fromType: |The type to transform the object from.|
+|toType: |The type to transform the object to.|
+|obj: |The object being transformed from. Must be assignable to `fromType`.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='dbaronenetmapperobjectmappermap(systemtype,systemobject)'></a>method: Map
+#### Signature
+``` c#
+ObjectMapper.Map(System.Type toType, System.Object obj)
+```
+#### Summary
+ Maps / transforms an object from one type to another. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
 |toType: |The type to transform the object to.|
 |obj: |The object being transformed from. Must be assignable to `fromType`.|
 
@@ -3373,10 +4056,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperobjectmappergetoperator(systemtype,systemtype)'></a>method: GetOperator
+>### <a id='dbaronenetmapperobjectmappergetmapperoperator(systemtype,systemtype)'></a>method: GetMapperOperator
 #### Signature
 ``` c#
-ObjectMapper.GetOperator(System.Type from, System.Type to)
+ObjectMapper.GetMapperOperator(System.Type from, System.Type to)
 ```
 #### Summary
  Gets the mapping execution plan. 
@@ -3396,10 +4079,10 @@ None
 None
 
 <small>[Back to top](#top)</small>
->### <a id='dbaronenetmapperobjectmappergetoperator``2'></a>method: GetOperator
+>### <a id='dbaronenetmapperobjectmappergetmapperoperator``2'></a>method: GetMapperOperator
 #### Signature
 ``` c#
-ObjectMapper.GetOperator<TSource, TTarget>()
+ObjectMapper.GetMapperOperator<TSource, TTarget>()
 ```
 #### Summary
  Gets the mapping execution plan. 
@@ -3793,3 +4476,72 @@ None
 ### Type Parameters:
 None
 
+
+---
+>## <a id='mapperoperatorlogdelegate'></a>type: MapperOperatorLogDelegate
+### Namespace:
+``
+### Summary
+ Defines a callback function which is used for logging purposes. 
+
+### Type Parameters:
+None
+
+
+---
+>## <a id='mapperextensions'></a>type: MapperExtensions
+### Namespace:
+``
+### Summary
+ Extension methods for mapping objects. 
+
+### Type Parameters:
+None
+
+>### <a id='mapperextensionsmapto``1(systemobject)'></a>method: MapTo
+#### Signature
+``` c#
+MapperExtensions.MapTo<T>(System.Object obj)
+```
+#### Summary
+ Maps the current object to another type. using automatic type registration. 
+
+#### Type Parameters:
+|Param | Description |
+|-----|-----|
+|T: |The type to map the current object to.|
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|obj: |The object to map.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>
+>### <a id='mapperextensionsmapto(systemobject,systemtype)'></a>method: MapTo
+#### Signature
+``` c#
+MapperExtensions.MapTo(System.Object obj, System.Type toType)
+```
+#### Summary
+ Maps the current object to another type. using automatic type registration. 
+
+#### Type Parameters:
+None
+
+#### Parameters:
+|Name | Description |
+|-----|------|
+|obj: |The object to map.|
+|toType: |The type to map to.|
+
+#### Exceptions:
+None
+#### Examples:
+None
+
+<small>[Back to top](#top)</small>

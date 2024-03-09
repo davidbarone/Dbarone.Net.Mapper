@@ -64,6 +64,22 @@ public class ObjectMapper
     /// <summary>
     /// Maps / transforms an object from one type to another.
     /// </summary>
+    /// <param name="toType">The type to transform the object to.</param>
+    /// <param name="obj">The object being transformed from. Must be assignable to `fromType`.</param>
+    /// <returns>Returns a mapped object of type `toType`.</returns>
+    public object? Map(Type toType, object? obj)
+    {
+        if (obj == null)
+        {
+            throw new MapperException("Source object is null.");
+        }
+        var fromType = obj.GetType();
+        return Map(fromType, toType, obj);
+    }
+
+    /// <summary>
+    /// Maps / transforms an object from one type to another.
+    /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TTarget"></typeparam>
     /// <param name="obj">Returns an object of the target type.</param>

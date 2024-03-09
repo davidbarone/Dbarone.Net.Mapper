@@ -67,7 +67,6 @@ public class EnumerableMapperOperator : MapperOperator
     /// Mapping implementation for <see cref="EnumerableMapperOperator"/> type. 
     /// </summary>
     /// <param name="source">The source object.</param>
-    /// <param name="target">The optional target object.</param>
     /// <returns>Returns a mapped object.</returns>
     /// <exception cref="MapperBuildException">Returns a <see cref="MapperBuildException"/> in the event of any failure to map the object.</exception>
     protected override object? MapInternal(object? source)

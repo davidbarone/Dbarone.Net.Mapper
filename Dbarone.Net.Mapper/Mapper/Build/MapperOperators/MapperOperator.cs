@@ -200,6 +200,9 @@ public abstract class MapperOperator
     /// <summary>
     /// Pretty-prints the current mapper operator
     /// </summary>
+    /// <param name="indent">The current indentation level.</param>
+    /// <param name="key">The key</param>
+    /// <param name="isLastChild">Optional - set to true if the last child. Used to change the indentation characters.</param>
     /// <returns>String representation of the mapper operator.</returns>
     public string PrettyPrint(string indent = "", string key = "", bool isLastChild = true)
     {
