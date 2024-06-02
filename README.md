@@ -12,7 +12,7 @@ The project contains a test suite covering a variety of use cases.
 
 This project is being used in another of my projects: https://github.com/davidbarone/Dbarone.Net.Document as a way to move data in and out of predefined document structures.
 
-For a full reference of this library, please refer to the [documentation](https://github.com/davidbarone/Dbarone.Net.Mapper/blob/main/Documentation.md).
+For a full reference of this library, please refer to the [API documentation](https://html-preview.github.io/?url=https://github.com/davidbarone/Dbarone.Net.Mapper/blob/main/Dbarone.Net.Mapper.html).
 
 ## Configuration
 The `MapperConfiguration` class is used for configuring the mapping. A single MapperConfiguration class is used to store mapping information for all your Types.

@@ -1,0 +1,7 @@
+{
+    "commentario.allowOverwrite": true,
+    "commentario.assemblyPath": "${workspaceFolder}/Dbarone.Net.Mapper/bin/Debug/net8.0/Dbarone.Net.Mapper.dll",
+    "commentario.outputPath": "${workspaceFolder}/Dbarone.Net.Mapper.html",
+    "commentario.readMePath": "",
+    "commentario.xmlCommentsPath": "${workspaceFolder}/Dbarone.Net.Mapper/bin/Debug/net8.0/Dbarone.Net.Mapper.xml"
+}

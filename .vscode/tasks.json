@@ -4,24 +4,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "document",
-      "type": "process",
-      "command": "dotnet",
-      "args": [
-        "script",
-        "./Scripts/Document.csx",
-        "${workspaceFolder}/Dbarone.Net.Mapper/bin/Debug/net6.0/Dbarone.Net.Mapper.xml",
-        "${workspaceFolder}/Documentation.md"
-      ],
-      "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "dependsOn": ["build"]
-    },
-    {
-      "label": "build",
+      "label": "build task",
       "command": "dotnet",
       "type": "process",
       "args": [
@@ -57,8 +40,8 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Build and Document",
-      "dependsOn": ["document", "build"],
+      "label": "Build",
+      "dependsOn": ["build task"],
       "problemMatcher": [],
       "group": "build"
     }
