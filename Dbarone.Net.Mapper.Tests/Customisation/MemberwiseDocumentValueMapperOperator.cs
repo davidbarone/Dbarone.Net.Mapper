@@ -43,6 +43,7 @@ public class MemberwiseDocumentValueMapperOperator : MapperOperator
     public override bool CanMap()
     {
         return SourceType.MemberResolver.HasMembers
+            && SourceType.Type != typeof(DateTime)
             && TargetType.Type == typeof(DocumentValue);
     }
 

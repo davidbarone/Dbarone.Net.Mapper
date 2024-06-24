@@ -22,7 +22,7 @@ public class ImplicitOperatorMapperOperator : MapperOperator
         var methods = SourceType.Type.GetMethods(BindingFlags.Public | BindingFlags.Static);
         var method = methods
                         .FirstOrDefault(
-                            m => m.GetParameters()[0].ParameterType == SourceType.Type &&
+                            m => m.GetParameters().Count() > 0 && m.GetParameters()[0].ParameterType == SourceType.Type &&
                             m.ReturnType == TargetType.Type &&
                             m.Name == "op_Implicit"
                         );
@@ -30,7 +30,7 @@ public class ImplicitOperatorMapperOperator : MapperOperator
         {
             method = methods
                             .FirstOrDefault(
-                                m => m.GetParameters()[0].ParameterType == TargetType.Type &&
+                                m => m.GetParameters().Count() > 0 && m.GetParameters()[0].ParameterType == TargetType.Type &&
                                 m.ReturnType == SourceType.Type &&
                                 m.Name == "op_Implicit"
                             );
