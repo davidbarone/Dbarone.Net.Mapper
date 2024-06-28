@@ -5,4 +5,4 @@ namespace Dbarone.Net.Mapper;
 /// </summary>
 /// <param name="obj">The object providing the value.</param>
 /// <returns>Returns a value from the object.</returns>
-public delegate object Getter(object obj);
+public delegate object? Getter(object obj);

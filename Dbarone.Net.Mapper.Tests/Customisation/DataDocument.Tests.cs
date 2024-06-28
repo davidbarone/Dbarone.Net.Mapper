@@ -271,4 +271,33 @@ public class DataDocumentTests
             Assert.Equal(123, doc.AsArray.RawValue.First().AsDocument["CustomerId"].AsInt32);
         }
     }
+
+    [Fact]
+    public void DocumentNullTest()
+    {
+        Customer a = new Customer();
+        a.CustomerId = 123;
+        a.CustomerName = null;
+
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<EnumerableDocumentValueMapperOperator>()
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+
+        var b = mapper.Map<Customer, DictionaryDocument>(a);
+        Assert.IsType<DictionaryDocument>(b);
+        Assert.NotNull(b);
+        Assert.Equal(123, (int)b["CustomerId"]);
+        Assert.Equal(DocumentType.Null, b["CustomerName"].Type);
+
+        // Convert back
+        var c = mapper.Map<DictionaryDocument, Customer>(b);
+        Assert.NotNull(c);
+        Assert.IsType<Customer>(c);
+        Assert.Null(c.CustomerName);
+        Assert.Equal(123, c.CustomerId);
+    }
 }

@@ -42,7 +42,8 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
                     .Where(mc => mc.Ignore == false)
                     .Select(mc => mc.InternalMemberName);
         }
-        else if (this.runTimeMembers==null) {
+        else if (this.runTimeMembers == null)
+        {
             // runTimeMembers only populated when source object instance
             // provided (e.g. during mapping process). If just getting
             // the initial mapper operator, then cannot do full check
@@ -137,14 +138,16 @@ public class MemberwiseMapperDeferBuildOperator : MapperOperator
             var members = this.SourceType.MemberResolver.GetInstanceMembers(source);
             foreach (var member in members)
             {
+                var getter = this.SourceType.MemberResolver.GetGetter(this.SourceType.Type, member, this.SourceType.Options);
+
                 var buildMember = new BuildMember
                 {
                     MemberName = member,
                     InternalMemberName = member,
                     Ignore = false,
-                    Getter = this.SourceType.MemberResolver.GetGetter(this.SourceType.Type, member, this.SourceType.Options),
+                    Getter = getter,
                     Setter = this.SourceType.MemberResolver.GetSetter(this.SourceType.Type, member, this.SourceType.Options),
-                    DataType = this.SourceType.MemberResolver.GetGetter(this.SourceType.Type, member, this.SourceType.Options)(source).GetType(),
+                    DataType = (getter(source) is null) ? typeof(object) : getter(source)!.GetType(),
                     Calculation = null
                 };
                 this.runTimeMembers.Add(buildMember);

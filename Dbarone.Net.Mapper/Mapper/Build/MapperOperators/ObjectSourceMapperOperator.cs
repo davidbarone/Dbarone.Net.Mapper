@@ -45,11 +45,8 @@ public class ObjectSourceMapperOperator : MapperOperator
 
     private void GetRuntimeOperator(object? source)
     {
-        if (source == null)
-        {
-            throw new Exception("null value invalid.");
-        }
-        var sourceRunTimeType = source.GetType();
+        // If source is null, use the target type as the source type as there is no other type we can use.
+        var sourceRunTimeType = (source is null) ? this.TargetType.Type : source.GetType();
         if (this.runtimeOperator == null)
         {
             this.runtimeOperator = Builder.GetMapperOperator(new SourceTarget(sourceRunTimeType, this.TargetType.Type), this);
