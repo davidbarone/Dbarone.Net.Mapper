@@ -7,6 +7,12 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Dbarone.Net.Mapper.Tests;
 
+public class ClassWithNullable
+{
+    public int? Age { get; set; } = null;
+    public int? Value { get; set; } = 123;
+}
+
 public class ClassWithDate
 {
     public DateTime Dob { get; set; }
@@ -299,5 +305,30 @@ public class DataDocumentTests
         Assert.IsType<Customer>(c);
         Assert.Null(c.CustomerName);
         Assert.Equal(123, c.CustomerId);
+    }
+
+    [Fact]
+    public void DocumentNullableTest()
+    {
+        ClassWithNullable a = new ClassWithNullable();
+        var conf = new MapperConfiguration()
+           .SetAutoRegisterTypes(true)
+           .RegisterResolvers<DocumentMemberResolver>()
+           .RegisterOperator<EnumerableDocumentValueMapperOperator>()
+           .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+        var OP = mapper.GetMapperOperator<ClassWithNullable, DictionaryDocument>();
+        var str = OP.PrettyPrint();
+
+        var b = mapper.Map<ClassWithNullable, DictionaryDocument>(a);
+        Assert.IsType<DictionaryDocument>(b);
+        Assert.Null(b["Age"]);
+        Assert.Equal(123, b["Value"].AsInt32);
+
+        var c = mapper.Map<DictionaryDocument, ClassWithNullable>(b);
+        Assert.IsType<ClassWithNullable>(c);
+        Assert.Null(c.Age);
+        Assert.Equal(123, c.Value);
     }
 }
