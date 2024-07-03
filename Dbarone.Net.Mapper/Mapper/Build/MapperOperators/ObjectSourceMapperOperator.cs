@@ -47,8 +47,11 @@ public class ObjectSourceMapperOperator : MapperOperator
     {
         // If source is null, use the target type as the source type as there is no other type we can use.
         var sourceRunTimeType = (source is null) ? this.TargetType.Type : source.GetType();
+
+        // Only set the operator once (using first source object)
         if (this.runtimeOperator == null)
         {
+            ResetChildren();    // Clears the empty [*, ] child with null runtimeOperator
             this.runtimeOperator = Builder.GetMapperOperator(new SourceTarget(sourceRunTimeType, this.TargetType.Type), this);
         }
     }

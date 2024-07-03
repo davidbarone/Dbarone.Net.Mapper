@@ -110,7 +110,7 @@ public abstract class MapperOperator
         return new Dictionary<string, MapperOperator>();
     }
 
-    private IDictionary<string, MapperOperator> _children = default!;
+    private IDictionary<string, MapperOperator>? _children = default!;
 
     /// <summary>
     /// Returns the children of the current operation.
@@ -125,6 +125,14 @@ public abstract class MapperOperator
             }
             return _children;
         }
+    }
+
+    /// <summary>
+    /// Resets / clears the child operators for the current node only.
+    /// </summary>
+    protected void ResetChildren()
+    {
+        _children = null;
     }
 
     /// <summary>

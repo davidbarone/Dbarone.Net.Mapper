@@ -141,6 +141,5 @@ public class MapperOperatorTests
                +- PersonName: AssignableMapperOperator (String->String)
                +- DoB: AssignableMapperOperator (DateTime->DateTime)
 ", str);
-
     }
 }
