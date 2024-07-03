@@ -116,6 +116,7 @@ public class MapperOperatorTests
         var op = objectMapper.GetMapperOperator(typeof(CompanyWithDeferBuild[]), typeof(List<CompanyDto>));
         var str = op.PrettyPrint();
 
+        // without specifying actual source object, the operator plan stops at the ObjectSourceMapperOperator
         Assert.Equal(@"+- EnumerableMapperOperator (CompanyWithDeferBuild[]->List`1)
    +- []: MemberwiseMapperOperator (CompanyWithDeferBuild->CompanyDto)
       +- CompanyId: AssignableMapperOperator (Int32->Int32)
@@ -128,8 +129,8 @@ public class MapperOperatorTests
         var mapped = op.Map(companies);
         str = op.PrettyPrint(); // Get updated operator plan
 
-        Assert.IsType<List<CompanyDto>>(mapped);
-        Assert.NotNull(mapped);
+        // The operator has mapped a source object - it is now able to show the
+        // actual operator plan used.
         Assert.Equal(@"+- EnumerableMapperOperator (CompanyWithDeferBuild[]->List`1)
    +- []: MemberwiseMapperOperator (CompanyWithDeferBuild->CompanyDto)
       +- CompanyId: AssignableMapperOperator (Int32->Int32)
@@ -141,5 +142,8 @@ public class MapperOperatorTests
                +- PersonName: AssignableMapperOperator (String->String)
                +- DoB: AssignableMapperOperator (DateTime->DateTime)
 ", str);
+        Assert.IsType<List<CompanyDto>>(mapped);
+        Assert.NotNull(mapped);
+
     }
 }
