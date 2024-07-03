@@ -220,7 +220,16 @@ public abstract class MapperOperator
         {
             var childKey = childKeys[i];
             var child = this.Children[childKey];
-            output += child.PrettyPrint(indent, childKey, i == childKeys.Count() - 1);
+            // the child operator can be null, for example for operators built at runtime.
+            if (child is null)
+            {
+                // The child is not yet defined
+                output += $"{indent}+- {childKey}: <undefined>{Environment.NewLine}";
+            }
+            else
+            {
+                output += child.PrettyPrint(indent, childKey, i == childKeys.Count() - 1);
+            }
         }
         return output;
     }
