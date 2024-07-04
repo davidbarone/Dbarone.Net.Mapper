@@ -150,6 +150,7 @@ public abstract class MapperOperator
         // Get all the mapper operator types
         // Default operators come last.
         var operatorTypes = builder.Configuration.Config.Operators.Union(builder.Configuration.Config.DefaultOperators);
+
         List<MapperOperator> mapperOperators = new List<MapperOperator>();
         foreach (var type in operatorTypes)
         {

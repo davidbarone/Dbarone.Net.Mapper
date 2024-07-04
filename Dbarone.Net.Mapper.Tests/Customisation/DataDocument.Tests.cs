@@ -318,14 +318,16 @@ public class DataDocumentTests
            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
 
         var mapper = new ObjectMapper(conf);
-        var OP = mapper.GetMapperOperator<ClassWithNullable, DictionaryDocument>();
-        var str = OP.PrettyPrint();
+        var op = mapper.GetMapperOperator<ClassWithNullable, DictionaryDocument>();
+        var str = op.PrettyPrint();
 
+        // Map POCO to document, including null values;
         var b = mapper.Map<ClassWithNullable, DictionaryDocument>(a);
         Assert.IsType<DictionaryDocument>(b);
-        Assert.Null(b["Age"]);
+        Assert.Equal(DocumentType.Null, b["Age"].Type);
         Assert.Equal(123, b["Value"].AsInt32);
 
+        // Map back to POCO
         var c = mapper.Map<DictionaryDocument, ClassWithNullable>(b);
         Assert.IsType<ClassWithNullable>(c);
         Assert.Null(c.Age);

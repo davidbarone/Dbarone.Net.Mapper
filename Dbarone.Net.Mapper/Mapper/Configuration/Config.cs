@@ -23,6 +23,10 @@ public class Config
             IList<IMemberResolver> resolvers = new List<IMemberResolver>();
 
             // Add core resolvers - note order is important. Types check member resolvers in order below.
+            if (!resolvers.Select(r => r.GetType()).Contains(typeof(NullableMemberResolver)))
+            {
+                resolvers.Add(new NullableMemberResolver());
+            }
             if (!resolvers.Select(r => r.GetType()).Contains(typeof(BuiltinMemberResolver)))
             {
                 resolvers.Add(new BuiltinMemberResolver());
@@ -63,6 +67,7 @@ public class Config
         get
         {
             return new List<Type>() {
+                typeof(NullableSourceMapperOperator),
                 typeof(AssignableMapperOperator),
                 typeof(ObjectSourceMapperOperator),
                 typeof(ConvertibleMapperOperator),
