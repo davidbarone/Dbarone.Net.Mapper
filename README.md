@@ -1,21 +1,37 @@
 # Dbarone.Net.Mapper
 A .NET object mapper library.
 
-Dbarone.Net.Mapper is an object-mapper library, similar to other object mapper libraries like https://docs.automapper.org/en/stable/Getting-started.html. Object mapping works by transforming an input object of one type into an output object of another type.
+Dbarone.Net.Mapper is an object-mapper library, similar to other object mapper libraries like https://docs.automapper.org/en/stable/Getting-started.html. Object mapping works by transforming an input object of one type into an output object of another type. Object mapping is a useful tool for converting data between different formats, for example from / to DTO objects, or from / to Http request / response objects.
 
-Mapping is configured using a `MapperConfiguration` class. To configure the mapper, you must register all the types that will be mapped to each other.
-By default, the mapper works by matching member names between types, but it can be configured in cases where the member names do not match up.
+A trivial example of mapping objects is shown below
 
-Once mapping configuration is completed, you can then map objects using the `ObjectMapper.MapOne` method, or the `ObjectMapper.ManyMany` if you are mapping an array or IEnumerable of objects.
+``` c#
 
-The project contains a test suite covering a variety of use cases.
+        CustomerModel obj1 = new CustomerModel() {
+            // Initialise obj1 with some values...
+        };
 
-This project is being used in another of my projects: https://github.com/davidbarone/Dbarone.Net.Document as a way to move data in and out of predefined document structures.
+        var mapper = MapperConfiguration.Create()
+            .RegisterType<CustomerModel>()
+            .RegisterType<CustomerDto>()
+            .Build();
 
-For a full reference of this library, please refer to the [API documentation](https://html-preview.github.io/?url=https://github.com/davidbarone/Dbarone.Net.Mapper/blob/main/Dbarone.Net.Mapper.html).
+        var obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
 
-## Configuration
-The `MapperConfiguration` class is used for configuring the mapping. A single MapperConfiguration class is used to store mapping information for all your Types.
+        // obj2 now contains all values of obj1.
+
+```
+The main mapper class is the `ObjectMapper` class. This contains a `Map` method which can be used to map objects between different types.
+
+## Mapping Stages
+There are 3 broad stages in the mapping process
+- Configuration
+- Build
+- Runtime (Mapping)
+
+### Configuration Stage
+
+Mapping is configured using a `MapperConfiguration` class. To configure the mapper, you need to register all the types that will be mapped to each other. By default, the mapper works by matching member names between types, but it can be configured in cases where the member names do not match up. A single `MapperConfiguration` class is used to store mapping information for all your Types.
 
 In order to map objects between types, those types must be registered within the mapper configuration.
 
@@ -30,13 +46,13 @@ In order to map objects between types, those types must be registered within the
             .RegisterType<CustomerDto>()
             .Build();
 
-        var obj2 = mapper.MapOne<CustomerModel, CustomerDto>(obj1)
+        var obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
 
         // obj2 now contains all values of obj1.
 
 ```
 
-The above example shows a simple mapping scenario. The mapper function (MapOne) maps a single object into another object / type. It does this by connecting members (properties and fields) with matching names. In the most basic example, if the CustomerModel CustomerDto types above have the same member names, then no additional configuration is required.
+The above example shows a simple mapping scenario. The mapper function maps a single object into another object / type. It does this by connecting members (properties and fields) with matching names. In the most basic example, if the CustomerModel CustomerDto types above have the same member names, then no additional configuration is required.
 
 Multiple types can be registered in one go:
 
@@ -53,10 +69,24 @@ Multiple types can be registered in one go:
 ```
 A MappingOptions can also be provided, so that groups of types can be configured with similar settings.
 
-### Mapper Options
+You do not need to manually register all the types before mapping. The following syntax will lazy-register any types as they are required:
+
+``` C#
+
+        var mapper = new ObjectMapper(new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+        );
+
+        // Do mapping here.
+
+```
+
+Auto-registering types will use default options for each type. If you need to customise the mapping behaviour, you will need to register types individually. Note that you can reference the same type multiple times during the configuration setup. The last occurrence of the type will be the one used, so you can mix `SetAutoRegisterTypes` and then specify individual types with custom options afterwards.
+
+#### Mapper Options
 When registering types, mapper options can be included. This defines how the type should be treated during mapping operations.
 
-### Including fields and private members
+#### Including fields and private members
 By default, mapper will only map public properties. This behaviour can be overriden within the MapperOptions value:
 
 ``` C#
@@ -70,12 +100,13 @@ By default, mapper will only map public properties. This behaviour can be overri
             .RegisterType<CustomerDto>(new MapperOptions { IncludePrivateMembers = true }) // includes private members
             .Build();
 
-        CustomerDto obj2 = mapper.MapOne<CustomerModel, CustomerDto>(obj1)
+        CustomerDto obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
 
         // obj2 now contains all values of obj1.
 
 ```
-### Member renaming strategy
+
+#### Member renaming strategy
 A member renaming strategy can be applied to types that are registered with the mapper configuration. Member renaming strategies are employed to rename members based on a rule. Mapping strategies implement the `IMemberRenameStrategy` interface. By default, no member renaming strategy is used. In this case, actual type member names are compared and matched between source and target types to produce a set mapping rules. However, the following classes can be used to provide a general renaming strategy:
 
 | Class                            | Description                                              |
@@ -111,7 +142,7 @@ public class Main {
             })
             .Build();
 
-        EntityWithPascalCaseMembers pascalObj = mapper.MapOne<EntityWithSnakeCaseMembers, EntityWithPascalCaseMembers>(snakeObj);
+        EntityWithPascalCaseMembers pascalObj = mapper.Map<EntityWithSnakeCaseMembers, EntityWithPascalCaseMembers>(snakeObj);
     }
 }
 ```
@@ -164,7 +195,7 @@ Sometimes, a map between two types is not straight forward, and a transformation
         .RegisterCalculation<Person, string>("FullName", (p) => p.FirstName + " " + p.Surname)
         .Build();
 
-    var person2 = mapper.MapOne<Person, PersonWithFullName>(person);
+    var person2 = mapper.Map<Person, PersonWithFullName>(person);
 ```
 
 ### Ignoring Members
@@ -182,30 +213,53 @@ be set in two places:
 - As part of the MemberOptions, when registering one or more types
 - Using the SetMemberFilterRule method on the MapperConfiguration class, to set a member filter rule for a single type.
 
-## Binding Algorithm
-The mapper algorithm works by joining 'members' from source type to target type. The way members are defined depends on the type being mapped. The mapper library supports 2 broad kinds of types:
+## Build Stage
+
+Once configuration is completed, the build stage converts the configuration into an execution plan.
+
+### Mapping Algorithm
+The mapping execution plan is built by creating a mapper operator graph that maps one object (including child member objets) to another object. There are mapper operators to cover different kinds of mapping operations, including simple classes, arrays and IEnumerable types, dictionaries, dynamic types, and null values.
+
+The build process works by joining 'members' from source type to target type. The way members are defined depends on the type being mapped. The mapper library supports 2 broad kinds of types:
 - Types with fixed schemas
-- Types with flexible schemas
+- Types with flexible / unknown schemas
 
-### Types with Fixed Schemas
-This includes all classes and structs that are strong-typed, and have known properties and fields at compile time. Members correlate to the type's properties and fields.
+#### Types with Fixed Schemas
+This includes all classes and structs that are strong-typed, and have known properties and fields at compile time. Members correlate to the type's properties and fields. When the operator graph is build, all mappings are 
 
-### Types with Variable Schemas
-This includes dictionaries and dynamic objects (which are implemented internally as dictionaries). These objects must be inspected at map-time to determine the members. The members correlate to the index key values.
+#### Types with Variable Schemas
+This includes dictionaries and dynamic objects (which are implemented internally as dictionaries). Operators that perform mappings on these types of objects do not know the actual objects being used at build time. Therefore they must defer the calculation of the operator graph until run time, when an actual object is mapped.
+
+## Runtime / Mapping Stage
+The runtime / mapping stage occurs when the `Map` method is executed, passing in a source object to map. The mapping stage then maps this source object to the specified target type.
 
 ### Mapping Process
-The MapOne() method works as follows:
-- A SourceType and TargetType are provided to the MapOne method.
+The `Map` method works as follows:
+- A SourceType and TargetType are provided to the Map method.
 - A source object is also provided to the MapOne method. This must be an object that can be assigned to SourceType, but can be a subtype. Note that if a sub type instance is provided, the mapper will still only map members based on SourceType.
-- A check is made that the SourceType has been registered. The source type can be any registered type, including interface types.
-- A check is made that the TargetType has been registered. The target type must be a concrete (non abstract) class, cannot be an interface, and the type must have a parameterless constructor.
-- If SourceType and TargetType are registered, then a full memberwise map will be carried out (see below).
-- If the SourceType or TargetType have not been registered, a second check is made in the TypeConverters registry. If a source and target TypeConverter match is found, then a simple type conversion mapping is performed (see below)
+- A check is made that the SourceType has been registered. The source type can be any registered type, including interface types. If `SetAutoRegisterTypes` is used, any unregistered type will be registered at this point.
+- A check is made that the TargetType has been registered. The target type must be a concrete (non abstract) class, cannot be an interface, and the type must have a parameterless constructor. If `SetAutoRegisterTypes` is used, any unregistered type will be registered at this point.
+- If SourceType and TargetType are registered, then the mapper operator is created to map the from -> to types.
 
-### TypeConversion Mapping Process
+### Mapper Operators
+At the time of publishing, the following mapper operators are available out of the box:
+
+| Mapper                             | Description                                                                                         |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------- |
+| EnumerableMapperOperator           | Maps objects that are arrays or Enumerable types                                                    |
+| AssignableMapperOperator           | Maps source to target object if the source object is assignable to the target type.                 |
+| ConverterMapperOperator            | Maps source to target based on the presence of a special converter function added to configuration. |
+| ConvertibleMapperOperator          | Maps types that support the IConvertible interface. This is typically for built-in types.           |
+| ImplicitOperatorMapperOperator     | Maps types where an implicit cast operator has been defined on either From or To type.              |
+| MemberwiseMapperOperator           | Operator for mapping classes and structs with members.                                              |
+| MemberwiseMapperDeferBuildOperator | Maps class and struct types on a member level, where the source type has a DeferBuild set to True.  |
+| NullableSourceMapperOperator       | Operator for when the source type is a nullable type.                                               |
+| ObjectSourceMapperOperator         | Operator for when the source type is object. This includes dynamic property types.                  |
+
+#### TypeConversion Mapping Process
 In a typeconversion mapping process, a converter method is called, passing in the source object. The converter method is then resposible for returning an object of type TargetType. No memberwise mapping takes place, and no recursive mapping of child objects takes place. This type of mapping should only be reserved in cases where you want to apply very simple mapping or type conversions on simple (e.g. native) types.
 
-### Memberwise Mapping Process
+#### Memberwise Mapping Process
 The memberwise mapping process is the full mapping process, and involves recusively mapping each connected member between source and target types.
 
 ### Validation Process
@@ -227,39 +281,9 @@ Individual types are validated as follows:
   - Otherwise, the member list is obtained from the source type.
   - Any members that do not exist on both sides are unmapped. Note that if EndPointValidation is set, orphaned members will cause exceptions to be thrown.
 
-#### Mapping
-- When mapping a member, the data types on the source and target types must match.
-- If the member types on source and target don't match, but a TypeConverter exists for the source / target type, a simple type conversion will be carried out (note this will not include any recursive mapping of child members though).
-- Otherwise, a type exception will be thrown.
-- When assigning the source value to the target object, if the type has been registered, then the child value will be mapped recursively.
+## Project Information
+The project contains a test suite covering a variety of use cases.
 
-### Member Selection Process
-- By default, the members defined as the public properties.
-- When registering a type, options can be provided to allow
-  - Fields to be included as members
-  - Private properties and fields to be included as members
-- For flexible schema types, the members align to the dictionary keys
-- Member names default to the property/field names or dictionary keys, but these names can be overridden using an `IMemberRenameStrategy`.
-- The 'renamed' member is known as the 'InternalMemberName'. This is the actual member name used to connect / map to other types.
-- Members can be excluded from the mapping process by calling the `Ignore` method.
-- 
+This project is being used in another of my projects: https://github.com/davidbarone/Dbarone.Net.Document as a way to move data in and out of predefined document structures.
 
-
-
-- If the SourceType or TargetType have not been registered, a second check is made in the TypeConverters registry. If a source + target TypeConverter match is found, then
--  both SourceType and TargetType have been registered in the configuration.
-- If the SourceType is not registered, then the system checks for a registration in the Type Converters. If a registration is found, then objects will be 'converted' to the target type.
-The following types can be mapped:
-- Value Types
-  - Built-in value types (e.g. int, float)
-  - Structs
-- Reference Types
-  - Classes
-
-To do:
-- internal member names case sensitive?
-- type converters can be global / assigned to type / member
-- type.filtermembers()
-- mapmany - all array types / list / ienumerable etc
-- open generics?
-- 
+For a full reference of this library, please refer to the [API documentation](https://html-preview.github.io/?url=https://github.com/davidbarone/Dbarone.Net.Mapper/blob/main/Dbarone.Net.Mapper.html).
