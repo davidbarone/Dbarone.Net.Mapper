@@ -6,20 +6,18 @@ Dbarone.Net.Mapper is an object-mapper library, similar to other object mapper l
 A trivial example of mapping objects is shown below
 
 ``` c#
+CustomerModel obj1 = new CustomerModel() {
+    // Initialise obj1 with some values...
+};
 
-        CustomerModel obj1 = new CustomerModel() {
-            // Initialise obj1 with some values...
-        };
+var mapper = MapperConfiguration.Create()
+    .RegisterType<CustomerModel>()
+    .RegisterType<CustomerDto>()
+    .Build();
 
-        var mapper = MapperConfiguration.Create()
-            .RegisterType<CustomerModel>()
-            .RegisterType<CustomerDto>()
-            .Build();
+var obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
 
-        var obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
-
-        // obj2 now contains all values of obj1.
-
+// obj2 now contains all values of obj1.
 ```
 The main mapper class is the `ObjectMapper` class. This contains a `Map` method which can be used to map objects between different types.
 
@@ -36,20 +34,18 @@ Mapping is configured using a `MapperConfiguration` class. To configure the mapp
 In order to map objects between types, those types must be registered within the mapper configuration.
 
 ``` c#
+CustomerModel obj1 = new CustomerModel() {
+    // Initialise obj1 with some values...
+};
 
-        CustomerModel obj1 = new CustomerModel() {
-            // Initialise obj1 with some values...
-        };
+var mapper = MapperConfiguration.Create()
+    .RegisterType<CustomerModel>()
+    .RegisterType<CustomerDto>()
+    .Build();
 
-        var mapper = MapperConfiguration.Create()
-            .RegisterType<CustomerModel>()
-            .RegisterType<CustomerDto>()
-            .Build();
+var obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
 
-        var obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
-
-        // obj2 now contains all values of obj1.
-
+// obj2 now contains all values of obj1.
 ```
 
 The above example shows a simple mapping scenario. The mapper function maps a single object into another object / type. It does this by connecting members (properties and fields) with matching names. In the most basic example, if the CustomerModel CustomerDto types above have the same member names, then no additional configuration is required.
@@ -57,28 +53,24 @@ The above example shows a simple mapping scenario. The mapper function maps a si
 Multiple types can be registered in one go:
 
 ``` C#
+// Get all the 'dto' types in the current assembly.
+var dtoTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Name.EndsWith("dto")).ToArray();
 
-        // Get all the 'dto' types in the current assembly.
-        var dtoTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Name.EndsWith("dto")).ToArray();
+var mapper = MapperConfiguration.Create()
+    .RegisterTypes(dtoTypes).Build();
 
-        var mapper = MapperConfiguration.Create()
-            .RegisterTypes(dtoTypes).Build();
-
-        // do some mapping now...
-
+// do some mapping now...
 ```
 A MappingOptions can also be provided, so that groups of types can be configured with similar settings.
 
 You do not need to manually register all the types before mapping. The following syntax will lazy-register any types as they are required:
 
 ``` C#
+var mapper = new ObjectMapper(new MapperConfiguration()
+    .SetAutoRegisterTypes(true)
+);
 
-        var mapper = new ObjectMapper(new MapperConfiguration()
-            .SetAutoRegisterTypes(true)
-        );
-
-        // Do mapping here.
-
+// Do mapping here.
 ```
 
 Auto-registering types will use default options for each type. If you need to customise the mapping behaviour, you will need to register types individually. Note that you can reference the same type multiple times during the configuration setup. The last occurrence of the type will be the one used, so you can mix `SetAutoRegisterTypes` and then specify individual types with custom options afterwards.
@@ -90,20 +82,18 @@ When registering types, mapper options can be included. This defines how the typ
 By default, mapper will only map public properties. This behaviour can be overriden within the MapperOptions value:
 
 ``` C#
+CustomerModel obj1 = new CustomerModel() {
+    // Initialise obj1 with some values...
+};
 
-     CustomerModel obj1 = new CustomerModel() {
-            // Initialise obj1 with some values...
-        };
+var mapper = MapperConfiguration.Create()
+    .RegisterType<CustomerModel>(new MapperOptions { IncludeFields = true }) // includes fields
+    .RegisterType<CustomerDto>(new MapperOptions { IncludePrivateMembers = true }) // includes private members
+    .Build();
 
-        var mapper = MapperConfiguration.Create()
-            .RegisterType<CustomerModel>(new MapperOptions { IncludeFields = true }) // includes fields
-            .RegisterType<CustomerDto>(new MapperOptions { IncludePrivateMembers = true }) // includes private members
-            .Build();
+CustomerDto obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
 
-        CustomerDto obj2 = mapper.Map<CustomerModel, CustomerDto>(obj1)
-
-        // obj2 now contains all values of obj1.
-
+// obj2 now contains all values of obj1.
 ```
 
 #### Member renaming strategy
@@ -164,38 +154,38 @@ Validation can be performed on the source, target, or both end points. This is c
 Sometimes, a map between two types is not straight forward, and a transformation needs to take place. A calculation can be added to the configuration to perform transformations. The following example demonstrates:
 
 ``` C#
-    // Assume we have 2 classes:
-    public class Person
-    {
-        public int PersonId { get; set; }
-        public string FirstName { get; set; } = default!;
-        public string Surname { get; set; } = default!;
-        public DateTime DoB { get; set; }
-    }
+// Assume we have 2 classes:
+public class Person
+{
+    public int PersonId { get; set; }
+    public string FirstName { get; set; } = default!;
+    public string Surname { get; set; } = default!;
+    public DateTime DoB { get; set; }
+}
 
-    public class PersonWithFullName
-    {
-        public int PersonId { get; set; }
-        public string FullName { get; set; } = default!;
-        public DateTime DoB { get; set; }
-    }
+public class PersonWithFullName
+{
+    public int PersonId { get; set; }
+    public string FullName { get; set; } = default!;
+    public DateTime DoB { get; set; }
+}
 
-    // And we want to map FirstName + Surname => FullName
-    Person person = new Person()
-    {
-        PersonId = 1,
-        FirstName = "John",
-        Surname = "Doe",
-        DoB = new DateTime(1960, 8, 26)
-    };
+// And we want to map FirstName + Surname => FullName
+Person person = new Person()
+{
+    PersonId = 1,
+    FirstName = "John",
+    Surname = "Doe",
+    DoB = new DateTime(1960, 8, 26)
+};
 
-    var mapper = MapperConfiguration.Create()
-        .RegisterType<Person>()
-        .RegisterType<PersonWithFullName>()
-        .RegisterCalculation<Person, string>("FullName", (p) => p.FirstName + " " + p.Surname)
-        .Build();
+var mapper = MapperConfiguration.Create()
+    .RegisterType<Person>()
+    .RegisterType<PersonWithFullName>()
+    .RegisterCalculation<Person, string>("FullName", (p) => p.FirstName + " " + p.Surname)
+    .Build();
 
-    var person2 = mapper.Map<Person, PersonWithFullName>(person);
+var person2 = mapper.Map<Person, PersonWithFullName>(person);
 ```
 
 ### Ignoring Members
@@ -203,7 +193,7 @@ Sometimes, you will want to ignore members from the mapping process. The `Ignore
 
 ``` C#
 
-    // Ignore example here...
+// Ignore example here...
 
 ```
 
@@ -214,7 +204,6 @@ be set in two places:
 - Using the SetMemberFilterRule method on the MapperConfiguration class, to set a member filter rule for a single type.
 
 ## Build Stage
-
 Once configuration is completed, the build stage converts the configuration into an execution plan.
 
 ### Mapping Algorithm
