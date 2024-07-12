@@ -13,7 +13,7 @@ public class ClassWithDummyInt
     public int DummyEnum { get; set; }
 }
 
-public class ClassWithDummString
+public class ClassWithDummyString
 {
     public string DummyEnum { get; set; }
 }
@@ -111,7 +111,7 @@ public class MapClassWithEnumsTests
     }
 
     [Fact]
-    public void Test_Class_With_Enum_Mapping()
+    public void Test_Class_With_Enum_Value_Mapping()
     {
         ClassWithDummyEnum a = new ClassWithDummyEnum();
         a.DummyEnum = DummyEnum.C;
@@ -126,6 +126,25 @@ public class MapClassWithEnumsTests
 
         // Map back again
         var c = mapper.Map<ClassWithDummyInt, ClassWithDummyEnum>(b);
+        Assert.Equal(DummyEnum.C, c.DummyEnum);
+    }
+
+    [Fact]
+    public void Test_Class_With_Enum_String_Mapping()
+    {
+        ClassWithDummyEnum a = new ClassWithDummyEnum();
+        a.DummyEnum = DummyEnum.C;
+
+        var mapper = new ObjectMapper(new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+        );
+
+        // Map
+        var b = mapper.Map<ClassWithDummyEnum, ClassWithDummyString>(a);
+        Assert.Equal("C", b.DummyEnum);
+
+        // Map back again
+        var c = mapper.Map<ClassWithDummyString, ClassWithDummyEnum>(b);
         Assert.Equal(DummyEnum.C, c.DummyEnum);
     }
 }

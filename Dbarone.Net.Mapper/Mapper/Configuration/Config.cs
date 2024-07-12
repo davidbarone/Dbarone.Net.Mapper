@@ -73,6 +73,8 @@ public class Config
             return new List<Type>() {
                 typeof(EnumSourceValueMapperOperator),
                 typeof(EnumTargetValueMapperOperator),
+                typeof(EnumSourceStringMapperOperator),
+                typeof(EnumTargetStringMapperOperator),
                 typeof(NullableSourceMapperOperator),
                 typeof(AssignableMapperOperator),
                 typeof(ObjectSourceMapperOperator),
