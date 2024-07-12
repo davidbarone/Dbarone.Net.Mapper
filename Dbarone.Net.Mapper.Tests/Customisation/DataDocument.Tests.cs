@@ -7,6 +7,18 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Dbarone.Net.Mapper.Tests;
 
+public enum FooBarBazEnumType
+{
+    Foo,
+    Bar,
+    Baz
+}
+
+public class ClassWithEnum
+{
+    public FooBarBazEnumType FooBarBaz { get; set; } = FooBarBazEnumType.Foo;
+}
+
 public class ClassWithNullable
 {
     public int? Age { get; set; } = null;
@@ -332,5 +344,31 @@ public class DataDocumentTests
         Assert.IsType<ClassWithNullable>(c);
         Assert.Null(c.Age);
         Assert.Equal(123, c.Value);
+    }
+
+
+    [Fact]
+    public void DocumentWithEnumTest()
+    {
+        ClassWithEnum a = new ClassWithEnum();
+        a.FooBarBaz = FooBarBazEnumType.Baz;
+
+        var conf = new MapperConfiguration()
+           .SetAutoRegisterTypes(true)
+           .RegisterResolvers<DocumentMemberResolver>()
+           .RegisterOperator<EnumerableDocumentValueMapperOperator>()
+           .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+        var op = mapper.GetMapperOperator<ClassWithEnum, DictionaryDocument>();
+
+        // Map POCO to document
+        var b = mapper.Map<ClassWithEnum, DictionaryDocument>(a);
+        Assert.IsType<DictionaryDocument>(b);
+
+        // Map back to POCO
+        var c = mapper.Map<DictionaryDocument, ClassWithEnum>(b);
+        Assert.IsType<ClassWithEnum>(c);
+        Assert.Equal(FooBarBazEnumType.Baz, c.FooBarBaz);
     }
 }

@@ -136,6 +136,51 @@ public abstract class MapperOperator
     }
 
     /// <summary>
+    /// Static method to determine whether a source-target mapping exists.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="sourceType"></param>
+    /// <param name="targetType"></param>
+    /// <param name="parent"></param>
+    /// <param name="onLog"></param>
+    /// <returns></returns>
+    /// <exception cref="MapperBuildException"></exception>
+    public static bool CanMap(MapperBuilder builder, BuildType sourceType, BuildType targetType, MapperOperator? parent = null, MapperOperatorLogDelegate? onLog = null)
+    {
+        // Get all the mapper operator types
+        // Default operators come last.
+        var operatorTypes = builder.Configuration.Config.Operators.Union(builder.Configuration.Config.DefaultOperators);
+
+        List<MapperOperator> mapperOperators = new List<MapperOperator>();
+        foreach (var type in operatorTypes)
+        {
+            var mapperOperator = (MapperOperator?)Activator.CreateInstance(type, builder, sourceType, targetType, parent, onLog);
+            if (mapperOperator == null)
+            {
+                throw new MapperBuildException(sourceType.Type, MapperEndPoint.Source, "", $"Unable to create mapper operator for mapper type: {type.Name}.");
+            }
+            mapperOperators.Add(mapperOperator);
+        }
+        mapperOperators = mapperOperators.ToList();
+
+        // Find the first mapper operator that can map the types
+        foreach (var mapperOperator in mapperOperators)
+        {
+            if (mapperOperator.CanMap())
+            {
+                // raise log event
+                if (onLog != null)
+                {
+                    onLog(mapperOperator, MapperOperatorLogType.Build);
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Factory method to create a new MapperOperator instance based on from / to types.
     /// </summary>
     /// <param name="builder">The current <see cref="MapperBuilder"/> instance.</param>

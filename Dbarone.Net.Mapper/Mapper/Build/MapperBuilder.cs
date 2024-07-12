@@ -42,6 +42,34 @@ public class MapperBuilder
     #region Public Methods
 
     /// <summary>
+    /// Returns boolean denoting whether a source-target mapping exists.
+    /// </summary>
+    /// <param name="sourceTarget">The source and target types.</param>
+    /// <param name="parent">An optional parent operator.</param>
+    /// <returns>Returns true if a mapper operator exists between source and target types.</returns>
+    public bool CanMap(SourceTarget sourceTarget, MapperOperator? parent = null)
+    {
+        MapperOperator? mapperOperator = null;
+
+        // source
+        if (!this.BuildTypes.ContainsKey(sourceTarget.Source))
+        {
+            this.BuildType(sourceTarget.Source);
+        }
+        var sourceBuild = this.BuildTypes[sourceTarget.Source];
+
+        // target
+        if (!this.BuildTypes.ContainsKey(sourceTarget.Target))
+        {
+            this.BuildType(sourceTarget.Target);
+        }
+        var targetBuild = this.BuildTypes[sourceTarget.Target];
+
+        // find mapper to handle source-target
+        return MapperOperator.CanMap(this, sourceBuild, targetBuild, parent, this.OnLog);
+    }
+
+    /// <summary>
     /// Gets a mapper operator based on source and target types. Note this ONLY gets the basic operator that can
     /// be identified during build time. Operators that use dynamic / defer logic will get complete mapping
     /// information only during run (map) time.
