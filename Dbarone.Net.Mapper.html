@@ -366,9 +366,14 @@ ol,
             Member resolver for Enumerable types.
             </td></tr><tr><td><a href="#T:Dbarone.Net.Mapper.EnumMemberResolver">EnumMemberResolver</a></td><td>Dbarone.Net.Mapper</td><td>
             General resolver for enumn types.
+            </td></tr><tr><td><a href="#T:Dbarone.Net.Mapper.EnumSourceStringMapperOperator">EnumSourceStringMapperOperator</a></td><td>Dbarone.Net.Mapper</td><td>
+            Operator for when the source type is an enum type. The operator will use the inner type
+            for mapping, or null.
             </td></tr><tr><td><a href="#T:Dbarone.Net.Mapper.EnumSourceValueMapperOperator">EnumSourceValueMapperOperator</a></td><td>Dbarone.Net.Mapper</td><td>
             Operator for when the source type is an enum type. The operator will use the inner type
             for mapping, or null.
+            </td></tr><tr><td><a href="#T:Dbarone.Net.Mapper.EnumTargetStringMapperOperator">EnumTargetStringMapperOperator</a></td><td>Dbarone.Net.Mapper</td><td>
+            Operator mapping strings to Enum types.
             </td></tr><tr><td><a href="#T:Dbarone.Net.Mapper.EnumTargetValueMapperOperator">EnumTargetValueMapperOperator</a></td><td>Dbarone.Net.Mapper</td><td>
             Operator mapping values to Enum types.
             </td></tr><tr><td><a href="#T:Dbarone.Net.Mapper.Getter">Getter</a></td><td>Dbarone.Net.Mapper</td><td>
@@ -2298,6 +2303,79 @@ Object
 </div>
 
 <div class="type">       
+    <h2 id="T:Dbarone.Net.Mapper.EnumSourceStringMapperOperator">Class: EnumSourceStringMapperOperator</h2>
+    <div class="type-inner">
+        <a href="#top">Back to top</a>
+
+        
+        <h3>Definition:</h3>
+        <ul>
+            <li>Namespace: Dbarone.Net.Mapper</li>
+            <li>Assembly: Dbarone.Net.Mapper, Version=2.0.2.0, Culture=neutral, PublicKeyToken=null</li>
+        </ul>
+        
+        
+        
+<h3>Base Class</h3>
+<a href="#T:Dbarone.Net.Mapper.MapperOperator">MapperOperator</a>
+
+        
+
+        
+
+        
+<h3>Summary</h3>
+
+            Operator for when the source type is an enum type. The operator will use the inner type
+            for mapping, or null.
+            
+
+        
+        
+<h3>Constructors</h3>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Parameters</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><a href="#M:Dbarone.Net.Mapper.EnumSourceStringMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.MapperOperator,MapperOperatorLogDelegate)">.ctor</a></td><td><a href="#T:Dbarone.Net.Mapper.MapperBuilder">MapperBuilder</a>,<a href="#T:Dbarone.Net.Mapper.BuildType">BuildType</a>,<a href="#T:Dbarone.Net.Mapper.BuildType">BuildType</a>,<a href="#T:Dbarone.Net.Mapper.MapperOperator">MapperOperator</a>,<a href="#T:MapperOperatorLogDelegate">MapperOperatorLogDelegate</a></td><td>
+            Creates a new <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a> instance.
+            </td></tr>
+        </tbody>
+    </table>
+</div>
+        
+        
+        
+<h3>Methods</h3>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Return Type</th>
+                <th>Parameters</th>
+                <th>Description</th>
+                <th>Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><a href="#M:Dbarone.Net.Mapper.EnumSourceStringMapperOperator.CanMap">CanMap</a></td><td>Boolean</td><td></td><td>
+            The <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a> operator is used to map objects declared as type 'object' at runtime. 
+            </td><td></td></tr><tr><td><a href="#M:Dbarone.Net.Mapper.EnumSourceStringMapperOperator.MapInternal(System.Object)">MapInternal</a></td><td>Object</td><td>Object</td><td></td><td></td></tr>
+        </tbody>
+    </table>
+</div>
+        
+    </div>
+</div>
+
+<div class="type">       
     <h2 id="T:Dbarone.Net.Mapper.EnumSourceValueMapperOperator">Class: EnumSourceValueMapperOperator</h2>
     <div class="type-inner">
         <a href="#top">Back to top</a>
@@ -2365,6 +2443,78 @@ Object
             </td><td></td></tr><tr><td><a href="#M:Dbarone.Net.Mapper.EnumSourceValueMapperOperator.GetChildren">GetChildren</a></td><td>IDictionary`2</td><td></td><td>
             GetChildren implementation for <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a>.
             </td><td></td></tr><tr><td><a href="#M:Dbarone.Net.Mapper.EnumSourceValueMapperOperator.MapInternal(System.Object)">MapInternal</a></td><td>Object</td><td>Object</td><td></td><td></td></tr>
+        </tbody>
+    </table>
+</div>
+        
+    </div>
+</div>
+
+<div class="type">       
+    <h2 id="T:Dbarone.Net.Mapper.EnumTargetStringMapperOperator">Class: EnumTargetStringMapperOperator</h2>
+    <div class="type-inner">
+        <a href="#top">Back to top</a>
+
+        
+        <h3>Definition:</h3>
+        <ul>
+            <li>Namespace: Dbarone.Net.Mapper</li>
+            <li>Assembly: Dbarone.Net.Mapper, Version=2.0.2.0, Culture=neutral, PublicKeyToken=null</li>
+        </ul>
+        
+        
+        
+<h3>Base Class</h3>
+<a href="#T:Dbarone.Net.Mapper.MapperOperator">MapperOperator</a>
+
+        
+
+        
+
+        
+<h3>Summary</h3>
+
+            Operator mapping strings to Enum types.
+            
+
+        
+        
+<h3>Constructors</h3>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Parameters</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><a href="#M:Dbarone.Net.Mapper.EnumTargetStringMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.MapperOperator,MapperOperatorLogDelegate)">.ctor</a></td><td><a href="#T:Dbarone.Net.Mapper.MapperBuilder">MapperBuilder</a>,<a href="#T:Dbarone.Net.Mapper.BuildType">BuildType</a>,<a href="#T:Dbarone.Net.Mapper.BuildType">BuildType</a>,<a href="#T:Dbarone.Net.Mapper.MapperOperator">MapperOperator</a>,<a href="#T:MapperOperatorLogDelegate">MapperOperatorLogDelegate</a></td><td>
+            Creates a new <a href="!:EnumTargetMapperOperator"></a> instance.
+            </td></tr>
+        </tbody>
+    </table>
+</div>
+        
+        
+        
+<h3>Methods</h3>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Return Type</th>
+                <th>Parameters</th>
+                <th>Description</th>
+                <th>Tags</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td><a href="#M:Dbarone.Net.Mapper.EnumTargetStringMapperOperator.CanMap">CanMap</a></td><td>Boolean</td><td></td><td>
+            The <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a> operator is used to map objects declared as type 'object' at runtime. 
+            </td><td></td></tr><tr><td><a href="#M:Dbarone.Net.Mapper.EnumTargetStringMapperOperator.MapInternal(System.Object)">MapInternal</a></td><td>Object</td><td>Object</td><td></td><td></td></tr>
         </tbody>
     </table>
 </div>
@@ -3650,7 +3800,7 @@ Object
 
         
 <h3>Sub Classes</h3>
-<ul><li><a href="#T:Dbarone.Net.Mapper.AssignableMapperOperator">AssignableMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ConverterMapperOperator">ConverterMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ConvertibleMapperOperator">ConvertibleMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumerableMapperOperator">EnumerableMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumSourceValueMapperOperator">EnumSourceValueMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumTargetValueMapperOperator">EnumTargetValueMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ImplicitOperatorMapperOperator">ImplicitOperatorMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.MemberwiseMapperDeferBuildOperator">MemberwiseMapperDeferBuildOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.MemberwiseMapperOperator">MemberwiseMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.NullableSourceMapperOperator">NullableSourceMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">ObjectSourceMapperOperator</a></li></ul>
+<ul><li><a href="#T:Dbarone.Net.Mapper.AssignableMapperOperator">AssignableMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ConverterMapperOperator">ConverterMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ConvertibleMapperOperator">ConvertibleMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumerableMapperOperator">EnumerableMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumSourceStringMapperOperator">EnumSourceStringMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumSourceValueMapperOperator">EnumSourceValueMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumTargetStringMapperOperator">EnumTargetStringMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.EnumTargetValueMapperOperator">EnumTargetValueMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ImplicitOperatorMapperOperator">ImplicitOperatorMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.MemberwiseMapperDeferBuildOperator">MemberwiseMapperDeferBuildOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.MemberwiseMapperOperator">MemberwiseMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.NullableSourceMapperOperator">NullableSourceMapperOperator</a></li><li><a href="#T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">ObjectSourceMapperOperator</a></li></ul>
 
         
 <h3>Summary</h3>
@@ -13342,6 +13492,114 @@ Returns true if the current IMemberResolver can resolve members of the specified
 </div>
 
 <div class="member">
+    <h2 id="M:Dbarone.Net.Mapper.EnumSourceStringMapperOperator.CanMap">Method: CanMap</h1>
+    <div class="member-inner">
+
+        <h3>Declaring Type</h3>
+        <a href="#T:Dbarone.Net.Mapper.EnumSourceStringMapperOperator">Dbarone.Net.Mapper.EnumSourceStringMapperOperator</a>
+
+        
+<h3>Signature</h3>
+<pre><code>public bool CanMap()</code></pre>
+            
+
+        <h3>Summary</h3>
+
+            The <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a> operator is used to map objects declared as type 'object' at runtime. 
+            
+
+        
+
+        
+
+        
+
+        <h3>Returns</h3>
+Returns true when the source declared type is 'object'.
+
+        
+
+    </div>
+</div>
+
+<div class="member">
+    <h2 id="M:Dbarone.Net.Mapper.EnumSourceStringMapperOperator.MapInternal(System.Object)">Method: MapInternal</h1>
+    <div class="member-inner">
+
+        <h3>Declaring Type</h3>
+        <a href="#T:Dbarone.Net.Mapper.EnumSourceStringMapperOperator">Dbarone.Net.Mapper.EnumSourceStringMapperOperator</a>
+
+        
+<h3>Signature</h3>
+<pre><code>protected object MapInternal(object source)</code></pre>
+            
+
+        
+
+        
+
+        
+
+        
+<h3>Parameters</h3>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+    <tr>
+        <td>source</td>
+        <td>Object</td>
+        <td></td>
+    </tr>
+        </tbody>
+    </table>
+</div>
+
+        
+
+        
+
+    </div>
+</div>
+
+<div class="member">
+    <h2 id="M:Dbarone.Net.Mapper.EnumSourceStringMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.MapperOperator,MapperOperatorLogDelegate)">Constructor: .ctor</h1>
+    <div class="member-inner">
+
+        <h3>Declaring Type</h3>
+        <a href="#T:Dbarone.Net.Mapper.EnumSourceStringMapperOperator">Dbarone.Net.Mapper.EnumSourceStringMapperOperator</a>
+
+        
+<h3>Signature</h3>
+<pre><code>public EnumSourceStringMapperOperator(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)</code></pre>
+            
+
+        <h3>Summary</h3>
+
+            Creates a new <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a> instance.
+            
+
+        
+
+        
+
+        
+
+        
+
+        
+
+    </div>
+</div>
+
+<div class="member">
     <h2 id="M:Dbarone.Net.Mapper.EnumSourceValueMapperOperator.GetChildren">Method: GetChildren</h1>
     <div class="member-inner">
 
@@ -13477,6 +13735,114 @@ Returns true when the source declared type is 'object'.
         <h3>Summary</h3>
 
             Creates a new <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a> instance.
+            
+
+        
+
+        
+
+        
+
+        
+
+        
+
+    </div>
+</div>
+
+<div class="member">
+    <h2 id="M:Dbarone.Net.Mapper.EnumTargetStringMapperOperator.CanMap">Method: CanMap</h1>
+    <div class="member-inner">
+
+        <h3>Declaring Type</h3>
+        <a href="#T:Dbarone.Net.Mapper.EnumTargetStringMapperOperator">Dbarone.Net.Mapper.EnumTargetStringMapperOperator</a>
+
+        
+<h3>Signature</h3>
+<pre><code>public bool CanMap()</code></pre>
+            
+
+        <h3>Summary</h3>
+
+            The <a href="T:Dbarone.Net.Mapper.ObjectSourceMapperOperator">Dbarone.Net.Mapper.ObjectSourceMapperOperator</a> operator is used to map objects declared as type 'object' at runtime. 
+            
+
+        
+
+        
+
+        
+
+        <h3>Returns</h3>
+Returns true when the source declared type is 'object'.
+
+        
+
+    </div>
+</div>
+
+<div class="member">
+    <h2 id="M:Dbarone.Net.Mapper.EnumTargetStringMapperOperator.MapInternal(System.Object)">Method: MapInternal</h1>
+    <div class="member-inner">
+
+        <h3>Declaring Type</h3>
+        <a href="#T:Dbarone.Net.Mapper.EnumTargetStringMapperOperator">Dbarone.Net.Mapper.EnumTargetStringMapperOperator</a>
+
+        
+<h3>Signature</h3>
+<pre><code>protected object MapInternal(object source)</code></pre>
+            
+
+        
+
+        
+
+        
+
+        
+<h3>Parameters</h3>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+    <tr>
+        <td>source</td>
+        <td>Object</td>
+        <td></td>
+    </tr>
+        </tbody>
+    </table>
+</div>
+
+        
+
+        
+
+    </div>
+</div>
+
+<div class="member">
+    <h2 id="M:Dbarone.Net.Mapper.EnumTargetStringMapperOperator.#ctor(Dbarone.Net.Mapper.MapperBuilder,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.BuildType,Dbarone.Net.Mapper.MapperOperator,MapperOperatorLogDelegate)">Constructor: .ctor</h1>
+    <div class="member-inner">
+
+        <h3>Declaring Type</h3>
+        <a href="#T:Dbarone.Net.Mapper.EnumTargetStringMapperOperator">Dbarone.Net.Mapper.EnumTargetStringMapperOperator</a>
+
+        
+<h3>Signature</h3>
+<pre><code>public EnumTargetStringMapperOperator(Dbarone.Net.Mapper.MapperBuilder builder, Dbarone.Net.Mapper.BuildType sourceType, Dbarone.Net.Mapper.BuildType targetType, Dbarone.Net.Mapper.MapperOperator parent, MapperOperatorLogDelegate onLog)</code></pre>
+            
+
+        <h3>Summary</h3>
+
+            Creates a new <a href="!:EnumTargetMapperOperator"></a> instance.
             
 
         
@@ -22595,7 +22961,7 @@ Returns true if the current IMemberResolver can resolve members of the specified
 
         <!-- Footer / Commentario link -->
         <div class="footer">
-            Documentation generated on 12-Jul-2024 18:19:28 using <a href="https://github.com/davidbarone/Commentario">Commentario</a>.
+            Documentation generated on 12-Jul-2024 21:44:54 using <a href="https://github.com/davidbarone/Commentario">Commentario</a>.
         </div>
 
     </body>
