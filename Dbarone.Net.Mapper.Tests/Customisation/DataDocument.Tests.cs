@@ -7,6 +7,21 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Dbarone.Net.Mapper.Tests;
 
+public class ComplexType
+{
+    public string StringValue { get; set; } = "FooBar";
+
+    public byte ByteValue { get; set; } = 123;
+
+    public DateTime DateTimeValue { get; set; } = DateTime.Now;
+
+    public int IntValue { get; set; } = 123;
+
+    public FooBarBazEnumType EnumValue { get; set; } = FooBarBazEnumType.Baz;
+
+    public int? NullableIntValue { get; set; } = null;
+}
+
 public enum FooBarBazEnumType
 {
     Foo,
@@ -370,5 +385,33 @@ public class DataDocumentTests
         var c = mapper.Map<DictionaryDocument, ClassWithEnum>(b);
         Assert.IsType<ClassWithEnum>(c);
         Assert.Equal(FooBarBazEnumType.Baz, c.FooBarBaz);
+    }
+
+    [Fact]
+    public void TestComplexDocument()
+    {
+        var complexValue = new ComplexType();
+
+        var conf = new MapperConfiguration()
+           .SetAutoRegisterTypes(true)
+           .RegisterResolvers<DocumentMemberResolver>()
+           .RegisterOperator<EnumerableDocumentValueMapperOperator>()
+           .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+        var op = mapper.GetMapperOperator<ComplexType, DictionaryDocument>();
+
+        // Map POCO to document
+        var b = mapper.Map<ComplexType, DictionaryDocument>(complexValue);
+        Assert.IsType<DictionaryDocument>(b);
+
+        // Serialize + deserialize:
+        DocumentSerializer ser = new DocumentSerializer();
+        var bytes = ser.Serialize(b);
+        var c = (DictionaryDocument)ser.Deserialize(bytes);
+
+        // Map back to POCO
+        var d = mapper.Map(typeof(ComplexType), c);
+        Assert.IsType<ComplexType>(d);
     }
 }
