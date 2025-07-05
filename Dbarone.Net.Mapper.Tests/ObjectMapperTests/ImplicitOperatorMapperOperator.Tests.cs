@@ -19,15 +19,17 @@ public class ImplicitOperatorTest
     public static implicit operator ImplicitOperatorTest(int i) => new ImplicitOperatorTest(i);
 }
 
-public class ImplicitOperatorMapperProviderTests
+public class ImplicitOperatorMapperTests
 {
     [Fact]
     public void Map_Int_To_Float_Should_Map()
     {
-        var mapper = new ObjectMapper(new MapperConfiguration()
+        var conf = new MapperConfiguration()
             .RegisterType<int>()
             .RegisterType<ImplicitOperatorTest>()
-        );
+            .RegisterOperator<ImplicitOperatorMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
 
         int len = 10;
         var expected = new string('X', len);  // 'XXXXXXXXXX'

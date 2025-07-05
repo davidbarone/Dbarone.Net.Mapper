@@ -19,7 +19,12 @@ public class DictionaryTests
             CustomerName = "Acme Ltd"
         };
 
-        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
+
+        ObjectMapper mapper = new ObjectMapper(conf);
 
         var dict = mapper.Map<Customer, Dictionary<string, object>>(customer);
         Assert.Equal(123, dict["CustomerId"]);
@@ -34,7 +39,12 @@ public class DictionaryTests
             {"CustomerName", "Acme Ltd" }
         };
 
-        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>();
+
+        ObjectMapper mapper = new ObjectMapper(conf);
         var customer = mapper.Map<Dictionary<string, object>, Customer>(dict);
         Assert.Equal(123, customer.CustomerId);
     }

@@ -10,7 +10,8 @@ public class Vector
     public int y { get; set; } = default!;
 }
 
-public class EntityWithDynamicProperty {
+public class EntityWithDynamicProperty
+{
     public int EntityId { get; set; }
     public string EntityName { get; set; }
     public dynamic DynamicValue { get; set; }
@@ -20,7 +21,8 @@ public class DynamicTests
 {
     private readonly ITestOutputHelper output;
 
-    public DynamicTests(ITestOutputHelper output) {
+    public DynamicTests(ITestOutputHelper output)
+    {
         this.output = output;
     }
 
@@ -33,7 +35,12 @@ public class DynamicTests
             y = 456
         };
 
-        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
+
+        ObjectMapper mapper = new ObjectMapper(conf);
 
         var dict = mapper.Map<Vector, dynamic>(v);
         Assert.Equal(123, dict.x);
@@ -47,7 +54,14 @@ public class DynamicTests
         exp.x = 123;
         exp.y = 456;
 
-        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<ObjectSourceMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>();
+
+        ObjectMapper mapper = new ObjectMapper(conf);
+
         var op = mapper.GetMapperOperator<dynamic, Vector>();
         var v = op.Map(exp);
         output.WriteLine(op.PrettyPrint());
@@ -55,9 +69,18 @@ public class DynamicTests
     }
 
     [Fact]
-    public void TestDynamicToBuiltInType() {
+    public void TestDynamicToBuiltInType()
+    {
         dynamic builtIn = 123;
-        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<ObjectSourceMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>();
+
+        ObjectMapper mapper = new ObjectMapper(conf);
+
         var op = mapper.GetMapperOperator<dynamic, int>();
         var result = op.Map(builtIn);
         Assert.Equal(123, result);
@@ -71,7 +94,14 @@ public class DynamicTests
         exp.x = 123;
         exp.y = 456;
 
-        ObjectMapper mapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<ObjectSourceMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>();
+
+        ObjectMapper mapper = new ObjectMapper(conf);
+
         var op = mapper.GetMapperOperator<dynamic, Dictionary<string, object>>();
         var dict = op.Map(exp);
         Assert.Equal(123, dict["x"]);

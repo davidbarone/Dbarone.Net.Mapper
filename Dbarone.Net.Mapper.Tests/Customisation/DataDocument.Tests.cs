@@ -68,7 +68,10 @@ public class DataDocumentTests
     [Fact]
     public void TestIntToDocumentUsesImplicitOperator()
     {
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>();
         var mapper = new ObjectMapper(conf);
         var op = mapper.GetMapperOperator<int, DocumentValue>();
         Assert.Equal(typeof(ImplicitOperatorMapperOperator), op.GetType());
@@ -77,7 +80,10 @@ public class DataDocumentTests
     [Fact]
     public void TestIntToDocument()
     {
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>();
         var mapper = new ObjectMapper(conf);
 
         int a = 123;
@@ -93,8 +99,12 @@ public class DataDocumentTests
     [Fact]
     public void TestDocumentToInt()
     {
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>();
         var mapper = new ObjectMapper(conf);
+
         var doc = new DocumentValue(123);
         int a = mapper.Map<DocumentValue, int>(doc);
         Assert.Equal(123, a);
@@ -103,7 +113,10 @@ public class DataDocumentTests
     [Fact]
     public void TestDateToDocument()
     {
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>();
         var mapper = new ObjectMapper(conf);
 
         DateTime dt = DateTime.Now;
@@ -119,9 +132,13 @@ public class DataDocumentTests
     [Fact]
     public void TestDocumentToDate()
     {
-        var d = DateTime.Now;
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>();
         var mapper = new ObjectMapper(conf);
+
+        var d = DateTime.Now;
         var doc = new DocumentValue(d);
         DateTime dt = mapper.Map<DocumentValue, DateTime>(doc);
         Assert.Equal(d, dt);
@@ -135,8 +152,14 @@ public class DataDocumentTests
             CustomerId = 123,
             CustomerName = "Acme Enterprises Ltd"
         };
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
         var mapper = new ObjectMapper(conf);
+
         var doc = mapper.Map<Customer, DictionaryDocument>(cust);
         Assert.NotNull(doc);
         if (doc is not null)
@@ -152,7 +175,11 @@ public class DataDocumentTests
         doc.Add("CustomerId", 123);
         doc.Add("CustomerName", "Acme Enterprises Ltd");
 
-        var conf = new MapperConfiguration().SetAutoRegisterTypes(true).RegisterResolvers<DocumentMemberResolver>();
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>();
         var mapper = new ObjectMapper(conf);
         var cust = mapper.Map<DictionaryDocument, Customer>(doc);
         Assert.NotNull(cust);
@@ -178,10 +205,13 @@ public class DataDocumentTests
         };
 
         var conf = new MapperConfiguration()
-        .SetAutoRegisterTypes(true)
-        .RegisterResolvers<DocumentMemberResolver>()
-        .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
         var mapper = new ObjectMapper(conf);
+
         var doc = mapper.Map<CustomerWithNestedObject, DictionaryDocument>(cust);
 
         if (doc is not null)
@@ -206,9 +236,12 @@ public class DataDocumentTests
 
         var conf = new MapperConfiguration()
             .SetAutoRegisterTypes(true)
-            .RegisterResolvers<DocumentMemberResolver>();
-
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>();
         var mapper = new ObjectMapper(conf);
+
         var operation = mapper.GetMapperOperator<DictionaryDocument, CustomerWithNestedObject>();
         var s = operation.PrettyPrint();
         var cust = mapper.Map<DictionaryDocument, CustomerWithNestedObject>(doc);
@@ -227,8 +260,9 @@ public class DataDocumentTests
             .SetAutoRegisterTypes(true)
             .RegisterResolvers<DocumentMemberResolver>()
             .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
-
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<EnumerableMapperOperator>();
         var mapper = new ObjectMapper(conf);
         var doc = mapper.Map<int[], DocumentValue>(intArray);
         Assert.NotNull(doc);
@@ -249,8 +283,8 @@ public class DataDocumentTests
             .SetAutoRegisterTypes(true)
             .RegisterResolvers<DocumentMemberResolver>()
             .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
-
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
         var mapper = new ObjectMapper(conf);
         var op = mapper.GetMapperOperator<ClassWithDate, DictionaryDocument>();
 
@@ -268,10 +302,11 @@ public class DataDocumentTests
         var conf = new MapperConfiguration()
             .SetAutoRegisterTypes(true)
             .RegisterResolvers<DocumentMemberResolver>()
-            .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
-
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
         var mapper = new ObjectMapper(conf);
+
         var doc = (DocumentValue)mapper.Map(typeof(DocumentValue), obj)!;
         Assert.NotNull(doc);
         Assert.Equal(d, doc!["Dob"].AsDateTime);
@@ -291,9 +326,10 @@ public class DataDocumentTests
         var conf = new MapperConfiguration()
             .SetAutoRegisterTypes(true)
             .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<MemberwiseDocumentValueMapperOperator>()
             .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
-
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
         var mapper = new ObjectMapper(conf);
         var doc = mapper.Map<List<Customer>, DocumentValue>(customers);
         Assert.NotNull(doc);
@@ -315,10 +351,13 @@ public class DataDocumentTests
         var conf = new MapperConfiguration()
             .SetAutoRegisterTypes(true)
             .RegisterResolvers<DocumentMemberResolver>()
-            .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-            .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
-
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<ObjectSourceMapperOperator>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
         var mapper = new ObjectMapper(conf);
+        var s = mapper.GetMapperOperator<Customer, DictionaryDocument>().PrettyPrint();
 
         var b = mapper.Map<Customer, DictionaryDocument>(a);
         Assert.IsType<DictionaryDocument>(b);
@@ -327,6 +366,8 @@ public class DataDocumentTests
         Assert.Equal(DocumentType.Null, b["CustomerName"].Type);
 
         // Convert back
+        s = mapper.GetMapperOperator<DictionaryDocument, Customer>().PrettyPrint();
+
         var c = mapper.Map<DictionaryDocument, Customer>(b);
         Assert.NotNull(c);
         Assert.IsType<Customer>(c);
@@ -341,8 +382,11 @@ public class DataDocumentTests
         var conf = new MapperConfiguration()
            .SetAutoRegisterTypes(true)
            .RegisterResolvers<DocumentMemberResolver>()
+           .RegisterOperator<MemberwiseDocumentValueMapperOperator>()
            .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-           .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+           .RegisterOperator<NullableSourceMapperOperator>()
+           .RegisterOperator<ImplicitOperatorMapperOperator>()
+           .RegisterOperator<MemberwiseMapperOperator>();
 
         var mapper = new ObjectMapper(conf);
         var op = mapper.GetMapperOperator<ClassWithNullable, DictionaryDocument>();
@@ -361,7 +405,6 @@ public class DataDocumentTests
         Assert.Equal(123, c.Value);
     }
 
-
     [Fact]
     public void DocumentWithEnumTest()
     {
@@ -369,19 +412,24 @@ public class DataDocumentTests
         a.FooBarBaz = FooBarBazEnumType.Baz;
 
         var conf = new MapperConfiguration()
-           .SetAutoRegisterTypes(true)
-           .RegisterResolvers<DocumentMemberResolver>()
-           .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-           .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
+            .SetAutoRegisterTypes(true)
+            .RegisterResolvers<DocumentMemberResolver>()
+            .RegisterOperator<EnumSourceValueMapperOperator>()
+            .RegisterOperator<EnumTargetValueMapperOperator>()
+            .RegisterOperator<ImplicitOperatorMapperOperator>()
+            .RegisterOperator<MemberwiseMapperDeferBuildOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
 
         var mapper = new ObjectMapper(conf);
         var op = mapper.GetMapperOperator<ClassWithEnum, DictionaryDocument>();
-
+        var s = op.PrettyPrint();
         // Map POCO to document
         var b = mapper.Map<ClassWithEnum, DictionaryDocument>(a);
         Assert.IsType<DictionaryDocument>(b);
 
         // Map back to POCO
+        op = mapper.GetMapperOperator<DictionaryDocument, ClassWithEnum>();
+        s = op.PrettyPrint();
         var c = mapper.Map<DictionaryDocument, ClassWithEnum>(b);
         Assert.IsType<ClassWithEnum>(c);
         Assert.Equal(FooBarBazEnumType.Baz, c.FooBarBaz);
@@ -395,9 +443,15 @@ public class DataDocumentTests
         var conf = new MapperConfiguration()
            .SetAutoRegisterTypes(true)
            .RegisterResolvers<DocumentMemberResolver>()
-           .RegisterOperator<EnumerableDocumentValueMapperOperator>()
-           .RegisterOperator<MemberwiseDocumentValueMapperOperator>();
-
+           .RegisterOperator<MemberwiseDocumentValueMapperOperator>()
+           .RegisterOperator<NullableSourceMapperOperator>()
+           .RegisterOperator<EnumSourceValueMapperOperator>()
+           .RegisterOperator<EnumTargetValueMapperOperator>()
+           .RegisterOperator<AssignableMapperOperator>()
+           .RegisterOperator<ObjectSourceMapperOperator>()
+           .RegisterOperator<ImplicitOperatorMapperOperator>()
+           .RegisterOperator<MemberwiseMapperDeferBuildOperator>()
+           .RegisterOperator<MemberwiseMapperOperator>();
         var mapper = new ObjectMapper(conf);
         var op = mapper.GetMapperOperator<ComplexType, DictionaryDocument>();
 

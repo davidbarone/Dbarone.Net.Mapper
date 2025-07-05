@@ -63,31 +63,6 @@ public class Config
         }
     }
 
-    /// <summary>
-    /// Returns the default operators.
-    /// </summary>
-    public IList<Type> DefaultOperators
-    {
-        get
-        {
-            return new List<Type>() {
-                typeof(EnumSourceValueMapperOperator),
-                typeof(EnumTargetValueMapperOperator),
-                typeof(EnumSourceStringMapperOperator),
-                typeof(EnumTargetStringMapperOperator),
-                typeof(NullableSourceMapperOperator),
-                typeof(AssignableMapperOperator),
-                typeof(ObjectSourceMapperOperator),
-                typeof(ConvertibleMapperOperator),
-                typeof(ConverterMapperOperator),
-                typeof(ImplicitOperatorMapperOperator),
-                typeof(EnumerableMapperOperator),
-                typeof(MemberwiseMapperDeferBuildOperator),
-                typeof(MemberwiseMapperOperator)
-            };
-        }
-    }
-
     public IList<Type> Operators { get; set; } = new List<Type>();
 
     /// <summary>

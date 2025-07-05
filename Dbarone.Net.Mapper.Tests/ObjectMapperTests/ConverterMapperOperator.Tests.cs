@@ -13,13 +13,14 @@ public class OutClass
     public string FullName { get; set; }
 }
 
-public class ConverterMapperTests
+public class ConverterMapperOperatorTests
 {
     [Fact]
     public void TestConverter()
     {
         var mapper = new ObjectMapper(new MapperConfiguration()
             .SetAutoRegisterTypes(true)
+            .RegisterOperator<ConverterMapperOperator>()
             .RegisterConverter<InClass, OutClass>((source) =>
             {
                 return new OutClass

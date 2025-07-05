@@ -1,17 +1,21 @@
 using Dbarone.Net.Mapper;
 
-public class EnumerableMapperProvider
+public class EnumerableMapperOperatorTests
 {
 
     [Fact]
     public void MapGenericLists()
     {
-        var mapper = new ObjectMapper(new MapperConfiguration()
+
+        var conf = new MapperConfiguration()
             .RegisterType<int[]>()
             .RegisterType<float[]>()
             .RegisterType<int>()
             .RegisterType<float>()
-        );
+            .RegisterOperator<ConvertibleMapperOperator>()
+            .RegisterOperator<EnumerableMapperOperator>();
+
+        ObjectMapper mapper = new ObjectMapper(conf);
 
         int[] ints = new int[] { 1, 2, 3, 4, 5 };
         var floats = mapper.Map<int[], float[]>(ints);

@@ -43,10 +43,11 @@ public class MapperOperatorTests
     [Fact]
     public void GetOperator1()
     {
-        var mapper = new ObjectMapper(new MapperConfiguration()
+        var conf = new MapperConfiguration()
             .RegisterType<int>()
             .RegisterType<float>()
-        );
+            .RegisterOperator<ConvertibleMapperOperator>();
+        var mapper = new ObjectMapper(conf);
 
         var op = mapper.GetMapperOperator<int, float>();
         Assert.NotNull(op);
@@ -74,7 +75,13 @@ public class MapperOperatorTests
             }
         } };
 
-        var objectMapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>()
+            .RegisterOperator<EnumerableMapperOperator>();
+        var mapper = new ObjectMapper(conf);
+        var objectMapper = new ObjectMapper(conf);
         var op = objectMapper.GetMapperOperator(typeof(Company[]), typeof(List<CompanyDto>));
         var str = op.PrettyPrint();
 
@@ -112,8 +119,15 @@ public class MapperOperatorTests
             }
         } };
 
-        var objectMapper = new ObjectMapper(new MapperConfiguration().SetAutoRegisterTypes(true));
-        var op = objectMapper.GetMapperOperator(typeof(CompanyWithDeferBuild[]), typeof(List<CompanyDto>));
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<ObjectSourceMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>()
+            .RegisterOperator<EnumerableMapperOperator>();
+        var mapper = new ObjectMapper(conf);
+
+        var op = mapper.GetMapperOperator(typeof(CompanyWithDeferBuild[]), typeof(List<CompanyDto>));
         var str = op.PrettyPrint();
 
         // without specifying actual source object, the operator plan stops at the ObjectSourceMapperOperator
@@ -144,6 +158,5 @@ public class MapperOperatorTests
 ", str);
         Assert.IsType<List<CompanyDto>>(mapped);
         Assert.NotNull(mapped);
-
     }
 }

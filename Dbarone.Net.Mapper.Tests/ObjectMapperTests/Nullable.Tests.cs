@@ -14,9 +14,11 @@ public class NullableTests
     public void NullableInt()
     {
         int? a = 123;
-        var mapper = new ObjectMapper(new MapperConfiguration()
-             .SetAutoRegisterTypes(true)
-         );
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<NullableSourceMapperOperator>();
+        var mapper = new ObjectMapper(conf);
 
         var b = mapper.Map<int?, int>(a);
         Assert.IsType<int>(b);
@@ -28,9 +30,11 @@ public class NullableTests
     {
         NullableMember a = new NullableMember();
 
-        var mapper = new ObjectMapper(new MapperConfiguration()
-             .SetAutoRegisterTypes(true)
-         );
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
+        var mapper = new ObjectMapper(conf);
 
         var b = mapper.Map<NullableMember, Dictionary<string, object>>(a);
         Assert.IsType<Dictionary<string, object>>(b);

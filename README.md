@@ -231,7 +231,7 @@ The `Map` method works as follows:
 - If SourceType and TargetType are registered, then the mapper operator is created to map the from -> to types.
 
 ### Mapper Operators
-At the time of publishing, the following mapper operators are available out of the box:
+At the time of publishing, the following mapper operators are available to use:
 
 | Mapper                             | Description                                                                                         |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -244,6 +244,8 @@ At the time of publishing, the following mapper operators are available out of t
 | MemberwiseMapperDeferBuildOperator | Maps class and struct types on a member level, where the source type has a DeferBuild set to True.  |
 | NullableSourceMapperOperator       | Operator for when the source type is a nullable type.                                               |
 | ObjectSourceMapperOperator         | Operator for when the source type is object. This includes dynamic property types.                  |
+
+Note that all operators must be manually added to the configuration, including any built-in ones listed above. The order of adding them is also important. You should add most targeted operators first, and the most general operators last. For each mapping operation, the system checks each operator in the order added, until the first operator is found that can handle the specified mapping.
 
 #### TypeConversion Mapping Process
 In a typeconversion mapping process, a converter method is called, passing in the source object. The converter method is then resposible for returning an object of type TargetType. No memberwise mapping takes place, and no recursive mapping of child objects takes place. This type of mapping should only be reserved in cases where you want to apply very simple mapping or type conversions on simple (e.g. native) types.

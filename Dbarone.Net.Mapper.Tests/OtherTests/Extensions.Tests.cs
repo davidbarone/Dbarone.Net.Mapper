@@ -8,7 +8,7 @@ public class ExtensionsTests
     public void MapToExtensionMethods()
     {
         var str = "123";
-        var actual = str.MapTo(typeof(int));
+        var actual = str.MapTo(typeof(int), new Type[] { typeof(ConvertibleMapperOperator) });
         Assert.IsType<int>(actual);
         Assert.Equal(123, actual);
     }

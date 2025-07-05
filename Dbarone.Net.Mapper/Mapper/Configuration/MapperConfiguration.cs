@@ -46,6 +46,20 @@ public class MapperConfiguration
     }
 
     /// <summary>
+    /// Adds multiple operators. Note that the order of operators is important.
+    /// </summary>
+    /// <param name="operatorTypes">An array of operator types.</param>
+    /// <returns>Returns the current <see cref="MapperConfiguration" /> instance.</returns>
+    public MapperConfiguration RegisterOperators(params Type[] operatorTypes)
+    {
+        foreach (var type in operatorTypes)
+        {
+            this.Config.Operators.Add(type);
+        }
+        return this;
+    }
+
+    /// <summary>
     /// Registers an IMemberResolver
     /// </summary>
     /// <param name="resolver">An IMemberResolver instance.</param>

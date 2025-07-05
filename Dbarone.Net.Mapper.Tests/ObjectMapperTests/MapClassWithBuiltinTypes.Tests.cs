@@ -66,7 +66,8 @@ public class BuiltinValueTypes
     }
 }
 
-public class BuiltinValueTypesNullable {
+public class BuiltinValueTypesNullable
+{
     public bool? BoolValue { get; set; }
     public byte? ByteValue { get; set; }
     public sbyte? SByteValue { get; set; }
@@ -83,7 +84,8 @@ public class BuiltinValueTypesNullable {
     public short? ShortValue { get; set; }
     public ushort? UShortValue { get; set; }
 
-    public static BuiltinValueTypesNullable CreateMin() {
+    public static BuiltinValueTypesNullable CreateMin()
+    {
         return new BuiltinValueTypesNullable
         {
             BoolValue = false,
@@ -103,8 +105,9 @@ public class BuiltinValueTypesNullable {
             UShortValue = ushort.MinValue
         };
     }
- 
-    public static BuiltinValueTypesNullable CreateMax() {
+
+    public static BuiltinValueTypesNullable CreateMax()
+    {
         return new BuiltinValueTypesNullable
         {
             BoolValue = true,
@@ -125,7 +128,8 @@ public class BuiltinValueTypesNullable {
         };
     }
 
-   public static BuiltinValueTypesNullable CreateNull() {
+    public static BuiltinValueTypesNullable CreateNull()
+    {
         return new BuiltinValueTypesNullable
         {
             BoolValue = null,
@@ -153,9 +157,13 @@ public class MapClassWithBuiltinTypesTests
     public void Should_Map_Builtin_Value_Types_Min()
     {
         BuiltinValueTypes obj1 = BuiltinValueTypes.CreateMin();
-        var mapper = new ObjectMapper(new MapperConfiguration()
+
+        var conf = new MapperConfiguration()
             .RegisterType<BuiltinValueTypes>()
-        );
+            .RegisterOperator<AssignableMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+
         var obj2 = mapper.Map<BuiltinValueTypes, BuiltinValueTypes>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
@@ -164,9 +172,13 @@ public class MapClassWithBuiltinTypesTests
     public void Should_Map_Builtin_Value_Types_Max()
     {
         BuiltinValueTypes obj1 = BuiltinValueTypes.CreateMin();
-        var mapper = new ObjectMapper(new MapperConfiguration()
+
+        var conf = new MapperConfiguration()
             .RegisterType<BuiltinValueTypes>()
-        );
+            .RegisterOperator<AssignableMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+
         var obj2 = mapper.Map<BuiltinValueTypes, BuiltinValueTypes>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
@@ -175,9 +187,15 @@ public class MapClassWithBuiltinTypesTests
     public void Should_Map_Builtin_Value_Types_Nullable()
     {
         BuiltinValueTypesNullable obj1 = BuiltinValueTypesNullable.CreateNull();
-        var mapper = new ObjectMapper(new MapperConfiguration()
-            .RegisterType<BuiltinValueTypesNullable>()
-        );
+
+        var conf = new MapperConfiguration()
+           .RegisterType<BuiltinValueTypesNullable>()
+           .RegisterOperator<NullableSourceMapperOperator>()
+           .RegisterOperator<AssignableMapperOperator>()
+           .RegisterOperator<MemberwiseMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
+
         var obj2 = mapper.Map<BuiltinValueTypesNullable, BuiltinValueTypesNullable>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }

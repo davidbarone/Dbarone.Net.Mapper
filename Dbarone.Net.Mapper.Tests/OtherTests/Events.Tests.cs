@@ -4,14 +4,15 @@ namespace Dbarone.Net.Mapper;
 
 public class EventsTests
 {
-
     [Fact]
     public void TestBuildEvent()
     {
         // Given
-        var mapper = new ObjectMapper(
-            new MapperConfiguration()
-            .SetAutoRegisterTypes(true));               // No need to register individual types here.
+        var conf = new MapperConfiguration()
+            .SetAutoRegisterTypes(true)
+            .RegisterOperator<ConvertibleMapperOperator>();
+
+        var mapper = new ObjectMapper(conf);
 
         int a = 1;
         var buildCount = 0;

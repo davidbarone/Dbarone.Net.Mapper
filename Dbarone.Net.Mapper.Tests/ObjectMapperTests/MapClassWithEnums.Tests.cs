@@ -81,9 +81,10 @@ public class MapClassWithEnumsTests
     public void Should_Map_Enum_Types()
     {
         EnumType obj1 = EnumType.CreateMax();
-        var mapper = new ObjectMapper(new MapperConfiguration()
+        var conf = new MapperConfiguration()
             .RegisterType<EnumType>()
-        );
+            .RegisterOperator<AssignableMapperOperator>();
+        var mapper = new ObjectMapper(conf);
         var obj2 = mapper.Map<EnumType, EnumType>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
@@ -92,9 +93,10 @@ public class MapClassWithEnumsTests
     public void Should_Map_Enum_Types_Nullable()
     {
         EnumTypeNullable obj1 = EnumTypeNullable.CreateMax();
-        var mapper = new ObjectMapper(new MapperConfiguration()
+        var conf = new MapperConfiguration()
             .RegisterType<EnumTypeNullable>()
-        );
+            .RegisterOperator<AssignableMapperOperator>();
+        var mapper = new ObjectMapper(conf);
         var obj2 = mapper.Map<EnumTypeNullable, EnumTypeNullable>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
@@ -103,9 +105,10 @@ public class MapClassWithEnumsTests
     public void Should_Map_Enum_Types_Nullable_Max()
     {
         EnumTypeNullable obj1 = EnumTypeNullable.CreateMax();
-        var mapper = new ObjectMapper(new MapperConfiguration()
+        var conf = new MapperConfiguration()
             .RegisterType<EnumTypeNullable>()
-        );
+            .RegisterOperator<AssignableMapperOperator>();
+        var mapper = new ObjectMapper(conf);
         var obj2 = mapper.Map<EnumTypeNullable, EnumTypeNullable>(obj1);
         Assert.True(obj1.ValueEquals(obj2));
     }
@@ -116,9 +119,13 @@ public class MapClassWithEnumsTests
         ClassWithDummyEnum a = new ClassWithDummyEnum();
         a.DummyEnum = DummyEnum.C;
 
-        var mapper = new ObjectMapper(new MapperConfiguration()
+        var conf = new MapperConfiguration()
             .SetAutoRegisterTypes(true)
-        );
+            .RegisterOperator<EnumSourceValueMapperOperator>()
+            .RegisterOperator<EnumTargetValueMapperOperator>()
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
+        var mapper = new ObjectMapper(conf);
 
         // Map
         var b = mapper.Map<ClassWithDummyEnum, ClassWithDummyInt>(a);
@@ -135,9 +142,13 @@ public class MapClassWithEnumsTests
         ClassWithDummyEnum a = new ClassWithDummyEnum();
         a.DummyEnum = DummyEnum.C;
 
-        var mapper = new ObjectMapper(new MapperConfiguration()
+        var conf = new MapperConfiguration()
             .SetAutoRegisterTypes(true)
-        );
+            .RegisterOperator<EnumSourceStringMapperOperator>()
+            .RegisterOperator<EnumTargetStringMapperOperator>()
+            .RegisterOperator<AssignableMapperOperator>()
+            .RegisterOperator<MemberwiseMapperOperator>();
+        var mapper = new ObjectMapper(conf);
 
         // Map
         var b = mapper.Map<ClassWithDummyEnum, ClassWithDummyString>(a);
